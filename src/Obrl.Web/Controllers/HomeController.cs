@@ -33,11 +33,46 @@ public class HomeController(ObrlDbContext db, AccessService access) : Controller
             .Select(b => new BookCard(b.Id, b.Title, b.Author, b.HasCover, b.Mode, true, null))
             .ToListAsync(ct);
 
+        // Shelves the whole library shares. Locked books show too, so readers find what to subscribe to.
+        var visible = access.VisibleBooks(User);
+
+        var since = DateTimeOffset.UtcNow.AddDays(-30);
+        var readers = await db.ActivityEvents.AsNoTracking()
+            .Where(e => e.Type == ActivityTypes.BookOpened && e.At >= since && e.BookId != null)
+            .GroupBy(e => e.BookId!.Value)
+            .Select(g => new { BookId = g.Key, Readers = g.Select(e => e.UserId).Distinct().Count() })
+            .OrderByDescending(x => x.Readers).Take(48)
+            .ToListAsync(ct);
+        var readerIds = readers.Select(r => r.BookId).ToList();
+        var mostReadBooks = await visible.Where(b => readerIds.Contains(b.Id))
+            .Select(b => new { b.Id, b.Title, b.Author, b.HasCover, b.Mode, b.RatingAverage, b.RatingCount, CanRead = readable.Any(r => r.Id == b.Id) })
+            .ToDictionaryAsync(b => b.Id, ct);
+        var mostRead = readers.Where(r => mostReadBooks.ContainsKey(r.BookId)).Take(12).Select(r =>
+        {
+            var b = mostReadBooks[r.BookId];
+            return new BookCard(b.Id, b.Title, b.Author, b.HasCover, b.Mode, b.CanRead,
+                Rating: b.RatingCount > 0 ? b.RatingAverage : null,
+                Note: r.Readers == 1 ? "1 reader this month" : $"{r.Readers} readers this month");
+        }).ToList();
+
+        var libraryMean = await db.Ratings.AverageAsync(r => (double?)r.Stars, ct) ?? 3.0;
+        const double w = Community.PriorWeight;
+        var topRated = await visible.Where(b => b.RatingCount >= Community.TopRatedMinimumVotes)
+            .OrderByDescending(b => (b.RatingAverage * b.RatingCount + libraryMean * w) / (b.RatingCount + w))
+            .ThenByDescending(b => b.RatingCount)
+            .Take(12)
+            .Select(b => new BookCard(b.Id, b.Title, b.Author, b.HasCover, b.Mode, readable.Any(r => r.Id == b.Id), null,
+                b.RatingAverage, b.RatingCount == 1 ? "1 rating" : b.RatingCount + " ratings"))
+            .ToListAsync(ct);
+
         return View(new DashboardVm
         {
             ContinueReading = continueReading,
             Bookmarked = bookmarked,
             NewBooks = newBooks,
+            MostRead = mostRead,
+            TopRated = topRated,
+            Board = await BoardController.TopicRows(db, AccessService.ReadsEverything(User)).Take(5).ToListAsync(ct),
             SubscribedCategories = await db.Subscriptions.CountAsync(s => s.UserId == userId && s.CategoryId != null, ct),
         });
     }

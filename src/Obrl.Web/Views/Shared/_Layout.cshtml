@@ -1,4 +1,5 @@
 ﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject Obrl.Web.Data.ObrlDbContext Db
 @{
     var signedIn = User.Identity?.IsAuthenticated == true;
     var authShell = !signedIn || ViewData["Shell"] as string == "auth";
@@ -10,6 +11,7 @@
     var isAdmin = signedIn && (await Authz.AuthorizeAsync(User, Policies.AdminOnly)).Succeeded;
     var twoFactorRequired = Context.Request.Path.StartsWithSegments("/Identity/Account/Manage/EnableAuthenticator") && Context.Request.Query["required"] == "1";
     var message = TempData["Message"] as string;
+    var waiting = canModerate && !authShell ? await Obrl.Web.Controllers.ModerationController.WaitingCountAsync(Db) : 0;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -49,6 +51,7 @@ else
             <a class="side-link @Active("Home")" href="/"><i class="bi bi-house"></i> Dashboard</a>
             <a class="side-link @Active("Library")" asp-controller="Library" asp-action="Index"><i class="bi bi-collection"></i> Library</a>
             <a class="side-link" asp-controller="Library" asp-action="Index" asp-route-mine="true"><i class="bi bi-bookmark-star"></i> My subscriptions</a>
+            <a class="side-link @Active("Board")" href="/board"><i class="bi bi-chat-square-text"></i> Message board</a>
 
             @if (canContribute)
             {
@@ -58,6 +61,7 @@ else
             @if (canModerate)
             {
                 <div class="nav-section">Moderate</div>
+                <a class="side-link @Active("Moderation")" href="/moderation"><i class="bi bi-inboxes"></i> Review queue @if (waiting > 0) { <span class="badge rounded-pill text-bg-danger ms-auto">@waiting</span> }</a>
                 <a class="side-link @Active("Categories")" asp-controller="Categories" asp-action="Index"><i class="bi bi-diagram-3"></i> Categories</a>
             }
             @if (isAdmin)
@@ -88,7 +92,7 @@ else
             <header class="topbar">
                 <form class="search" method="get" action="/Library" role="search">
                     <i class="bi bi-search"></i>
-                    <input class="form-control" type="search" name="q" placeholder="Search titles and authors" value="@Context.Request.Query["q"]" aria-label="Search" />
+                    <input class="form-control" type="search" name="q" placeholder="Search titles, authors and descriptions" value="@Context.Request.Query["q"]" aria-label="Search" />
                 </form>
             </header>
             <main class="content">
@@ -111,6 +115,7 @@ else
     <nav class="mobile-nav" aria-label="Main">
         <a class="@Active("Home")" href="/"><i class="bi bi-house"></i>Home</a>
         <a class="@Active("Library")" href="/Library"><i class="bi bi-collection"></i>Library</a>
+        <a class="@Active("Board")" href="/board"><i class="bi bi-chat-square-text"></i>Board</a>
         @if (canContribute)
         {
             <a class="@Active("Uploads")" href="/Uploads"><i class="bi bi-cloud-arrow-up"></i>Uploads</a>

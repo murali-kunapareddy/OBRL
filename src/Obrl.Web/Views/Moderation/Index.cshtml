@@ -1,0 +1,91 @@
+@model ModerationVm
+@{
+    ViewData["Title"] = "Review queue";
+}
+<h1 class="page-title">Review queue</h1>
+<p class="page-sub">Books from Contributors wait here until you approve them. Comments readers report show up below.</p>
+
+<h2 class="h5 mt-4">Books waiting for approval <span class="text-muted fw-normal">@Model.PendingBooks.Count</span></h2>
+@if (Model.PendingBooks.Count == 0)
+{
+    <div class="empty-shelf">Nothing to review.</div>
+}
+else
+{
+    <div class="panel p-0 mb-4">
+        <ul class="review-list">
+            @foreach (var b in Model.PendingBooks)
+            {
+                <li id="book-@b.Id">
+                    <div class="mini-cover">
+                        @if (b.HasCover) { <img src="/books/@b.Id/cover" alt="" loading="lazy" /> }
+                    </div>
+                    <div class="flex-grow-1 min-w-0">
+                        <a class="fw-semibold" href="/books/@b.Id">@b.Title</a>
+                        <div class="small text-muted">
+                            @(b.Author ?? "Unknown author") · @b.Format.ToUpperInvariant() · by @b.UploadedBy · @b.CreatedAt.ToString("d MMM yyyy")
+                            @if (b.Status != BookStatus.Ready) { <span class="badge text-bg-secondary ms-1">@b.Status</span> }
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-start">
+                        <form method="post" action="/moderation/books/@b.Id/approve">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-success" type="submit"><i class="bi bi-check2"></i> Approve</button>
+                        </form>
+                        <details>
+                            <summary class="btn btn-sm btn-outline-danger">Reject</summary>
+                            <form method="post" action="/moderation/books/@b.Id/reject" class="mt-2 d-flex gap-2">
+                                @Html.AntiForgeryToken()
+                                <input name="note" class="form-control form-control-sm" maxlength="1000" placeholder="Note for the uploader" aria-label="Note for the uploader" />
+                                <button class="btn btn-sm btn-danger" type="submit">Send</button>
+                            </form>
+                        </details>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+<h2 class="h5 mt-4">Reported comments <span class="text-muted fw-normal">@Model.ReportedComments.Count</span></h2>
+@if (Model.ReportedComments.Count == 0)
+{
+    <div class="empty-shelf">No open reports.</div>
+}
+else
+{
+    <div class="panel p-0">
+        <ul class="review-list">
+            @foreach (var c in Model.ReportedComments)
+            {
+                <li id="comment-@c.CommentId">
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="small text-muted mb-1">
+                            <strong class="text-body">@c.AuthorName</strong> on <a href="/books/@c.BookId#comment-@c.CommentId">@c.BookTitle</a> · @c.CreatedAt.ToString("d MMM yyyy")
+                            @if (c.IsHidden) { <span class="badge text-bg-secondary ms-1">Hidden</span> }
+                        </div>
+                        <partial name="_UserText" model="c.Body" />
+                        <ul class="small text-danger mb-0 mt-2 ps-3">
+                            @foreach (var reason in c.Reasons) { <li>@reason</li> }
+                        </ul>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-start">
+                        <form method="post" action="/comments/@c.CommentId/keep">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="returnUrl" value="/moderation" />
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">Keep</button>
+                        </form>
+                        @if (!c.IsHidden)
+                        {
+                            <form method="post" action="/comments/@c.CommentId/hide">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="returnUrl" value="/moderation" />
+                                <button class="btn btn-sm btn-danger" type="submit"><i class="bi bi-eye-slash"></i> Hide</button>
+                            </form>
+                        }
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+}

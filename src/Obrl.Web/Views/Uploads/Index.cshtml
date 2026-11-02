@@ -36,6 +36,15 @@ else
                                     case BookStatus.Failed: <span class="badge text-bg-danger">Failed</span><div class="small text-danger">@b.StatusMessage</div> break;
                                     default: <span class="badge text-bg-secondary">@b.Status</span> break;
                                 }
+                                @if (!b.IsApproved && b.RejectedAt is not null)
+                                {
+                                    <span class="badge text-bg-danger">Not approved</span>
+                                    <div class="small text-danger">@(b.ReviewNote ?? "A Moderator turned this book down.") Edit the details to send it back for review.</div>
+                                }
+                                else if (!b.IsApproved)
+                                {
+                                    <span class="badge text-bg-warning">Waiting for review</span>
+                                }
                             </td>
                             @if (seesAll) { <td class="small">@b.UploadedBy?.Email</td> }
                             <td class="small text-muted">@b.CreatedAt.ToString("yyyy-MM-dd")</td>

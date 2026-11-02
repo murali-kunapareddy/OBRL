@@ -1,0 +1,26 @@
+@model (BoardPostView Post, bool CanModerate, bool IsOpening)
+@{
+    var p = Model.Post;
+}
+<article class="post @(p.IsHidden ? "is-hidden" : "")" id="post-@p.Id">
+    <header class="post-head">
+        <span class="avatar" aria-hidden="true">@(string.IsNullOrEmpty(p.AuthorName) ? "?" : p.AuthorName[..1].ToUpperInvariant())</span>
+        <strong>@p.AuthorName</strong>
+        <time class="text-muted small" datetime="@p.CreatedAt.ToString("o")">@p.CreatedAt.ToString("d MMM yyyy, HH:mm")</time>
+        @if (p.IsHidden) { <span class="badge text-bg-secondary">Hidden</span> }
+        <span class="ms-auto d-flex gap-1">
+            @if (p.IsMine)
+            {
+                <form method="post" action="/board/post/@p.Id/delete" data-confirm="@(Model.IsOpening ? "Delete this topic?" : "Delete this reply?")">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-sm btn-link text-danger p-0" type="submit">Delete</button>
+                </form>
+            }
+            @if (Model.CanModerate && !Model.IsOpening)
+            {
+                <partial name="_ModerateButton" model="@((p.Id, p.IsHidden ? "unhide" : "hide", p.IsHidden ? "Show" : "Hide", p.IsHidden ? "bi-eye" : "bi-eye-slash"))" />
+            }
+        </span>
+    </header>
+    <partial name="_UserText" model="p.Body" />
+</article>

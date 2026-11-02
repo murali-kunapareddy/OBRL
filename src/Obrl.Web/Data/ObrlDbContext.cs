@@ -15,6 +15,10 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
     public DbSet<Disclaimer> Disclaimers => Set<Disclaimer>();
     public DbSet<TermsAcceptance> TermsAcceptances => Set<TermsAcceptance>();
     public DbSet<ActivityEvent> ActivityEvents => Set<ActivityEvent>();
+    public DbSet<Rating> Ratings => Set<Rating>();
+    public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<CommentReport> CommentReports => Set<CommentReport>();
+    public DbSet<BoardPost> BoardPosts => Set<BoardPost>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -48,6 +52,22 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
             e.Property(x => x.TocJson).HasColumnType("jsonb");
             e.HasIndex(x => x.Status);
             e.HasIndex(x => x.CreatedAt);
+            e.HasIndex(x => x.IsApproved);
+            e.HasIndex(x => x.RatingAverage);
+            e.Property(x => x.ApprovedById).HasMaxLength(450);
+            // Books that already exist when this column arrives were live before approval existed.
+            e.Property(x => x.IsApproved).HasDefaultValue(true).HasSentinel(true);
+            e.Property(x => x.ReviewNote).HasMaxLength(1000);
+            // Full-text search over title, author and description (PostgreSQL only).
+            if (Database.IsNpgsql())
+            {
+                e.HasGeneratedTsVectorColumn(x => x.SearchVector!, "simple", x => new { x.Title, x.Author, x.Description })
+                    .HasIndex(x => x.SearchVector).HasMethod("GIN");
+            }
+            else
+            {
+                e.Ignore(x => x.SearchVector);
+            }
             e.HasOne(x => x.UploadedBy).WithMany().HasForeignKey(x => x.UploadedById).OnDelete(DeleteBehavior.Restrict);
         });
 
@@ -96,6 +116,44 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
             e.HasIndex(x => new { x.UserId, x.DisclaimerVersion });
             e.Property(x => x.IpAddress).HasMaxLength(64);
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        b.Entity<Rating>(e =>
+        {
+            e.HasKey(x => new { x.UserId, x.BookId });
+            e.HasIndex(x => x.BookId);
+            e.ToTable(t => t.HasCheckConstraint("CK_Rating_Stars", "\"Stars\" BETWEEN 1 AND 5"));
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Book).WithMany().HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        b.Entity<Comment>(e =>
+        {
+            e.Property(x => x.Body).HasMaxLength(4000).IsRequired();
+            e.Property(x => x.HiddenReason).HasMaxLength(300);
+            e.Property(x => x.HiddenById).HasMaxLength(450);
+            e.HasIndex(x => new { x.BookId, x.CreatedAt });
+            e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Book).WithMany().HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Parent).WithMany(x => x.Replies).HasForeignKey(x => x.ParentId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        b.Entity<CommentReport>(e =>
+        {
+            e.Property(x => x.Reason).HasMaxLength(300);
+            e.HasIndex(x => new { x.CommentId, x.UserId }).IsUnique();
+            e.HasIndex(x => x.ResolvedAt);
+            e.HasOne(x => x.Comment).WithMany(x => x.Reports).HasForeignKey(x => x.CommentId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        b.Entity<BoardPost>(e =>
+        {
+            e.Property(x => x.Title).HasMaxLength(200);
+            e.Property(x => x.Body).HasMaxLength(8000).IsRequired();
+            e.HasIndex(x => new { x.ParentId, x.IsPinned, x.LastActivityAt });
+            e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Parent).WithMany(x => x.Replies).HasForeignKey(x => x.ParentId).OnDelete(DeleteBehavior.Cascade);
         });
 
         b.Entity<ActivityEvent>(e =>

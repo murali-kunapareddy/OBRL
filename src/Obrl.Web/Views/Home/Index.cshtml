@@ -15,6 +15,28 @@
     }
 </p>
 
+<section class="shelf board-strip">
+    <div class="shelf-head">
+        <h2><i class="bi bi-chat-square-text me-1"></i> Message board</h2>
+        <div class="d-flex gap-3 small">
+            <a href="/board/new">New topic</a>
+            <a href="/board">See all</a>
+        </div>
+    </div>
+    @if (Model.Board.Count == 0)
+    {
+        <div class="empty-shelf">No messages yet. <a href="/board/new">Start the first topic</a>.</div>
+    }
+    else
+    {
+        <div class="panel p-0">
+            <partial name="~/Views/Board/_TopicList.cshtml" model="Model.Board" />
+        </div>
+    }
+</section>
+
 <partial name="_Shelf" model="@(("Continue reading", Model.ContinueReading, "Books you start will appear here, ready to pick up where you left off.", (string?)null))" />
 <partial name="_Shelf" model="@(("Bookmarked", Model.Bookmarked, "Add a bookmark in the reader and the book shows up here.", (string?)null))" />
 <partial name="_Shelf" model="@(("New in your subscriptions", Model.NewBooks, "No books in your subscriptions yet.", (string?)"/Library?mine=true"))" />
+<partial name="_Shelf" model="@(("Most read this month", Model.MostRead, "Nobody has opened a book in the last 30 days.", (string?)null))" />
+<partial name="_Shelf" model="@(("Top rated", Model.TopRated, $"Books need {Obrl.Web.Services.Community.TopRatedMinimumVotes} ratings to show here.", (string?)null))" />
