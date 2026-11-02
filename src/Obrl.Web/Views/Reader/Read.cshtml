@@ -1,0 +1,137 @@
+@model ReaderVm
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    Layout = null;
+    var b = Model.Book;
+    var isPage = b.Mode == ReaderMode.Page;
+    var bookmarks = System.Text.Json.JsonSerializer.Serialize(Model.Bookmarks.Select(m => new { id = m.Id, position = m.Position, offset = m.Offset, note = m.Note }));
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+    <title>@b.Title · OBRL</title>
+    <script src="~/js/theme-init.js" asp-append-version="true"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/reader.css" asp-append-version="true" />
+</head>
+<body class="reader-body">
+<div id="reader" class="reader"
+     data-book="@b.Id"
+     data-mode="@(isPage ? "page" : "text")"
+     data-count="@b.UnitCount"
+     data-position="@Model.Position"
+     data-offset="@Model.Offset.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+     data-user="@Model.UserLabel"
+     data-user-short="@Model.UserIdShort">
+
+    <header class="reader-bar" id="bar">
+        <div class="bar-group bar-left">
+            <a class="bar-btn" href="/books/@b.Id" title="Close the book"><i class="bi bi-arrow-left"></i></a>
+            <div class="bar-title" title="@b.Title">@b.Title</div>
+        </div>
+
+        <div class="bar-group bar-center">
+            <button class="bar-btn" id="prev" title="Previous (←)"><i class="bi bi-chevron-left"></i></button>
+            <label class="pager">
+                <input id="pos" type="number" min="1" max="@b.UnitCount" value="@(Model.Position + 1)" aria-label="@(isPage ? "Page" : "Section")" />
+                <span>/ @b.UnitCount</span>
+            </label>
+            <button class="bar-btn" id="next" title="Next (→)"><i class="bi bi-chevron-right"></i></button>
+        </div>
+
+        <div class="bar-group bar-right">
+            @if (isPage)
+            {
+                <button class="bar-btn" id="zoomOut" title="Zoom out (−)"><i class="bi bi-zoom-out"></i></button>
+                <span class="zoom-label" id="zoomLabel">100%</span>
+                <button class="bar-btn" id="zoomIn" title="Zoom in (+)"><i class="bi bi-zoom-in"></i></button>
+                <button class="bar-btn" id="fitWidth" title="Fit to width (W)"><i class="bi bi-arrows-expand-vertical"></i></button>
+                <button class="bar-btn" id="fitPage" title="Fit whole page (P)"><i class="bi bi-arrows-angle-contract"></i></button>
+            }
+            else
+            {
+                <button class="bar-btn" id="fontDown" title="Smaller text"><span class="small fw-bold">A−</span></button>
+                <button class="bar-btn" id="fontUp" title="Larger text"><span class="fw-bold">A+</span></button>
+                <div class="dropdown">
+                    <button class="bar-btn" data-bs-toggle="dropdown" title="Text settings"><i class="bi bi-type"></i></button>
+                    <div class="dropdown-menu dropdown-menu-end p-2" style="min-width:220px">
+                        <div class="small fw-semibold mb-1">Font</div>
+                        <div class="btn-group btn-group-sm w-100 mb-2">
+                            <button class="btn btn-outline-secondary" data-font="serif">Literata</button>
+                            <button class="btn btn-outline-secondary" data-font="sans">Inter</button>
+                        </div>
+                        <div class="small fw-semibold mb-1">Line spacing</div>
+                        <div class="btn-group btn-group-sm w-100 mb-2">
+                            <button class="btn btn-outline-secondary" data-leading="1.45">Tight</button>
+                            <button class="btn btn-outline-secondary" data-leading="1.7">Normal</button>
+                            <button class="btn btn-outline-secondary" data-leading="2">Loose</button>
+                        </div>
+                        <div class="small fw-semibold mb-1">Width</div>
+                        <div class="btn-group btn-group-sm w-100">
+                            <button class="btn btn-outline-secondary" data-measure="34em">Narrow</button>
+                            <button class="btn btn-outline-secondary" data-measure="42em">Normal</button>
+                            <button class="btn btn-outline-secondary" data-measure="56em">Wide</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="bar-btn" data-bs-toggle="dropdown" title="Contents"><i class="bi bi-list-ul"></i></button>
+                    <div class="dropdown-menu dropdown-menu-end reader-menu" id="toc"></div>
+                </div>
+            }
+            <div class="dropdown">
+                <button class="bar-btn" data-bs-toggle="dropdown" title="Bookmarks"><i class="bi bi-bookmarks"></i></button>
+                <div class="dropdown-menu dropdown-menu-end reader-menu">
+                    <button class="dropdown-item fw-semibold" id="addMark"><i class="bi bi-bookmark-plus me-2"></i>Bookmark this place</button>
+                    <div class="dropdown-divider"></div>
+                    <div id="marks"></div>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="bar-btn" data-bs-toggle="dropdown" title="Paper colour"><i class="bi bi-palette"></i></button>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <button class="dropdown-item" data-theme-choice="light"><i class="bi bi-sun me-2"></i>Light</button>
+                    <button class="dropdown-item" data-theme-choice="sepia"><i class="bi bi-cup-hot me-2"></i>Sepia</button>
+                    <button class="dropdown-item" data-theme-choice="dark"><i class="bi bi-moon-stars me-2"></i>Dark</button>
+                    <button class="dropdown-item" data-theme-choice="auto"><i class="bi bi-circle-half me-2"></i>Match device</button>
+                </div>
+            </div>
+            <button class="bar-btn" id="fullscreen" title="Full screen (F)"><i class="bi bi-fullscreen"></i></button>
+        </div>
+    </header>
+
+    <main class="stage" id="stage" tabindex="0">
+        @if (isPage)
+        {
+            <div class="page-wrap" id="pageWrap">
+                <canvas id="canvas" aria-label="Book page"></canvas>
+                <div class="page-loading" id="loading"><div class="spinner-border" role="status"></div></div>
+            </div>
+        }
+        else
+        {
+            <article class="text-page" id="text" aria-live="polite"></article>
+            <div class="text-nav">
+                <button class="btn btn-outline-secondary" id="prevSection"><i class="bi bi-chevron-left"></i> Previous</button>
+                <button class="btn btn-primary" id="nextSection">Next <i class="bi bi-chevron-right"></i></button>
+            </div>
+            <div class="text-watermark" id="watermark" aria-hidden="true"></div>
+        }
+    </main>
+    <div class="reader-toast" id="toast" role="status"></div>
+    <div class="print-block">Printing is not available for OBRL books.</div>
+</div>
+
+<script type="application/json" id="tocData">@Html.Raw(Model.TocJson)</script>
+<script type="application/json" id="marksData">@Html.Raw(bookmarks)</script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/reader.js" asp-append-version="true"></script>
+</body>
+</html>

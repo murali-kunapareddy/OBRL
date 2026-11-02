@@ -1,0 +1,38 @@
+# /etc/systemd/system/obrl.service
+[Unit]
+Description=OBRL - Online Book Reading Library
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=obrl
+Group=obrl
+WorkingDirectory=/opt/obrl
+ExecStart=/usr/bin/dotnet /opt/obrl/Obrl.Web.dll --urls http://127.0.0.1:5000
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+EnvironmentFile=/etc/obrl/obrl.env
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+Environment=DOTNET_NOLOGO=1
+
+# Hardening: the app can only write to its data folder.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=/var/lib/obrl
+ReadOnlyPaths=/etc/obrl
+MemoryMax=3G
+
+[Install]
+WantedBy=multi-user.target

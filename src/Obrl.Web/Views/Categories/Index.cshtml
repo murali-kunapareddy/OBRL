@@ -1,0 +1,25 @@
+@model List<CategoryNode>
+@{
+    ViewData["Title"] = "Categories";
+    var counts = (Dictionary<int, int>)ViewBag.BookCounts;
+}
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+    <div>
+        <h1 class="page-title">Categories</h1>
+        <p class="page-sub">Categories can be nested to any depth. A subscription to a category includes everything below it.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg me-1"></i> New top-level category</a>
+</div>
+@if (Model.Count == 0)
+{
+    <div class="empty-shelf">No categories yet. Create the first one.</div>
+}
+else
+{
+    <div class="panel p-0">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>Name</th><th>Books</th><th></th></tr></thead>
+            <tbody><partial name="_Rows" model="@((Model, counts))" /></tbody>
+        </table>
+    </div>
+}

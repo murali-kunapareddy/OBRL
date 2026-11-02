@@ -1,0 +1,63 @@
+@model UploadVm
+@{
+    var creating = Model.Id is null;
+    ViewData["Title"] = creating ? "Upload a book" : "Edit book";
+}
+<h1 class="page-title">@ViewData["Title"]</h1>
+<p class="page-sub">
+    @if (creating)
+    {
+        <text>PDF and Word files are shown as pages. EPUB and text files reflow to fit any screen. Up to @ViewBag.MaxMb MB.</text>
+    }
+    else
+    {
+        <text>Change the details readers see. To replace the file, delete the book and upload it again.</text>
+    }
+</p>
+
+<form method="post" enctype="multipart/form-data" class="panel" style="max-width:720px" asp-action="@(creating ? "Create" : "Edit")" asp-route-id="@Model.Id">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    @if (creating)
+    {
+        <div class="mb-3">
+            <label asp-for="File" class="form-label fw-semibold"></label>
+            <input asp-for="File" type="file" class="form-control" accept="@ViewBag.Accept" required />
+            <span asp-validation-for="File" class="text-danger small"></span>
+        </div>
+    }
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label fw-semibold"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Author" class="form-label fw-semibold"></label>
+        <input asp-for="Author" class="form-control" placeholder="Filled in from the e-book when left empty" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label fw-semibold"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+    </div>
+    <div class="mb-4">
+        <label class="form-label fw-semibold">Categories</label>
+        @if (Model.AllCategories.Count == 0)
+        {
+            <div class="alert alert-warning mb-0">There are no categories yet. Ask a moderator to create some first.</div>
+        }
+        else
+        {
+            <div class="border rounded p-2" style="max-height:280px;overflow:auto">
+                @foreach (var c in Model.AllCategories)
+                {
+                    <div class="form-check" style="margin-left:@(c.Depth * 1.25)rem">
+                        <input class="form-check-input" type="checkbox" name="CategoryIds" value="@c.Id" id="cat-@c.Id" @(Model.CategoryIds.Contains(c.Id) ? "checked" : "") />
+                        <label class="form-check-label" for="cat-@c.Id">@c.Name</label>
+                    </div>
+                }
+            </div>
+        }
+        <span asp-validation-for="CategoryIds" class="text-danger small"></span>
+    </div>
+    <button class="btn btn-primary" type="submit">@(creating ? "Upload" : "Save")</button>
+    <a class="btn btn-link" asp-action="Index">Cancel</a>
+</form>

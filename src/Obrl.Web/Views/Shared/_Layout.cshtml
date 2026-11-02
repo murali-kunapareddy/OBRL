@@ -1,0 +1,126 @@
+﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var authShell = !signedIn || ViewData["Shell"] as string == "auth";
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var area = ViewContext.RouteData.Values["area"]?.ToString();
+    string Active(string c) => controller == c && area is null ? "active" : "";
+    var canContribute = signedIn && (await Authz.AuthorizeAsync(User, Policies.CanContribute)).Succeeded;
+    var canModerate = signedIn && (await Authz.AuthorizeAsync(User, Policies.CanModerate)).Succeeded;
+    var isAdmin = signedIn && (await Authz.AuthorizeAsync(User, Policies.AdminOnly)).Succeeded;
+    var twoFactorRequired = Context.Request.Path.StartsWithSegments("/Identity/Account/Manage/EnableAuthenticator") && Context.Request.Query["required"] == "1";
+    var message = TempData["Message"] as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    @if (signedIn)
+    {
+        <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+    }
+    <title>@(ViewData["Title"] is string t ? t + " · OBRL" : "OBRL")</title>
+    <script src="~/js/theme-init.js" asp-append-version="true"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body>
+@if (authShell)
+{
+    <div class="auth-shell">
+        <div class="auth-card">
+            <a class="brand" href="/"><span class="brand-mark"><i class="bi bi-book"></i></span> OBRL</a>
+            <div class="panel p-4">
+                @RenderBody()
+            </div>
+            <p class="text-center small text-muted mt-3">Online Book Reading Library · members only</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" href="/"><span class="brand-mark"><i class="bi bi-book"></i></span> OBRL</a>
+            <a class="side-link @Active("Home")" href="/"><i class="bi bi-house"></i> Dashboard</a>
+            <a class="side-link @Active("Library")" asp-controller="Library" asp-action="Index"><i class="bi bi-collection"></i> Library</a>
+            <a class="side-link" asp-controller="Library" asp-action="Index" asp-route-mine="true"><i class="bi bi-bookmark-star"></i> My subscriptions</a>
+
+            @if (canContribute)
+            {
+                <div class="nav-section">Contribute</div>
+                <a class="side-link @Active("Uploads")" asp-controller="Uploads" asp-action="Index"><i class="bi bi-cloud-arrow-up"></i> My uploads</a>
+            }
+            @if (canModerate)
+            {
+                <div class="nav-section">Moderate</div>
+                <a class="side-link @Active("Categories")" asp-controller="Categories" asp-action="Index"><i class="bi bi-diagram-3"></i> Categories</a>
+            }
+            @if (isAdmin)
+            {
+                <div class="nav-section">Admin</div>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() is "Users" or "CreateUser" ? "active" : "")" asp-controller="Admin" asp-action="Users"><i class="bi bi-people"></i> Users</a>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Disclaimer" ? "active" : "")" asp-controller="Admin" asp-action="Disclaimer"><i class="bi bi-file-earmark-text"></i> Disclaimer</a>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Activity" ? "active" : "")" asp-controller="Admin" asp-action="Activity"><i class="bi bi-activity"></i> Activity</a>
+            }
+
+            <div class="sidebar-foot">
+                <div class="nav-section mt-0">Theme</div>
+                <div class="btn-group btn-group-sm theme-switch w-100 mb-3 px-1" role="group" aria-label="Theme">
+                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="auto" title="Match device"><i class="bi bi-circle-half"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="light" title="Light"><i class="bi bi-sun"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="sepia" title="Sepia"><i class="bi bi-cup-hot"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="dark" title="Dark"><i class="bi bi-moon-stars"></i></button>
+                </div>
+                <a class="side-link @(area == "Identity" ? "active" : "")" href="/Identity/Account/Manage"><i class="bi bi-person-circle"></i> <span class="text-truncate">@User.Identity?.Name</span></a>
+                <form method="post" action="/Identity/Account/Logout?returnUrl=%2F">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="side-link border-0 bg-transparent w-100"><i class="bi bi-box-arrow-right"></i> Sign out</button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="main">
+            <header class="topbar">
+                <form class="search" method="get" action="/Library" role="search">
+                    <i class="bi bi-search"></i>
+                    <input class="form-control" type="search" name="q" placeholder="Search titles and authors" value="@Context.Request.Query["q"]" aria-label="Search" />
+                </form>
+            </header>
+            <main class="content">
+                @if (twoFactorRequired)
+                {
+                    <div class="alert alert-warning"><i class="bi bi-shield-lock me-2"></i><strong>Two-factor sign-in is required.</strong> Set up an authenticator app below before using OBRL.</div>
+                }
+                @if (!string.IsNullOrEmpty(message))
+                {
+                    <div class="alert alert-info alert-dismissible fade show" role="status">
+                        @message
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Main">
+        <a class="@Active("Home")" href="/"><i class="bi bi-house"></i>Home</a>
+        <a class="@Active("Library")" href="/Library"><i class="bi bi-collection"></i>Library</a>
+        @if (canContribute)
+        {
+            <a class="@Active("Uploads")" href="/Uploads"><i class="bi bi-cloud-arrow-up"></i>Uploads</a>
+        }
+        <a class="@(area == "Identity" ? "active" : "")" href="/Identity/Account/Manage"><i class="bi bi-person-circle"></i>Account</a>
+    </nav>
+}
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/qrcode/qrcode.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

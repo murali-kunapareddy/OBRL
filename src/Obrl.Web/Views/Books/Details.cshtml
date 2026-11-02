@@ -1,0 +1,94 @@
+@model BookDetailsVm
+@{
+    var b = Model.Book;
+    ViewData["Title"] = b.Title;
+    string FormatLabel() => b.Mode == ReaderMode.Page ? $"{b.UnitCount} pages" : "Reflowable text";
+}
+<div class="book-hero">
+    <div class="cover">
+        @if (b.HasCover)
+        {
+            <img src="/books/@b.Id/cover" alt="Cover of @b.Title" />
+        }
+    </div>
+    <div>
+        <h1 class="page-title">@b.Title</h1>
+        @if (!string.IsNullOrEmpty(b.Author))
+        {
+            <p class="fs-5 text-muted mb-2">@b.Author</p>
+        }
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge badge-soft">@b.OriginalFormat.ToUpperInvariant()</span>
+            @if (b.Status == BookStatus.Ready)
+            {
+                <span class="badge badge-soft">@FormatLabel()</span>
+            }
+            else
+            {
+                <span class="badge text-bg-warning">@b.Status</span>
+            }
+        </div>
+
+        @foreach (var trail in Model.CategoryTrails)
+        {
+            <div class="small mb-1">
+                <i class="bi bi-tag text-muted"></i>
+                @for (var i = 0; i < trail.Count; i++)
+                {
+                    <a href="/Library?category=@trail[i].Id">@trail[i].Name</a>
+                    @if (i < trail.Count - 1) { <span class="text-muted"> › </span> }
+                }
+            </div>
+        }
+
+        <div class="d-flex flex-wrap gap-2 my-4">
+            @if (Model.CanRead)
+            {
+                var label = Model.Progress is null ? "Start reading" : $"Continue ({Math.Round(Model.Progress.PercentComplete)}%)";
+                <a class="btn btn-primary btn-lg" href="/read/@b.Id"><i class="bi bi-book-half me-1"></i> @label</a>
+            }
+            @if (b.Status == BookStatus.Ready)
+            {
+                if (Model.SubscribedToBook)
+                {
+                    <form method="post" action="/books/@b.Id/unsubscribe">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-outline-primary btn-lg"><i class="bi bi-check2"></i> Subscribed</button>
+                    </form>
+                }
+                else if (!Model.CanRead)
+                {
+                    <form method="post" action="/books/@b.Id/subscribe">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-primary btn-lg"><i class="bi bi-plus-lg"></i> Subscribe to read</button>
+                    </form>
+                }
+            }
+            @if (Model.CanEdit)
+            {
+                <a class="btn btn-outline-secondary btn-lg" asp-controller="Uploads" asp-action="Edit" asp-route-id="@b.Id"><i class="bi bi-pencil"></i> Edit details</a>
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(b.Description))
+        {
+            <h2 class="h5">About this book</h2>
+            <p style="white-space:pre-line">@b.Description</p>
+        }
+
+        @if (Model.Bookmarks.Count > 0 && Model.CanRead)
+        {
+            <h2 class="h5 mt-4">Your bookmarks</h2>
+            <div class="list-group" style="max-width:520px">
+                @foreach (var m in Model.Bookmarks)
+                {
+                    <a class="list-group-item list-group-item-action" href="/read/@b.Id?at=@m.Position">
+                        <i class="bi bi-bookmark-fill me-2"></i>
+                        @(b.Mode == ReaderMode.Page ? $"Page {m.Position + 1}" : $"Section {m.Position + 1}")
+                        @if (m.Note is not null) { <span class="text-muted">· @m.Note</span> }
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>

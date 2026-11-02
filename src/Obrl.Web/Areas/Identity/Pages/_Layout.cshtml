@@ -1,0 +1,8 @@
+@* Makes Identity's account pages use OBRL's own layout. *@
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+@RenderBody()
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

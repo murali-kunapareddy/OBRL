@@ -1,0 +1,20 @@
+@model (List<CategoryNode> Nodes, LibraryVm Vm)
+<ul>
+    @foreach (var c in Model.Nodes)
+    {
+        <li>
+            <a class="@(Model.Vm.Current?.Id == c.Id ? "active" : "")" href="/Library?category=@c.Id">
+                <i class="bi @(c.Children.Count > 0 ? "bi-folder2" : "bi-tag")"></i>
+                <span class="text-truncate">@c.Name</span>
+                @if (Model.Vm.IsCovered(c))
+                {
+                    <i class="bi bi-check-circle-fill" title="Subscribed"></i>
+                }
+            </a>
+            @if (c.Children.Count > 0)
+            {
+                <partial name="_CategoryTree" model="@((c.Children, Model.Vm))" />
+            }
+        </li>
+    }
+</ul>

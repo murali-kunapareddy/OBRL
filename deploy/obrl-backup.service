@@ -1,0 +1,7 @@
+[Unit]
+Description=OBRL nightly backup
+After=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/obrl-backup
