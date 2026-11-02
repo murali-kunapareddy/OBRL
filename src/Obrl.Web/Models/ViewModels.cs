@@ -197,6 +197,7 @@ public sealed record UserRow(
     string DisplayName,
     string Role,
     bool TwoFactor,
+    int Passkeys,
     bool LockedOut,
     DateTimeOffset CreatedAt,
     DateTimeOffset? LastLoginAt);

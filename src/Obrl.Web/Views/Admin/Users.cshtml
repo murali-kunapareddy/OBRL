@@ -15,7 +15,7 @@
 <div class="panel p-0">
     <div class="table-responsive">
         <table class="table align-middle mb-0">
-            <thead><tr><th>User</th><th>Role</th><th>2FA</th><th>Last sign-in</th><th></th></tr></thead>
+            <thead><tr><th>User</th><th>Role</th><th>Sign-in</th><th>Last sign-in</th><th></th></tr></thead>
             <tbody>
             @foreach (var u in Model)
             {
@@ -37,7 +37,11 @@
                             <button class="btn btn-sm btn-outline-secondary">Set</button>
                         </form>
                     </td>
-                    <td>@(u.TwoFactor ? Html.Raw("<i class=\"bi bi-shield-check text-success\"></i>") : Html.Raw("<span class=\"small text-muted\">not yet</span>"))</td>
+                    <td class="text-nowrap">
+                        @if (u.TwoFactor) { <i class="bi bi-shield-check text-success" title="Authenticator app"></i> }
+                        @if (u.Passkeys > 0) { <span class="small" title="Passkeys"><i class="bi bi-key text-success"></i> @u.Passkeys</span> }
+                        @if (!u.TwoFactor && u.Passkeys == 0) { <span class="small text-muted">not yet</span> }
+                    </td>
                     <td class="small text-muted">@(u.LastLoginAt?.ToString("yyyy-MM-dd HH:mm") ?? "never")</td>
                     <td class="text-end">
                         <div class="dropdown">
@@ -51,9 +55,9 @@
                                         <button class="btn btn-outline-secondary">Set</button>
                                     </div>
                                 </form>
-                                <form method="post" asp-action="ResetTwoFactor" data-confirm="Reset two-factor sign-in for @u.Email?">
+                                <form method="post" asp-action="ResetTwoFactor" data-confirm="Reset the authenticator app and remove all passkeys for @u.Email?">
                                     <input type="hidden" name="id" value="@u.Id" />
-                                    <button class="dropdown-item">Reset two-factor sign-in</button>
+                                    <button class="dropdown-item">Reset authenticator and passkeys</button>
                                 </form>
                                 <form method="post" asp-action="SignOutUser">
                                     <input type="hidden" name="id" value="@u.Id" />

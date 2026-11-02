@@ -30,6 +30,12 @@ public class ObrlOptions
     /// <summary>Minutes of inactivity before a user is signed out.</summary>
     public int IdleTimeoutMinutes { get; set; } = 30;
 
+    /// <summary>
+    /// The domain passkeys are bound to, e.g. "library.example.org". Leave empty to use the host the site is
+    /// served from. Changing it later makes existing passkeys stop working.
+    /// </summary>
+    public string? PasskeyServerDomain { get; set; }
+
     public SeedOptions Seed { get; set; } = new();
 }
 

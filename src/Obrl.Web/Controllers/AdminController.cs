@@ -31,12 +31,14 @@ public class AdminController(
         var roleByUser = await (from ur in db.UserRoles
                                 join r in db.Roles on ur.RoleId equals r.Id
                                 select new { ur.UserId, r.Name }).ToListAsync(ct);
+        var passkeys = await db.UserPasskeys.GroupBy(p => p.UserId).Select(g => new { g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count, ct);
         var now = DateTimeOffset.UtcNow;
         ViewBag.Query = q;
         return View(list.Select(u => new UserRow(
             u.Id, u.Email ?? "", u.DisplayName,
             roleByUser.FirstOrDefault(r => r.UserId == u.Id)?.Name ?? Roles.User,
-            u.TwoFactorEnabled, u.LockoutEnd > now, u.CreatedAt, u.LastLoginAt)).ToList());
+            u.TwoFactorEnabled, passkeys.GetValueOrDefault(u.Id), u.LockoutEnd > now, u.CreatedAt, u.LastLoginAt)).ToList());
     }
 
     [HttpGet]
@@ -112,9 +114,12 @@ public class AdminController(
         if (user is null) return NotFound();
         await users.SetTwoFactorEnabledAsync(user, false);
         await users.ResetAuthenticatorKeyAsync(user);
+        // A lost phone often holds the passkey too, so passkeys go as well.
+        foreach (var passkey in await users.GetPasskeysAsync(user))
+            await users.RemovePasskeyAsync(user, passkey.CredentialId);
         user.CurrentSessionId = null;
         await users.UpdateAsync(user);
-        return Back($"Two-factor sign-in reset for {user.Email}. They will set it up again at next login.");
+        return Back($"Authenticator app and passkeys reset for {user.Email}. They will set up a strong sign-in again at next login.");
     }
 
     [HttpPost, ValidateAntiForgeryToken]

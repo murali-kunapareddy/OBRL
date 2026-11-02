@@ -5,7 +5,7 @@ It's built with ASP.NET Core MVC on .NET 10 and PostgreSQL, and runs on one Ubun
 
 Phases 1 and 2 (this version) include:
 
-- **Sign-in:** login only, accounts are created by admins, two-factor sign-in is required for everyone, one active session per account, lockout after 5 failed attempts, and passwords that appear in leak lists are refused.
+- **Sign-in:** login only, accounts are created by admins, and everyone must set up a strong sign-in before using the library: a **passkey** (fingerprint, face or device PIN, phishing-resistant) or an **authenticator app** (password + code). Members can have both, and up to 10 passkeys. A member with only passkeys cannot sign in with the password alone. One active session per account, lockout after 5 failed attempts, and passwords that appear in leak lists are refused.
 - **Disclaimer:** users must accept it before reading. Admins edit it, and every change creates a new version that users must accept again.
 - **Roles:**
   - **User:** reads, subscribes and bookmarks.
@@ -59,7 +59,7 @@ dotnet run
 ```
 
 Open http://localhost:5102 and sign in as `admin@obrl.local` / `Dev-only reading pass 2026`.
-You'll set up an authenticator app (any TOTP app works), sign in again with a code, and accept the disclaimer.
+You'll set up an authenticator app (any TOTP app works) or add a passkey, and accept the disclaimer. Passkeys need a secure origin: `http://localhost` works for development (not `127.0.0.1`), and production needs HTTPS.
 Local data (encrypted books and the dev master key) goes to `.data/`, which git ignores.
 
 ```bash
@@ -113,6 +113,7 @@ Set these in `appsettings.json`, or as environment variables in `/etc/obrl/obrl.
 | `Obrl:PageUrlLifetimeSeconds` | `60` | How long a signed page link works |
 | `Obrl:ReaderRequestsPerMinute` / `PerHour` | `60` / `600` | Per-user reader limits |
 | `Obrl:IdleTimeoutMinutes` | `30` | Sign-out after inactivity |
+| `Obrl:PasskeyServerDomain` | empty | Domain passkeys are bound to, e.g. `library.example.org`. Empty uses the site's host name. Set it before members add passkeys: changing it later makes their passkeys stop working |
 | `Obrl:LibreOfficePath` / `CalibreConvertPath` | `soffice` / `ebook-convert` | Conversion tools |
 | `Obrl:Seed:AdminEmail` / `AdminPassword` | | Creates the first admin when none exists |
 
