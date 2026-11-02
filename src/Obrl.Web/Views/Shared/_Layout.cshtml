@@ -98,7 +98,7 @@ else
             <main class="content">
                 @if (twoFactorRequired)
                 {
-                    <div class="alert alert-warning"><i class="bi bi-shield-lock me-2"></i><strong>Two-factor sign-in is required.</strong> Set up an authenticator app below before using OBRL.</div>
+                    <div class="alert alert-warning"><i class="bi bi-shield-lock me-2"></i><strong>A strong sign-in is required.</strong> Set up an authenticator app below, or <a href="/Identity/Account/Manage/Passkeys">add a passkey instead</a>, before using OBRL.</div>
                 }
                 @if (!string.IsNullOrEmpty(message))
                 {

@@ -282,4 +282,6 @@ public static class ActivityTypes
     public const string CommentHidden = "comment_hidden";
     public const string BoardPosted = "board_posted";
     public const string BoardModerated = "board_moderated";
+    public const string PasskeyAdded = "passkey_added";
+    public const string PasskeyRemoved = "passkey_removed";
 }

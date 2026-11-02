@@ -1,0 +1,81 @@
+@page
+@model Obrl.Web.Areas.Identity.Pages.Account.Manage.PasskeysModel
+@{
+    ViewData["Title"] = "Passkeys";
+    ViewData["ActivePage"] = "Passkeys";
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+}
+<h3 class="h5">Passkeys</h3>
+<p class="text-muted">
+    A passkey lets you sign in with your fingerprint, face or device PIN instead of a password and code.
+    It only works on this site, so it cannot be phished. You can add one for each device you use.
+</p>
+
+@if (Model.StatusMessage is not null)
+{
+    <div class="alert alert-success" role="status">@Model.StatusMessage</div>
+}
+@if (Model.ErrorMessage is not null)
+{
+    <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+}
+@if (!Model.HasAuthenticator && Model.Passkeys.Count == 0)
+{
+    <div class="alert alert-warning">
+        <i class="bi bi-shield-lock me-1"></i>
+        Add a passkey, or <a href="/Identity/Account/Manage/EnableAuthenticator">set up an authenticator app</a>, before using OBRL.
+    </div>
+}
+
+<div id="passkey-unsupported" class="alert alert-secondary" hidden>
+    This browser cannot create passkeys. Use a recent version of Chrome, Edge, Firefox or Safari.
+</div>
+
+@if (Model.Passkeys.Count > 0)
+{
+    <ul class="list-group mb-4" id="passkey-list">
+        @foreach (var p in Model.Passkeys)
+        {
+            <li class="list-group-item d-flex flex-wrap align-items-center gap-2">
+                <i class="bi bi-key fs-5 text-primary" aria-hidden="true"></i>
+                <div class="flex-grow-1 min-w-0">
+                    <div class="fw-semibold passkey-name">@p.Name</div>
+                    <div class="small text-muted">Added @p.CreatedAt.ToString("d MMM yyyy") · @(p.Synced ? "synced across your devices" : "stays on one device")</div>
+                </div>
+                <details class="text-end">
+                    <summary class="btn btn-sm btn-outline-secondary">Rename</summary>
+                    <form method="post" asp-page-handler="Rename" class="d-flex gap-2 mt-2">
+                        <input type="hidden" name="id" value="@p.Id" />
+                        <input name="name" class="form-control form-control-sm" maxlength="60" value="@p.Name" aria-label="New name" required />
+                        <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                    </form>
+                </details>
+                <form method="post" asp-page-handler="Remove" data-confirm="Remove the passkey “@p.Name”? You will not be able to sign in with it any more.">
+                    <input type="hidden" name="id" value="@p.Id" />
+                    <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                </form>
+            </li>
+        }
+    </ul>
+}
+
+@if (Model.Passkeys.Count < Obrl.Web.Areas.Identity.Pages.Account.Manage.PasskeysModel.MaxPasskeys)
+{
+    <form method="post" asp-page-handler="Add" id="passkey-add" class="panel p-3" data-options-url="@Url.Page("Passkeys", "CreationOptions")">
+        <input type="hidden" name="credential" />
+        <label for="passkey-name" class="form-label fw-semibold">Name this passkey</label>
+        <div class="d-flex flex-wrap gap-2">
+            <input id="passkey-name" name="name" class="form-control" style="max-width:320px" maxlength="60" placeholder="e.g. My phone, Work laptop" />
+            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Add a passkey</button>
+        </div>
+        <div class="small text-danger mt-2" data-passkey-error hidden></div>
+    </form>
+}
+else
+{
+    <p class="text-muted">You have the maximum of @Obrl.Web.Areas.Identity.Pages.Account.Manage.PasskeysModel.MaxPasskeys passkeys.</p>
+}
+
+@section Scripts {
+    <script src="~/js/passkeys.js" asp-append-version="true"></script>
+}

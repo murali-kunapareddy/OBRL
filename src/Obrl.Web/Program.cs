@@ -59,11 +59,22 @@ builder.Services
         o.Lockout.AllowedForNewUsers = true;
         o.User.RequireUniqueEmail = true;
         o.SignIn.RequireConfirmedAccount = false;
+        // Schema version 3 adds the AspNetUserPasskeys table.
+        o.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ObrlDbContext>()
     .AddSignInManager<ObrlSignInManager>()
     .AddPasswordValidator<CommonPasswordValidator>();
+
+// Passkeys (WebAuthn): discoverable credentials so members can sign in without typing their email,
+// and user verification (fingerprint, face or device PIN) always required, so a passkey counts as two factors.
+builder.Services.Configure<IdentityPasskeyOptions>(o =>
+{
+    o.ServerDomain = string.IsNullOrWhiteSpace(obrl.PasskeyServerDomain) ? null : obrl.PasskeyServerDomain;
+    o.ResidentKeyRequirement = "required";
+    o.UserVerificationRequirement = "required";
+});
 
 builder.Services.Configure<SecurityStampValidatorOptions>(o => o.ValidationInterval = TimeSpan.FromMinutes(5));
 builder.Services.ConfigureApplicationCookie(o =>

@@ -15,7 +15,7 @@ namespace Obrl.Web.Security;
 /// <list type="number">
 /// <item>One active session per account: signing in elsewhere ends the older session.</item>
 /// <item>Locked or deleted accounts are signed out at once.</item>
-/// <item>Two-factor sign-in must be set up before anything else can be used.</item>
+/// <item>A strong sign-in (an authenticator app or a passkey) must be set up before anything else can be used.</item>
 /// <item>The latest disclaimer must be accepted before anything else can be used.</item>
 /// </list>
 /// </summary>
@@ -35,6 +35,7 @@ public static class SessionRules
         "/Identity/Account/Manage/ShowRecoveryCodes",
         "/Identity/Account/Manage/ResetAuthenticator",
         "/Identity/Account/Manage/TwoFactorAuthentication",
+        "/Identity/Account/Manage/Passkeys",
         "/Identity/Account/AccessDenied",
         "/Home/Error",
     ];
@@ -95,12 +96,16 @@ public static class SessionRules
 
         // Security-relevant account changes (2FA turned on, password or role changed) update the security stamp.
         // Identity would only notice after its validation interval; OBRL asks for a fresh sign-in straight away.
-        // Not applied while 2FA is still being set up (creating the authenticator key changes the stamp too),
-        // and not on the recovery-codes page, so the codes are shown once before signing in again.
+        // Not applied before a strong sign-in exists, nor on the authenticator setup pages (creating the
+        // authenticator key changes the stamp too, also for members who already have a passkey), so the
+        // setup can finish and the recovery codes are shown once before signing in again.
+        var db = http.RequestServices.GetRequiredService<ObrlDbContext>();
+        var strongSignIn = await HasStrongSignInAsync(db, user);
         var stampClaim = http.RequestServices.GetRequiredService<IOptions<IdentityOptions>>().Value.ClaimsIdentity.SecurityStampClaimType;
-        if (user.TwoFactorEnabled
+        if (strongSignIn
             && http.User.FindFirstValue(stampClaim) != user.SecurityStamp
-            && !path.StartsWith("/Identity/Account/Manage/ShowRecoveryCodes", StringComparison.OrdinalIgnoreCase))
+            && !path.StartsWith("/Identity/Account/Manage/ShowRecoveryCodes", StringComparison.OrdinalIgnoreCase)
+            && !(path.StartsWith(EnableAuthenticatorPath, StringComparison.OrdinalIgnoreCase) && !user.TwoFactorEnabled))
         {
             await http.SignOutAsync(IdentityConstants.ApplicationScheme);
             http.Response.Redirect("/Identity/Account/Login?reason=changed");
@@ -108,18 +113,17 @@ public static class SessionRules
         }
         var allowed = AlwaysAllowed.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase));
 
-        if (!user.TwoFactorEnabled && !allowed)
+        if (!strongSignIn && !allowed)
         {
             http.Response.Redirect(EnableAuthenticatorPath + "?required=1");
             return;
         }
 
-        if (user.TwoFactorEnabled && !allowed && !path.StartsWith("/Disclaimer", StringComparison.OrdinalIgnoreCase))
+        if (strongSignIn && !allowed && !path.StartsWith("/Disclaimer", StringComparison.OrdinalIgnoreCase))
         {
             var latest = await LatestDisclaimerVersionAsync(http.RequestServices);
             if (latest > 0)
             {
-                var db = http.RequestServices.GetRequiredService<ObrlDbContext>();
                 var accepted = await db.TermsAcceptances.AnyAsync(t => t.UserId == user.Id && t.DisclaimerVersion == latest);
                 if (!accepted)
                 {
@@ -131,6 +135,13 @@ public static class SessionRules
 
         await next();
     }
+
+    /// <summary>
+    /// A strong sign-in is an authenticator app (password + code) or a passkey (device + fingerprint, face or PIN).
+    /// Until one is set up, the account can only reach the setup pages.
+    /// </summary>
+    public static async Task<bool> HasStrongSignInAsync(ObrlDbContext db, ApplicationUser user) =>
+        user.TwoFactorEnabled || await db.UserPasskeys.AnyAsync(p => p.UserId == user.Id);
 
     public static async Task<int> LatestDisclaimerVersionAsync(IServiceProvider services)
     {
