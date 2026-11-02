@@ -10,14 +10,84 @@ public sealed record BookCard(
     bool HasCover,
     ReaderMode Mode,
     bool CanRead,
-    double? Percent = null);
+    double? Percent = null,
+    double? Rating = null,
+    string? Note = null);
 
 public sealed class DashboardVm
 {
     public List<BookCard> ContinueReading { get; init; } = [];
     public List<BookCard> Bookmarked { get; init; } = [];
     public List<BookCard> NewBooks { get; init; } = [];
+    public List<BookCard> MostRead { get; init; } = [];
+    public List<BookCard> TopRated { get; init; } = [];
+    public List<BoardTopicRow> Board { get; init; } = [];
     public int SubscribedCategories { get; init; }
+}
+
+public sealed record BoardTopicRow(
+    long Id,
+    string Title,
+    string AuthorName,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset LastActivityAt,
+    int Replies,
+    bool IsPinned,
+    bool IsLocked,
+    bool IsHidden);
+
+public sealed class BoardIndexVm
+{
+    public List<BoardTopicRow> Topics { get; init; } = [];
+    public int Page { get; init; } = 1;
+    public bool HasMore { get; init; }
+    public bool CanModerate { get; init; }
+}
+
+public sealed record BoardPostView(long Id, string AuthorName, string Body, DateTimeOffset CreatedAt, bool IsHidden, bool IsMine);
+
+public sealed class BoardTopicVm
+{
+    public required BoardTopicRow Topic { get; init; }
+    public required BoardPostView Opening { get; init; }
+    public List<BoardPostView> Replies { get; init; } = [];
+    public bool CanModerate { get; init; }
+    public bool CanReply { get; init; }
+}
+
+public sealed class NewTopicVm
+{
+    [Required, StringLength(200)]
+    public string Title { get; set; } = "";
+
+    [Required, StringLength(8000), Display(Name = "Message")]
+    public string Body { get; set; } = "";
+}
+
+public sealed record PendingBookRow(
+    Guid Id,
+    string Title,
+    string? Author,
+    string Format,
+    BookStatus Status,
+    string UploadedBy,
+    DateTimeOffset CreatedAt,
+    bool HasCover);
+
+public sealed record ReportedCommentRow(
+    long CommentId,
+    Guid BookId,
+    string BookTitle,
+    string AuthorName,
+    string Body,
+    bool IsHidden,
+    DateTimeOffset CreatedAt,
+    List<string> Reasons);
+
+public sealed class ModerationVm
+{
+    public List<PendingBookRow> PendingBooks { get; init; } = [];
+    public List<ReportedCommentRow> ReportedComments { get; init; } = [];
 }
 
 public sealed record CategoryNode(int Id, string Name, int? ParentId, string Path, int Depth, string? Description)
@@ -50,6 +120,9 @@ public sealed class BookDetailsVm
     public bool CanEdit { get; init; }
     public ReadingProgress? Progress { get; init; }
     public List<Bookmark> Bookmarks { get; init; } = [];
+    public int? MyRating { get; init; }
+    public List<Obrl.Web.Services.CommentView> Comments { get; init; } = [];
+    public bool CanModerate { get; init; }
 }
 
 public sealed class UploadVm

@@ -1,0 +1,90 @@
+@model (Obrl.Web.Services.CommentView Comment, Guid BookId, bool CanRead, bool CanModerate, bool IsTop)
+@{
+    var c = Model.Comment;
+    var removed = c.Body is null;
+}
+<article class="comment @(c.IsHidden ? "is-hidden" : "")" id="comment-@c.Id">
+    @if (removed)
+    {
+        <p class="text-muted fst-italic mb-1">This comment was removed.</p>
+    }
+    else
+    {
+        <header class="post-head">
+            <span class="avatar" aria-hidden="true">@(string.IsNullOrEmpty(c.AuthorName) ? "?" : c.AuthorName[..1].ToUpperInvariant())</span>
+            <strong>@c.AuthorName</strong>
+            <time class="text-muted small" datetime="@c.CreatedAt.ToString("o")">@c.CreatedAt.ToString("d MMM yyyy, HH:mm")</time>
+            @if (c.IsHidden)
+            {
+                <span class="badge text-bg-secondary" title="@c.HiddenReason">Hidden</span>
+            }
+            @if (c.OpenReports > 0)
+            {
+                <span class="badge text-bg-danger">@c.OpenReports @(c.OpenReports == 1 ? "report" : "reports")</span>
+            }
+        </header>
+        <partial name="_UserText" model="c.Body" />
+        <div class="comment-actions">
+            @if (Model.CanRead && Model.IsTop)
+            {
+                <details class="d-inline-block">
+                    <summary class="btn btn-link btn-sm p-0">Reply</summary>
+                    <form method="post" action="/books/@Model.BookId/comments" class="mt-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="parentId" value="@c.Id" />
+                        <textarea name="body" class="form-control form-control-sm mb-2" rows="2" maxlength="4000" required aria-label="Write a reply"></textarea>
+                        <button class="btn btn-primary btn-sm" type="submit">Post reply</button>
+                    </form>
+                </details>
+            }
+            @if (c.IsMine)
+            {
+                <form method="post" action="/comments/@c.Id/delete" class="d-inline" data-confirm="Delete your comment?">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-link btn-sm p-0 text-danger" type="submit">Delete</button>
+                </form>
+            }
+            else if (Model.CanRead && !c.ReportedByMe && !c.IsHidden)
+            {
+                <details class="d-inline-block">
+                    <summary class="btn btn-link btn-sm p-0 text-muted">Report</summary>
+                    <form method="post" action="/comments/@c.Id/report" class="mt-2 d-flex gap-2">
+                        @Html.AntiForgeryToken()
+                        <input name="reason" class="form-control form-control-sm" maxlength="500" placeholder="What is wrong with it? (optional)" aria-label="Reason" />
+                        <button class="btn btn-outline-danger btn-sm" type="submit">Send</button>
+                    </form>
+                </details>
+            }
+            else if (c.ReportedByMe)
+            {
+                <span class="small text-muted">You reported this</span>
+            }
+            @if (Model.CanModerate)
+            {
+                if (c.IsHidden && c.HiddenReason != Obrl.Web.Services.Community.RemovedByAuthor)
+                {
+                    <form method="post" action="/comments/@c.Id/unhide" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-link btn-sm p-0" type="submit">Show again</button>
+                    </form>
+                }
+                else if (!c.IsHidden)
+                {
+                    <form method="post" action="/comments/@c.Id/hide" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-link btn-sm p-0" type="submit">Hide</button>
+                    </form>
+                }
+            }
+        </div>
+    }
+    @if (c.Replies.Count > 0)
+    {
+        <div class="replies">
+            @foreach (var r in c.Replies)
+            {
+                <partial name="_Comment" model="@((r, Model.BookId, Model.CanRead, Model.CanModerate, false))" />
+            }
+        </div>
+    }
+</article>

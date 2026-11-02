@@ -119,6 +119,26 @@ builder.Services.AddRateLimiter(o =>
                 QueueLimit = 0,
             })));
     });
+    // Comments, ratings, reports and board posts: enough for a lively discussion, too few for spam.
+    o.AddPolicy("posting", http =>
+    {
+        var key = http.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? http.Connection.RemoteIpAddress?.ToString() ?? "anon";
+        return RateLimitPartition.Get(key, _ => RateLimiter.CreateChained(
+            new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 6,
+                QueueLimit = 0,
+            }),
+            new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 120,
+                Window = TimeSpan.FromHours(1),
+                SegmentsPerWindow = 12,
+                QueueLimit = 0,
+            })));
+    });
     o.OnRejected = async (ctx, ct) =>
     {
         var userId = ctx.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);

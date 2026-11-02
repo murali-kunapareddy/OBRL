@@ -12,6 +12,7 @@ namespace Obrl.Web.Services;
 /// <item>Contributors can read the books they uploaded.</item>
 /// <item>Everyone can read books they subscribed to, and every book in a subscribed category
 /// or any of its sub categories (at any depth).</item>
+/// <item>A book a Contributor uploads stays hidden from other readers until a Moderator approves it.</item>
 /// </list>
 /// </summary>
 public sealed class AccessService(ObrlDbContext db)
@@ -33,9 +34,17 @@ public sealed class AccessService(ObrlDbContext db)
 
         return db.Books.Where(b =>
             b.UploadedById == userId
-            || db.Subscriptions.Any(s => s.UserId == userId && s.BookId == b.Id)
-            || b.Categories.Any(bc => subscribedPaths.Any(p => bc.Category!.Path.StartsWith(p))));
+            || (b.IsApproved
+                && (db.Subscriptions.Any(s => s.UserId == userId && s.BookId == b.Id)
+                    || b.Categories.Any(bc => subscribedPaths.Any(p => bc.Category!.Path.StartsWith(p))))));
     }
+
+    /// <summary>Ready books the user may see in the library (to browse and subscribe), whether or not they can read them yet.</summary>
+    public IQueryable<Book> VisibleBooks(ClaimsPrincipal user) =>
+        VisibleBooks(db, UserId(user), ReadsEverything(user)).Where(b => b.Status == BookStatus.Ready);
+
+    public static IQueryable<Book> VisibleBooks(ObrlDbContext db, string userId, bool readsEverything) =>
+        readsEverything ? db.Books : db.Books.Where(b => b.IsApproved || b.UploadedById == userId);
 
     public Task<bool> CanReadAsync(ClaimsPrincipal user, Guid bookId, CancellationToken ct = default) =>
         ReadableBooks(user).AnyAsync(b => b.Id == bookId, ct);

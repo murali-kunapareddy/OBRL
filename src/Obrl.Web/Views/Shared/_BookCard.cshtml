@@ -19,4 +19,17 @@
     {
         <div class="book-author">@Model.Author</div>
     }
+    @if (Model.Rating is not null || Model.Note is not null)
+    {
+        <div class="book-meta">
+            @if (Model.Rating is double stars)
+            {
+                <partial name="_Stars" model="stars" />
+            }
+            @if (Model.Note is not null)
+            {
+                <span>@Model.Note</span>
+            }
+        </div>
+    }
 </a>

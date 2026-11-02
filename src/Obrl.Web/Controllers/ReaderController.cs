@@ -146,17 +146,19 @@ public partial class ReaderController(
         var book = await ReadableBookAsync(id, null, ct);
         if (book is null) return NotFound();
         var userId = AccessService.UserId(User);
-        var row = await db.ReadingProgress.FirstOrDefaultAsync(p => p.UserId == userId && p.BookId == id, ct);
-        if (row is null)
-        {
-            row = new ReadingProgress { UserId = userId, BookId = id };
-            db.ReadingProgress.Add(row);
-        }
-        row.Position = Math.Clamp(dto.Position, 0, Math.Max(0, book.UnitCount - 1));
-        row.Offset = Math.Clamp(dto.Offset, 0, 1);
-        row.PercentComplete = Math.Clamp(dto.Percent, 0, 100);
-        row.UpdatedAt = DateTimeOffset.UtcNow;
-        await db.SaveChangesAsync(ct);
+        var position = Math.Clamp(dto.Position, 0, Math.Max(0, book.UnitCount - 1));
+        var offset = Math.Clamp(dto.Offset, 0, 1);
+        var percent = Math.Clamp(dto.Percent, 0, 100);
+        var now = DateTimeOffset.UtcNow;
+
+        // One statement, so two tabs saving at the same moment cannot collide.
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO "ReadingProgress" ("UserId", "BookId", "Position", "Offset", "PercentComplete", "UpdatedAt")
+            VALUES ({userId}, {id}, {position}, {offset}, {percent}, {now})
+            ON CONFLICT ("UserId", "BookId") DO UPDATE SET
+                "Position" = EXCLUDED."Position", "Offset" = EXCLUDED."Offset",
+                "PercentComplete" = EXCLUDED."PercentComplete", "UpdatedAt" = EXCLUDED."UpdatedAt"
+            """, ct);
         return NoContent();
     }
 

@@ -1,0 +1,6 @@
+@model (long Id, string Op, string Label, string Icon)
+<form method="post" action="/board/post/@Model.Id/moderate" class="d-inline">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="op" value="@Model.Op" />
+    <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi @Model.Icon"></i> @Model.Label</button>
+</form>

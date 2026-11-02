@@ -9,7 +9,7 @@ namespace Obrl.Tests;
 public class AccessTests : IDisposable
 {
     private readonly ObrlDbContext _db;
-    private readonly Book _classic, _science, _uncategorised, _queued;
+    private readonly Book _classic, _science, _uncategorised, _queued, _pending;
 
     public AccessTests()
     {
@@ -29,7 +29,10 @@ public class AccessTests : IDisposable
         _uncategorised = Book("Trap", 14);
         _queued = Book("Not ready", 1);
         _queued.Status = BookStatus.Queued;
-        _db.Books.AddRange(_classic, _science, _uncategorised, _queued);
+        _pending = Book("Awaiting review", 4);
+        _pending.IsApproved = false;
+        _pending.UploadedById = "contributor";
+        _db.Books.AddRange(_classic, _science, _uncategorised, _queued, _pending);
         _db.SaveChanges();
     }
 
@@ -87,7 +90,31 @@ public class AccessTests : IDisposable
 
     [Fact]
     public void Moderators_and_admins_read_everything_that_is_ready() =>
-        Assert.Equal(["Classic mystery", "Physics", "Trap"], Readable("mod", everything: true));
+        Assert.Equal(["Awaiting review", "Classic mystery", "Physics", "Trap"], Readable("mod", everything: true));
+
+    [Fact]
+    public void Unapproved_books_stay_locked_even_for_subscribers()
+    {
+        _db.Subscriptions.AddRange(
+            new Subscription { UserId = "reader", CategoryId = 4 },
+            new Subscription { UserId = "reader", BookId = _pending.Id });
+        _db.SaveChanges();
+        Assert.Equal(["Physics"], Readable("reader"));
+    }
+
+    [Fact]
+    public void Contributors_read_their_own_books_while_waiting_for_review() =>
+        Assert.Equal(["Awaiting review"], Readable("contributor"));
+
+    [Fact]
+    public void Unapproved_books_are_not_listed_in_the_library_for_others()
+    {
+        List<string> Visible(string user, bool everything = false) =>
+            AccessService.VisibleBooks(_db, user, everything).Select(b => b.Title).ToList();
+        Assert.DoesNotContain("Awaiting review", Visible("reader"));
+        Assert.Contains("Awaiting review", Visible("contributor"));
+        Assert.Contains("Awaiting review", Visible("mod", everything: true));
+    }
 
     [Fact]
     public void Covered_check_matches_whole_path_segments()

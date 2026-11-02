@@ -3,14 +3,14 @@
 A private, login-only online library. Members read books in a built-in reader and can't download them.
 It's built with ASP.NET Core MVC on .NET 10 and PostgreSQL, and runs on one Ubuntu server.
 
-**Phase 1** (this version) includes:
+Phases 1 and 2 (this version) include:
 
 - **Sign-in:** login only, accounts are created by admins, two-factor sign-in is required for everyone, one active session per account, lockout after 5 failed attempts, and passwords that appear in leak lists are refused.
 - **Disclaimer:** users must accept it before reading. Admins edit it, and every change creates a new version that users must accept again.
 - **Roles:**
   - **User:** reads, subscribes and bookmarks.
   - **Contributor:** also uploads books.
-  - **Moderator:** also manages categories and all books.
+  - **Moderator:** also manages categories and all books, approves uploads, and moderates comments and the message board.
   - **Admin:** also manages users, roles, the disclaimer and the activity log.
 - **Categories:** nested to any depth. Subscribing to a category includes all its sub categories. Users can also subscribe to single books. Subscriptions are free.
 - **Uploads:** PDF, DOC, DOCX, ODT, RTF, EPUB, TXT, MD, plus MOBI, AZW3 and FB2 when Calibre is installed.
@@ -18,10 +18,15 @@ It's built with ASP.NET Core MVC on .NET 10 and PostgreSQL, and runs on one Ubun
   - **Page mode** (PDF and Word): watermarked page images with zoom, fit to width, fit to page and full screen.
   - **Text mode** (EPUB and TXT): reflowing text with font size, font choice, line spacing and width, plus a table of contents.
   - **Both modes:** bookmarks with notes, automatic resume, light, sepia and dark themes, keyboard and swipe navigation.
-- **Dashboard:** continue reading, bookmarked books and new books in your subscriptions.
-- **History:** sign-ins, failed sign-ins, uploads, books opened, subscriptions, bookmarks, rate-limit hits and access denials go to the `ActivityEvents` table.
+- **Dashboard:** the latest message board topics, continue reading, bookmarked books, new books in your subscriptions, most read this month (distinct readers over 30 days) and top rated (a weighted average, so one 5-star vote does not beat many 4-star votes).
+- **Book approval:** books from Contributors wait in the Moderator's review queue before readers see them. A rejected book goes back to the uploader with a note, and editing it resubmits it. Moderator and Admin uploads go live straight away, and Moderators can take any book down.
+- **Ratings and comments:** readers of a book rate it from 1 to 5 stars and comment, with one level of replies. Members delete their own comments and report others. Reports land in the review queue, where a Moderator keeps or hides the comment.
+- **Message board:** every member can start topics and reply. Moderators pin, lock and hide topics and replies.
+- **Search:** PostgreSQL full-text search over title, author and description (web-search syntax such as `"exact phrase"` and `-word`), plus partial matches in title and author.
+- **Anti-spam:** posting, rating and reporting are limited to 10 a minute and 120 an hour per member. Member text is always shown as plain text.
+- **History:** sign-ins, failed sign-ins, uploads, books opened, subscriptions, bookmarks, ratings, comments, reports, approvals, board posts, moderator actions, rate-limit hits and access denials go to the `ActivityEvents` table.
 
-Phase 2 adds the message board, ratings, comments, most-read/top-rated shelves and moderation queues. Phase 3 adds analytics.
+Phase 3 adds analytics.
 
 ## How books are protected
 

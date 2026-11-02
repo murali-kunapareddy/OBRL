@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 using Obrl.Web.Data;
 
 #nullable disable
@@ -282,11 +283,66 @@ namespace Obrl.Web.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.BoardPost", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(8000)
+                        .HasColumnType("character varying(8000)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPinned")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("LastActivityAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ParentId", "IsPinned", "LastActivityAt");
+
+                    b.ToTable("BoardPosts");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Book", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ApprovedById")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.Property<string>("Author")
                         .HasMaxLength(300)
@@ -301,6 +357,11 @@ namespace Obrl.Web.Data.Migrations
 
                     b.Property<bool>("HasCover")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsApproved")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("Mode")
                         .HasColumnType("integer");
@@ -318,8 +379,27 @@ namespace Obrl.Web.Data.Migrations
                     b.Property<long>("OriginalSize")
                         .HasColumnType("bigint");
 
+                    b.Property<double>("RatingAverage")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("RatingCount")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset?>("ReadyAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("RejectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReviewNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "simple")
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Title", "Author", "Description" });
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -346,6 +426,14 @@ namespace Obrl.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedAt");
+
+                    b.HasIndex("IsApproved");
+
+                    b.HasIndex("RatingAverage");
+
+                    b.HasIndex("SearchVector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.HasIndex("Status");
 
@@ -444,6 +532,94 @@ namespace Obrl.Web.Data.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.Comment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("EditedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("HiddenById")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("HiddenReason")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("boolean");
+
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("BookId", "CreatedAt");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.CommentReport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CommentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateTimeOffset?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResolvedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("CommentId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("CommentReports");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Disclaimer", b =>
                 {
                     b.Property<int>("Id")
@@ -472,6 +648,30 @@ namespace Obrl.Web.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Disclaimers");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.Rating", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Stars")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("Ratings", t =>
+                        {
+                            t.HasCheckConstraint("CK_Rating_Stars", "\"Stars\" BETWEEN 1 AND 5");
+                        });
                 });
 
             modelBuilder.Entity("Obrl.Web.Domain.ReadingProgress", b =>
@@ -624,6 +824,24 @@ namespace Obrl.Web.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.BoardPost", b =>
+                {
+                    b.HasOne("Obrl.Web.Domain.BoardPost", "Parent")
+                        .WithMany("Replies")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Obrl.Web.Domain.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Book", b =>
                 {
                     b.HasOne("Obrl.Web.Domain.ApplicationUser", "UploadedBy")
@@ -681,6 +899,66 @@ namespace Obrl.Web.Data.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.Comment", b =>
+                {
+                    b.HasOne("Obrl.Web.Domain.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Obrl.Web.Domain.Comment", "Parent")
+                        .WithMany("Replies")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Obrl.Web.Domain.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.CommentReport", b =>
+                {
+                    b.HasOne("Obrl.Web.Domain.Comment", "Comment")
+                        .WithMany("Reports")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Obrl.Web.Domain.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.Rating", b =>
+                {
+                    b.HasOne("Obrl.Web.Domain.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Obrl.Web.Domain.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.ReadingProgress", b =>
                 {
                     b.HasOne("Obrl.Web.Domain.Book", "Book")
@@ -730,6 +1008,11 @@ namespace Obrl.Web.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.BoardPost", b =>
+                {
+                    b.Navigation("Replies");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Book", b =>
                 {
                     b.Navigation("Categories");
@@ -740,6 +1023,13 @@ namespace Obrl.Web.Data.Migrations
                     b.Navigation("Books");
 
                     b.Navigation("Children");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.Comment", b =>
+                {
+                    b.Navigation("Replies");
+
+                    b.Navigation("Reports");
                 });
 #pragma warning restore 612, 618
         }

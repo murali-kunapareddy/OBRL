@@ -49,8 +49,12 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         }
 
         var userId = AccessService.UserId(User);
+        var approvedOnUpload = AccessService.ReadsEverything(User);
         var book = new Book
         {
+            IsApproved = approvedOnUpload,
+            ApprovedById = approvedOnUpload ? userId : null,
+            ApprovedAt = approvedOnUpload ? DateTimeOffset.UtcNow : null,
             Title = vm.Title.Trim(),
             Author = Blank(vm.Author),
             Description = Blank(vm.Description),
@@ -72,7 +76,9 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         db.Books.Add(book);
         log.Add(ActivityTypes.BookUploaded, userId, book.Id, new { format, size = book.OriginalSize });
         await db.SaveChangesAsync(ct);
-        TempData["Message"] = $"\"{book.Title}\" was uploaded and is being prepared. It usually takes under a minute.";
+        TempData["Message"] = approvedOnUpload
+            ? $"\"{book.Title}\" was uploaded and is being prepared. It usually takes under a minute."
+            : $"\"{book.Title}\" was uploaded. Readers will see it once a Moderator has approved it.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -115,8 +121,12 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         book.Categories.RemoveAll(c => !wanted.Contains(c.CategoryId));
         foreach (var c in wanted.Where(c => book.Categories.All(x => x.CategoryId != c)))
             book.Categories.Add(new BookCategory { BookId = id, CategoryId = c });
+
+        // Editing a rejected book sends it back to the review queue.
+        var resubmitted = book.RejectedAt is not null && !book.IsApproved;
+        if (resubmitted) book.RejectedAt = null;
         await db.SaveChangesAsync(ct);
-        TempData["Message"] = "Saved.";
+        TempData["Message"] = resubmitted ? "Saved and sent back for review." : "Saved.";
         return RedirectToAction("Details", "Books", new { id });
     }
 
