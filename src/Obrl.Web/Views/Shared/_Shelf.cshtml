@@ -1,0 +1,23 @@
+@model (string Title, List<BookCard> Books, string Empty, string? MoreUrl)
+<section class="shelf">
+    <div class="shelf-head">
+        <h2>@Model.Title</h2>
+        @if (Model.MoreUrl is not null && Model.Books.Count > 0)
+        {
+            <a class="small" href="@Model.MoreUrl">See all</a>
+        }
+    </div>
+    @if (Model.Books.Count == 0)
+    {
+        <div class="empty-shelf">@Model.Empty</div>
+    }
+    else
+    {
+        <div class="shelf-row">
+            @foreach (var b in Model.Books)
+            {
+                <partial name="_BookCard" model="b" />
+            }
+        </div>
+    }
+</section>

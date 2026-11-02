@@ -1,0 +1,20 @@
+@model DashboardVm
+@{
+    ViewData["Title"] = "Dashboard";
+    var name = User.Identity?.Name?.Split('@')[0];
+}
+<h1 class="page-title">Welcome back@(name is null ? "" : ", " + name)</h1>
+<p class="page-sub">
+    @if (Model.SubscribedCategories == 0)
+    {
+        <text>You have not subscribed to any categories yet. <a href="/Library">Browse the library</a> to choose what you want to read.</text>
+    }
+    else
+    {
+        <text>You follow @Model.SubscribedCategories @(Model.SubscribedCategories == 1 ? "category" : "categories"). <a href="/Library">Find more</a>.</text>
+    }
+</p>
+
+<partial name="_Shelf" model="@(("Continue reading", Model.ContinueReading, "Books you start will appear here, ready to pick up where you left off.", (string?)null))" />
+<partial name="_Shelf" model="@(("Bookmarked", Model.Bookmarked, "Add a bookmark in the reader and the book shows up here.", (string?)null))" />
+<partial name="_Shelf" model="@(("New in your subscriptions", Model.NewBooks, "No books in your subscriptions yet.", (string?)"/Library?mine=true"))" />

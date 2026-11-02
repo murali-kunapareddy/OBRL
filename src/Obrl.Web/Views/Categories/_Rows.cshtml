@@ -1,0 +1,21 @@
+@model (List<CategoryNode> Nodes, Dictionary<int, int> Counts)
+@foreach (var c in Model.Nodes)
+{
+    <tr>
+        <td>
+            <span style="padding-left:@(c.Depth * 1.5)rem">
+                <i class="bi @(c.Children.Count > 0 ? "bi-folder2-open" : "bi-tag") text-muted me-1"></i>
+                <a href="/Library?category=@c.Id">@c.Name</a>
+            </span>
+        </td>
+        <td class="text-muted small">@(Model.Counts.GetValueOrDefault(c.Id))</td>
+        <td class="text-end text-nowrap">
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Create" asp-route-parentId="@c.Id" title="Add sub category"><i class="bi bi-plus-lg"></i></a>
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@c.Id" title="Rename or move"><i class="bi bi-pencil"></i></a>
+            <form class="d-inline" method="post" asp-action="Delete" asp-route-id="@c.Id" data-confirm="Delete the category “@c.Name”?">
+                <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+            </form>
+        </td>
+    </tr>
+    <partial name="_Rows" model="@((c.Children, Model.Counts))" />
+}

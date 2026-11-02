@@ -1,0 +1,35 @@
+@model CategoryEditVm
+@{
+    var creating = Model.Id is null;
+    ViewData["Title"] = creating ? "New category" : "Edit category";
+}
+<h1 class="page-title">@ViewData["Title"]</h1>
+<form method="post" class="panel mt-3" style="max-width:600px" asp-action="@(creating ? "Create" : "Edit")" asp-route-id="@Model.Id">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label fw-semibold"></label>
+        <input asp-for="Name" class="form-control" autofocus />
+        <span asp-validation-for="Name" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ParentId" class="form-label fw-semibold"></label>
+        <select asp-for="ParentId" class="form-select">
+            <option value="">(top level)</option>
+            @foreach (var c in Model.AllCategories)
+            {
+                <option value="@c.Id">@(new string(' ', c.Depth * 4))@c.Name</option>
+            }
+        </select>
+        <span asp-validation-for="ParentId" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label fw-semibold"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="mb-4" style="max-width:160px">
+        <label asp-for="SortOrder" class="form-label fw-semibold">Sort order</label>
+        <input asp-for="SortOrder" class="form-control" type="number" />
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-link" asp-action="Index">Cancel</a>
+</form>

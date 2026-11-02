@@ -1,0 +1,22 @@
+@model BookCard
+<a class="book-card" href="/books/@Model.Id" title="@Model.Title">
+    <div class="cover">
+        @if (Model.HasCover)
+        {
+            <img src="/books/@Model.Id/cover" alt="" loading="lazy" />
+        }
+        @if (!Model.CanRead)
+        {
+            <span class="lock" title="Subscribe to read"><i class="bi bi-lock-fill"></i></span>
+        }
+        @if (Model.Percent is double p)
+        {
+            <div class="progress-line"><span style="width:@(Math.Round(p))%"></span></div>
+        }
+    </div>
+    <div class="book-title">@Model.Title</div>
+    @if (!string.IsNullOrEmpty(Model.Author))
+    {
+        <div class="book-author">@Model.Author</div>
+    }
+</a>

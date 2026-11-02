@@ -1,0 +1,41 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal.LoginModel
+@{
+    ViewData["Title"] = "Sign in";
+    var reason = Request.Query["reason"].ToString();
+}
+<h1 class="h4 mb-1">Sign in</h1>
+<p class="text-muted small mb-4">OBRL is for members only. Accounts are created by an administrator.</p>
+
+@if (reason == "elsewhere")
+{
+    <div class="alert alert-warning small">You were signed out because your account signed in on another device.</div>
+}
+else if (reason == "changed")
+{
+    <div class="alert alert-info small">Your sign-in settings changed. Please sign in again with your password and authenticator code.</div>
+}
+else if (reason == "ended")
+{
+    <div class="alert alert-info small">Your session ended. Please sign in again.</div>
+}
+
+<form id="account" method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+    <div class="mb-3">
+        <label asp-for="Input.Email" class="form-label fw-semibold">Email</label>
+        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" autofocus />
+        <span asp-validation-for="Input.Email" class="text-danger small"></span>
+    </div>
+    <div class="mb-4">
+        <label asp-for="Input.Password" class="form-label fw-semibold">Password</label>
+        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+    </div>
+    <button id="login-submit" type="submit" class="btn btn-primary w-100">Continue</button>
+</form>
+<p class="small text-muted mt-3 mb-0">Forgot your password or lost your authenticator? Ask an administrator to reset it. After 5 wrong attempts the account is locked for 15 minutes.</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
