@@ -4,7 +4,7 @@
         <h2>@Model.Title</h2>
         @if (Model.MoreUrl is not null && Model.Books.Count > 0)
         {
-            <a class="small" href="@Model.MoreUrl">See all</a>
+            <a class="small" href="@Model.MoreUrl">@L["See all"]</a>
         }
     </div>
     @if (Model.Books.Count == 0)

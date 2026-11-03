@@ -57,7 +57,7 @@ public sealed class BoardTopicVm
 
 public sealed class NewTopicVm
 {
-    [Required, StringLength(200)]
+    [Required, StringLength(200), Display(Name = "Title")]
     public string Title { get; set; } = "";
 
     [Required, StringLength(8000), Display(Name = "Message")]
@@ -129,13 +129,13 @@ public sealed class UploadVm
 {
     public Guid? Id { get; set; }
 
-    [Required, StringLength(300)]
+    [Required, StringLength(300), Display(Name = "Title")]
     public string Title { get; set; } = "";
 
-    [StringLength(300)]
+    [StringLength(300), Display(Name = "Author")]
     public string? Author { get; set; }
 
-    [StringLength(4000)]
+    [StringLength(4000), Display(Name = "Description")]
     public string? Description { get; set; }
 
     [Display(Name = "Categories")]
@@ -151,15 +151,16 @@ public sealed class CategoryEditVm
 {
     public int? Id { get; set; }
 
-    [Required, StringLength(120)]
+    [Required, StringLength(120), Display(Name = "Name")]
     public string Name { get; set; } = "";
 
-    [StringLength(1000)]
+    [StringLength(1000), Display(Name = "Description")]
     public string? Description { get; set; }
 
     [Display(Name = "Parent category")]
     public int? ParentId { get; set; }
 
+    [Display(Name = "Sort order")]
     public int SortOrder { get; set; }
 
     public List<CategoryNode> AllCategories { get; set; } = [];
@@ -178,13 +179,13 @@ public sealed class ReaderVm
 
 public sealed class CreateUserVm
 {
-    [Required, EmailAddress, StringLength(256)]
+    [Required, EmailAddress, StringLength(256), Display(Name = "Email")]
     public string Email { get; set; } = "";
 
     [Required, StringLength(100), Display(Name = "Display name")]
     public string DisplayName { get; set; } = "";
 
-    [Required]
+    [Required, Display(Name = "Role")]
     public string Role { get; set; } = Roles.User;
 
     [Required, StringLength(128, MinimumLength = 12), DataType(DataType.Password), Display(Name = "Temporary password")]

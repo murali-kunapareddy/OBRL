@@ -1,0 +1,26 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Manage.Internal.IndexModel
+@{
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+    ViewData["Title"] = L["Profile"].Value;
+    ViewData["ActivePage"] = "Index";
+}
+<h3 class="h5">@L["Profile"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+<form id="profile-form" method="post" style="max-width:420px">
+    <partial name="_ErrorSummary" />
+    <div class="mb-3">
+        <label asp-for="Username" class="form-label fw-semibold"></label>
+        <input asp-for="Username" class="form-control" disabled />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Input.PhoneNumber" class="form-label fw-semibold"></label>
+        <input asp-for="Input.PhoneNumber" class="form-control" />
+        <span asp-validation-for="Input.PhoneNumber" class="text-danger small"></span>
+    </div>
+    <button id="update-profile-button" type="submit" class="btn btn-primary">@L["Save"]</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

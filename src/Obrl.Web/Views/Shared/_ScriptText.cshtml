@@ -1,0 +1,5 @@
+@* Text used by OBRL's scripts, in the member's language. Read by obrl.t() in site.js; the keys are listed in Localization/ExtraText.cs. *@
+@{
+    var text = Obrl.Web.Localization.ExtraText.Script.ToDictionary(k => k, k => L[k].Value);
+}
+<script type="application/json" id="obrl-text">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(text).Replace("</", "<\\/"))</script>

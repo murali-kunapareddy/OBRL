@@ -1,7 +1,7 @@
 @model CategoryEditVm
 @{
     var creating = Model.Id is null;
-    ViewData["Title"] = creating ? "New category" : "Edit category";
+    ViewData["Title"] = creating ? L["New category"].Value : L["Edit category"].Value;
 }
 <h1 class="page-title">@ViewData["Title"]</h1>
 <form method="post" class="panel mt-3" style="max-width:600px" asp-action="@(creating ? "Create" : "Edit")" asp-route-id="@Model.Id">
@@ -14,7 +14,7 @@
     <div class="mb-3">
         <label asp-for="ParentId" class="form-label fw-semibold"></label>
         <select asp-for="ParentId" class="form-select">
-            <option value="">(top level)</option>
+            <option value="">@L["(top level)"]</option>
             @foreach (var c in Model.AllCategories)
             {
                 <option value="@c.Id">@(new string(' ', c.Depth * 4))@c.Name</option>
@@ -27,9 +27,9 @@
         <textarea asp-for="Description" class="form-control" rows="3"></textarea>
     </div>
     <div class="mb-4" style="max-width:160px">
-        <label asp-for="SortOrder" class="form-label fw-semibold">Sort order</label>
+        <label asp-for="SortOrder" class="form-label fw-semibold"></label>
         <input asp-for="SortOrder" class="form-control" type="number" />
     </div>
-    <button class="btn btn-primary" type="submit">Save</button>
-    <a class="btn btn-link" asp-action="Index">Cancel</a>
+    <button class="btn btn-primary" type="submit">@L["Save"]</button>
+    <a class="btn btn-link" asp-action="Index">@L["Cancel"]</a>
 </form>

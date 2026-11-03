@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,7 +9,7 @@ using Obrl.Web.Services;
 namespace Obrl.Web.Areas.Identity.Pages.Account.Manage;
 
 /// <summary>Add, rename and remove the passkeys a member signs in with.</summary>
-public class PasskeysModel(UserManager<ApplicationUser> users, SignInManager<ApplicationUser> signIn, ActivityLog log) : PageModel
+public class PasskeysModel(UserManager<ApplicationUser> users, SignInManager<ApplicationUser> signIn, ActivityLog log, IStringLocalizer<SharedResource> L) : PageModel
 {
     public const int MaxPasskeys = 10;
 
@@ -52,12 +53,12 @@ public class PasskeysModel(UserManager<ApplicationUser> users, SignInManager<App
         if (user is null) return Challenge();
         if (string.IsNullOrEmpty(credential))
         {
-            ErrorMessage = "Your browser did not create a passkey. Please try again.";
+            ErrorMessage = L["Your browser did not create a passkey. Please try again."];
             return RedirectToPage();
         }
         if ((await users.GetPasskeysAsync(user)).Count >= MaxPasskeys)
         {
-            ErrorMessage = $"You can have up to {MaxPasskeys} passkeys. Remove one first.";
+            ErrorMessage = L["You can have up to {0} passkeys. Remove one first.", MaxPasskeys];
             return RedirectToPage();
         }
 
@@ -69,12 +70,12 @@ public class PasskeysModel(UserManager<ApplicationUser> users, SignInManager<App
         catch (InvalidOperationException)
         {
             // No creation was started in this browser session (an old tab or a hand-made request).
-            ErrorMessage = "This passkey request expired. Please try again.";
+            ErrorMessage = L["This passkey request expired. Please try again."];
             return RedirectToPage();
         }
         if (!attestation.Succeeded)
         {
-            ErrorMessage = "This passkey could not be added: " + attestation.Failure.Message;
+            ErrorMessage = L["This passkey could not be added: {0}", attestation.Failure.Message];
             return RedirectToPage();
         }
 
@@ -83,14 +84,14 @@ public class PasskeysModel(UserManager<ApplicationUser> users, SignInManager<App
         var saved = await users.AddOrUpdatePasskeyAsync(user, passkey);
         if (!saved.Succeeded)
         {
-            ErrorMessage = "This passkey could not be saved. " + string.Join(" ", saved.Errors.Select(e => e.Description));
+            ErrorMessage = L["This passkey could not be saved. {0}", string.Join(" ", saved.Errors.Select(e => L[e.Description].Value))];
             return RedirectToPage();
         }
 
         await log.WriteAsync(ActivityTypes.PasskeyAdded, user.Id, data: new { name = passkey.Name, synced = passkey.IsBackedUp });
         // Saving changes the security stamp; refresh the session so it stays valid.
         await signIn.RefreshSignInAsync(user);
-        StatusMessage = $"Passkey \"{passkey.Name}\" added. Next time, choose \"Sign in with a passkey\".";
+        StatusMessage = L["Passkey “{0}” added. Next time, choose “Sign in with a passkey”.", passkey.Name ?? ""];
         return RedirectToPage();
     }
 
@@ -104,7 +105,7 @@ public class PasskeysModel(UserManager<ApplicationUser> users, SignInManager<App
         passkey.Name = clean;
         await users.AddOrUpdatePasskeyAsync(user, passkey);
         await signIn.RefreshSignInAsync(user);
-        StatusMessage = "Passkey renamed.";
+        StatusMessage = L["Passkey renamed."];
         return RedirectToPage();
     }
 
@@ -118,7 +119,7 @@ public class PasskeysModel(UserManager<ApplicationUser> users, SignInManager<App
         await users.RemovePasskeyAsync(user, passkey.CredentialId);
         await log.WriteAsync(ActivityTypes.PasskeyRemoved, user.Id, data: new { name = passkey.Name });
         await signIn.RefreshSignInAsync(user);
-        StatusMessage = $"Passkey \"{passkey.Name}\" removed. Also delete it from your device or password manager.";
+        StatusMessage = L["Passkey “{0}” removed. Also delete it from your device or password manager.", passkey.Name ?? ""];
         return RedirectToPage();
     }
 

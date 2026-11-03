@@ -1,14 +1,13 @@
 @page
 @model Obrl.Web.Areas.Identity.Pages.Account.Manage.PasskeysModel
 @{
-    ViewData["Title"] = "Passkeys";
+    ViewData["Title"] = L["Passkeys"].Value;
     ViewData["ActivePage"] = "Passkeys";
     Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
 }
-<h3 class="h5">Passkeys</h3>
+<h3 class="h5">@L["Passkeys"]</h3>
 <p class="text-muted">
-    A passkey lets you sign in with your fingerprint, face or device PIN instead of a password and code.
-    It only works on this site, so it cannot be phished. You can add one for each device you use.
+    @L["A passkey lets you sign in with your fingerprint, face or device PIN instead of a password and code. It only works on this site, so it cannot be phished. You can add one for each device you use."]
 </p>
 
 @if (Model.StatusMessage is not null)
@@ -23,12 +22,12 @@
 {
     <div class="alert alert-warning">
         <i class="bi bi-shield-lock me-1"></i>
-        Add a passkey, or <a href="/Identity/Account/Manage/EnableAuthenticator">set up an authenticator app</a>, before using OBRL.
+        @H["Add a passkey, or <a href=\"/Identity/Account/Manage/EnableAuthenticator\">set up an authenticator app</a>, before using OBRL."]
     </div>
 }
 
 <div id="passkey-unsupported" class="alert alert-secondary" hidden>
-    This browser cannot create passkeys. Use a recent version of Chrome, Edge, Firefox or Safari.
+    @L["This browser cannot create passkeys. Use a recent version of Chrome, Edge, Firefox or Safari."]
 </div>
 
 @if (Model.Passkeys.Count > 0)
@@ -40,19 +39,19 @@
                 <i class="bi bi-key fs-5 text-primary" aria-hidden="true"></i>
                 <div class="flex-grow-1 min-w-0">
                     <div class="fw-semibold passkey-name">@p.Name</div>
-                    <div class="small text-muted">Added @p.CreatedAt.ToString("d MMM yyyy") · @(p.Synced ? "synced across your devices" : "stays on one device")</div>
+                    <div class="small text-muted">@L["Added {0}", p.CreatedAt.ToString("d MMM yyyy")] · @(p.Synced ? L["synced across your devices"] : L["stays on one device"])</div>
                 </div>
                 <details class="text-end">
-                    <summary class="btn btn-sm btn-outline-secondary">Rename</summary>
+                    <summary class="btn btn-sm btn-outline-secondary">@L["Rename"]</summary>
                     <form method="post" asp-page-handler="Rename" class="d-flex gap-2 mt-2">
                         <input type="hidden" name="id" value="@p.Id" />
-                        <input name="name" class="form-control form-control-sm" maxlength="60" value="@p.Name" aria-label="New name" required />
-                        <button class="btn btn-sm btn-primary" type="submit">Save</button>
+                        <input name="name" class="form-control form-control-sm" maxlength="60" value="@p.Name" aria-label="@L["New name"]" required />
+                        <button class="btn btn-sm btn-primary" type="submit">@L["Save"]</button>
                     </form>
                 </details>
-                <form method="post" asp-page-handler="Remove" data-confirm="Remove the passkey “@p.Name”? You will not be able to sign in with it any more.">
+                <form method="post" asp-page-handler="Remove" data-confirm="@L["Remove the passkey “{0}”? You will not be able to sign in with it any more.", p.Name ?? ""]">
                     <input type="hidden" name="id" value="@p.Id" />
-                    <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                    <button class="btn btn-sm btn-outline-danger" type="submit">@L["Remove"]</button>
                 </form>
             </li>
         }
@@ -63,17 +62,17 @@
 {
     <form method="post" asp-page-handler="Add" id="passkey-add" class="panel p-3" data-options-url="@Url.Page("Passkeys", "CreationOptions")">
         <input type="hidden" name="credential" />
-        <label for="passkey-name" class="form-label fw-semibold">Name this passkey</label>
+        <label for="passkey-name" class="form-label fw-semibold">@L["Name this passkey"]</label>
         <div class="d-flex flex-wrap gap-2">
-            <input id="passkey-name" name="name" class="form-control" style="max-width:320px" maxlength="60" placeholder="e.g. My phone, Work laptop" />
-            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Add a passkey</button>
+            <input id="passkey-name" name="name" class="form-control" style="max-width:320px" maxlength="60" placeholder="@L["e.g. My phone, Work laptop"]" />
+            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> @L["Add a passkey"]</button>
         </div>
         <div class="small text-danger mt-2" data-passkey-error hidden></div>
     </form>
 }
 else
 {
-    <p class="text-muted">You have the maximum of @Obrl.Web.Areas.Identity.Pages.Account.Manage.PasskeysModel.MaxPasskeys passkeys.</p>
+    <p class="text-muted">@L["You have the maximum of {0} passkeys.", Obrl.Web.Areas.Identity.Pages.Account.Manage.PasskeysModel.MaxPasskeys]</p>
 }
 
 @section Scripts {

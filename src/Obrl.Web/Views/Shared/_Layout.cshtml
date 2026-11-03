@@ -15,7 +15,7 @@
     var waiting = canModerate && !authShell ? await Obrl.Web.Controllers.ModerationController.WaitingCountAsync(Db) : 0;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@Obrl.Web.Localization.Languages.Current.Code">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -41,7 +41,8 @@
             <div class="panel p-4">
                 @RenderBody()
             </div>
-            <p class="text-center small text-muted mt-3">Online Book Reading Library · members only</p>
+            <p class="text-center small text-muted mt-3">@L["Online Book Reading Library · members only"]</p>
+            <div class="d-flex justify-content-center"><partial name="_LanguageSwitch" /></div>
         </div>
     </div>
 }
@@ -50,43 +51,43 @@ else
     <div class="app-shell">
         <aside class="sidebar">
             <a class="brand" href="/"><span class="brand-mark"><i class="bi bi-book"></i></span> OBRL</a>
-            <a class="side-link @Active("Home")" href="/"><i class="bi bi-house"></i> Dashboard</a>
-            <a class="side-link @Active("Library")" asp-controller="Library" asp-action="Index"><i class="bi bi-collection"></i> Library</a>
-            <a class="side-link" asp-controller="Library" asp-action="Index" asp-route-mine="true"><i class="bi bi-bookmark-star"></i> My subscriptions</a>
-            <a class="side-link @Active("Board")" href="/board"><i class="bi bi-chat-square-text"></i> Message board</a>
+            <a class="side-link @Active("Home")" href="/"><i class="bi bi-house"></i> @L["Dashboard"]</a>
+            <a class="side-link @Active("Library")" asp-controller="Library" asp-action="Index"><i class="bi bi-collection"></i> @L["Library"]</a>
+            <a class="side-link" asp-controller="Library" asp-action="Index" asp-route-mine="true"><i class="bi bi-bookmark-star"></i> @L["My subscriptions"]</a>
+            <a class="side-link @Active("Board")" href="/board"><i class="bi bi-chat-square-text"></i> @L["Message board"]</a>
 
             @if (canContribute)
             {
-                <div class="nav-section">Contribute</div>
-                <a class="side-link @Active("Uploads")" asp-controller="Uploads" asp-action="Index"><i class="bi bi-cloud-arrow-up"></i> My uploads</a>
+                <div class="nav-section">@L["Contribute"]</div>
+                <a class="side-link @Active("Uploads")" asp-controller="Uploads" asp-action="Index"><i class="bi bi-cloud-arrow-up"></i> @L["My uploads"]</a>
             }
             @if (canModerate)
             {
-                <div class="nav-section">Moderate</div>
-                <a class="side-link @Active("Moderation")" href="/moderation"><i class="bi bi-inboxes"></i> Review queue @if (waiting > 0) { <span class="badge rounded-pill text-bg-danger ms-auto">@waiting</span> }</a>
-                <a class="side-link @Active("Categories")" asp-controller="Categories" asp-action="Index"><i class="bi bi-diagram-3"></i> Categories</a>
+                <div class="nav-section">@L["Moderate"]</div>
+                <a class="side-link @Active("Moderation")" href="/moderation"><i class="bi bi-inboxes"></i> @L["Review queue"] @if (waiting > 0) { <span class="badge rounded-pill text-bg-danger ms-auto">@waiting</span> }</a>
+                <a class="side-link @Active("Categories")" asp-controller="Categories" asp-action="Index"><i class="bi bi-diagram-3"></i> @L["Categories"]</a>
             }
             @if (isAdmin)
             {
-                <div class="nav-section">Admin</div>
-                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() is "Users" or "CreateUser" ? "active" : "")" asp-controller="Admin" asp-action="Users"><i class="bi bi-people"></i> Users</a>
-                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Disclaimer" ? "active" : "")" asp-controller="Admin" asp-action="Disclaimer"><i class="bi bi-file-earmark-text"></i> Disclaimer</a>
-                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Activity" ? "active" : "")" asp-controller="Admin" asp-action="Activity"><i class="bi bi-activity"></i> Activity</a>
-                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")" asp-controller="Admin" asp-action="Settings"><i class="bi bi-gear"></i> Settings</a>
+                <div class="nav-section">@L["Admin"]</div>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() is "Users" or "CreateUser" ? "active" : "")" asp-controller="Admin" asp-action="Users"><i class="bi bi-people"></i> @L["Users"]</a>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Disclaimer" ? "active" : "")" asp-controller="Admin" asp-action="Disclaimer"><i class="bi bi-file-earmark-text"></i> @L["Disclaimer"]</a>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Activity" ? "active" : "")" asp-controller="Admin" asp-action="Activity"><i class="bi bi-activity"></i> @L["Activity"]</a>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")" asp-controller="Admin" asp-action="Settings"><i class="bi bi-gear"></i> @L["Settings"]</a>
             }
 
             <div class="sidebar-foot">
-                <div class="nav-section mt-0">Theme</div>
-                <div class="btn-group btn-group-sm theme-switch w-100 mb-3 px-1" role="group" aria-label="Theme">
-                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="auto" title="Match device"><i class="bi bi-circle-half"></i></button>
-                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="light" title="Light"><i class="bi bi-sun"></i></button>
-                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="sepia" title="Sepia"><i class="bi bi-cup-hot"></i></button>
-                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="dark" title="Dark"><i class="bi bi-moon-stars"></i></button>
+                <div class="nav-section mt-0">@L["Theme"]</div>
+                <div class="btn-group btn-group-sm theme-switch w-100 mb-3 px-1" role="group" aria-label="@L["Theme"]">
+                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="auto" title="@L["Match device"]"><i class="bi bi-circle-half"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="light" title="@L["Light"]"><i class="bi bi-sun"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="sepia" title="@L["Sepia"]"><i class="bi bi-cup-hot"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-theme-choice="dark" title="@L["Dark"]"><i class="bi bi-moon-stars"></i></button>
                 </div>
                 <a class="side-link @(area == "Identity" ? "active" : "")" href="/Identity/Account/Manage"><i class="bi bi-person-circle"></i> <span class="text-truncate">@User.Identity?.Name</span></a>
                 <form method="post" action="/Identity/Account/Logout?returnUrl=%2F">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="side-link border-0 bg-transparent w-100"><i class="bi bi-box-arrow-right"></i> Sign out</button>
+                    <button type="submit" class="side-link border-0 bg-transparent w-100"><i class="bi bi-box-arrow-right"></i> @L["Sign out"]</button>
                 </form>
             </div>
         </aside>
@@ -95,19 +96,20 @@ else
             <header class="topbar">
                 <form class="search" method="get" action="/Library" role="search">
                     <i class="bi bi-search"></i>
-                    <input class="form-control" type="search" name="q" placeholder="Search titles, authors and descriptions" value="@Context.Request.Query["q"]" aria-label="Search" />
+                    <input class="form-control" type="search" name="q" placeholder="@L["Search titles, authors and descriptions"]" value="@Context.Request.Query["q"]" aria-label="@L["Search"]" />
                 </form>
+                <partial name="_LanguageSwitch" />
             </header>
             <main class="content">
                 @if (twoFactorRequired)
                 {
-                    <div class="alert alert-warning"><i class="bi bi-shield-lock me-2"></i><strong>A strong sign-in is required.</strong> Set up an authenticator app below, or <a href="/Identity/Account/Manage/Passkeys">add a passkey instead</a>, before using OBRL.</div>
+                    <div class="alert alert-warning"><i class="bi bi-shield-lock me-2"></i>@H["<strong>A strong sign-in is required.</strong> Set up an authenticator app below, or <a href=\"/Identity/Account/Manage/Passkeys\">add a passkey instead</a>, before using OBRL."]</div>
                 }
                 @if (!string.IsNullOrEmpty(message))
                 {
                     <div class="alert alert-info alert-dismissible fade show" role="status">
                         @message
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@L["Close"]"></button>
                     </div>
                 }
                 @RenderBody()
@@ -115,17 +117,18 @@ else
         </div>
     </div>
 
-    <nav class="mobile-nav" aria-label="Main">
-        <a class="@Active("Home")" href="/"><i class="bi bi-house"></i>Home</a>
-        <a class="@Active("Library")" href="/Library"><i class="bi bi-collection"></i>Library</a>
-        <a class="@Active("Board")" href="/board"><i class="bi bi-chat-square-text"></i>Board</a>
+    <nav class="mobile-nav" aria-label="@L["Main"]">
+        <a class="@Active("Home")" href="/"><i class="bi bi-house"></i>@L["Home"]</a>
+        <a class="@Active("Library")" href="/Library"><i class="bi bi-collection"></i>@L["Library"]</a>
+        <a class="@Active("Board")" href="/board"><i class="bi bi-chat-square-text"></i>@L["Board"]</a>
         @if (canContribute)
         {
-            <a class="@Active("Uploads")" href="/Uploads"><i class="bi bi-cloud-arrow-up"></i>Uploads</a>
+            <a class="@Active("Uploads")" href="/Uploads"><i class="bi bi-cloud-arrow-up"></i>@L["Uploads"]</a>
         }
-        <a class="@(area == "Identity" ? "active" : "")" href="/Identity/Account/Manage"><i class="bi bi-person-circle"></i>Account</a>
+        <a class="@(area == "Identity" ? "active" : "")" href="/Identity/Account/Manage"><i class="bi bi-person-circle"></i>@L["Account"]</a>
     </nav>
 }
+<partial name="_ScriptText" />
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/lib/qrcode/qrcode.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

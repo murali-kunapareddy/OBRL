@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ namespace Obrl.Web.Controllers;
 
 /// <summary>Contributors add and edit their books; Moderators and Admins can manage every book.</summary>
 [Authorize(Policy = Policies.CanContribute)]
-public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLog log, IOptions<ObrlOptions> options) : Controller
+public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLog log, IOptions<ObrlOptions> options, IStringLocalizer<SharedResource> L) : Controller
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -36,8 +37,8 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
     public async Task<IActionResult> Create(UploadVm vm, CancellationToken ct)
     {
         var format = vm.File is null ? null : BookFormats.Normalize(vm.File.FileName);
-        if (vm.File is null || vm.File.Length == 0) ModelState.AddModelError(nameof(vm.File), "Choose a file to upload.");
-        else if (format is null) ModelState.AddModelError(nameof(vm.File), "This file type is not supported.");
+        if (vm.File is null || vm.File.Length == 0) ModelState.AddModelError(nameof(vm.File), L["Choose a file to upload."]);
+        else if (format is null) ModelState.AddModelError(nameof(vm.File), L["This file type is not supported."]);
         await ValidateCategoriesAsync(vm, ct);
 
         if (!ModelState.IsValid)
@@ -77,8 +78,8 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         log.Add(ActivityTypes.BookUploaded, userId, book.Id, new { format, size = book.OriginalSize });
         await db.SaveChangesAsync(ct);
         TempData["Message"] = approvedOnUpload
-            ? $"\"{book.Title}\" was uploaded and is being prepared. It usually takes under a minute."
-            : $"\"{book.Title}\" was uploaded. Readers will see it once a Moderator has approved it.";
+            ? L["“{0}” was uploaded and is being prepared. It usually takes under a minute.", book.Title].Value
+            : L["“{0}” was uploaded. Readers will see it once a Moderator has approved it.", book.Title].Value;
         return RedirectToAction(nameof(Index));
     }
 
@@ -126,7 +127,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         var resubmitted = book.RejectedAt is not null && !book.IsApproved;
         if (resubmitted) book.RejectedAt = null;
         await db.SaveChangesAsync(ct);
-        TempData["Message"] = resubmitted ? "Saved and sent back for review." : "Saved.";
+        TempData["Message"] = (resubmitted ? L["Saved and sent back for review."] : L["Saved."]).Value;
         return RedirectToAction("Details", "Books", new { id });
     }
 
@@ -150,14 +151,14 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         if (!CanManage(book)) return Forbid();
         if (book.Status == BookStatus.Processing)
         {
-            TempData["Message"] = "This book is being converted right now. Try again in a minute.";
+            TempData["Message"] = L["This book is being converted right now. Try again in a minute."].Value;
             return RedirectToAction(nameof(Index));
         }
         db.Books.Remove(book);
         log.Add(ActivityTypes.BookDeleted, AccessService.UserId(User), id, new { book.Title });
         await db.SaveChangesAsync(ct);
         storage.DeleteAll(id);
-        TempData["Message"] = $"\"{book.Title}\" was deleted.";
+        TempData["Message"] = L["“{0}” was deleted.", book.Title].Value;
         return RedirectToAction(nameof(Index));
     }
 
@@ -168,12 +169,12 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
     {
         if (vm.CategoryIds.Count == 0)
         {
-            ModelState.AddModelError(nameof(vm.CategoryIds), "Pick at least one category, so readers can find the book.");
+            ModelState.AddModelError(nameof(vm.CategoryIds), L["Pick at least one category, so readers can find the book."]);
             return;
         }
         var ids = vm.CategoryIds.Distinct().ToList();
         if (await db.Categories.CountAsync(c => ids.Contains(c.Id), ct) != ids.Count)
-            ModelState.AddModelError(nameof(vm.CategoryIds), "One of the categories no longer exists.");
+            ModelState.AddModelError(nameof(vm.CategoryIds), L["One of the categories no longer exists."]);
     }
 
     private static string? Blank(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();

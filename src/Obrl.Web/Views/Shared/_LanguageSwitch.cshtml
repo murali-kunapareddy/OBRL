@@ -1,0 +1,19 @@
+@using Obrl.Web.Localization
+@* Language picker. Works without JavaScript: each language is a submit button. *@
+@{
+    var current = Languages.Current;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+<div class="dropdown language-switch">
+    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="@L["Language"]">
+        <i class="bi bi-translate me-1" aria-hidden="true"></i><span>@current.NativeName</span>
+    </button>
+    <form method="post" action="/Language" class="dropdown-menu dropdown-menu-end">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        @foreach (var lang in Languages.All)
+        {
+            <button type="submit" name="culture" value="@lang.Code" lang="@lang.Code" class="dropdown-item @(lang.Code == current.Code ? "active" : "")" aria-current="@(lang.Code == current.Code ? "true" : null)">@lang.NativeName</button>
+        }
+    </form>
+</div>

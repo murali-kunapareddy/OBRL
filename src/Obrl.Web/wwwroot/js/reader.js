@@ -14,6 +14,7 @@
     var toastEl = document.getElementById("toast");
     var csrf = (document.querySelector('meta[name="csrf-token"]') || {}).content || "";
 
+    var t = (window.obrl && window.obrl.t ? window.obrl.t : function (s) { return s; });
     function $(id) { return document.getElementById(id); }
     function on(id, evt, fn) { var el = $(id); if (el) el.addEventListener(evt, fn); }
 
@@ -77,7 +78,7 @@
         var k = e.key.toLowerCase();
         if ((e.ctrlKey || e.metaKey) && ["c", "x", "a", "s", "p", "u"].indexOf(k) >= 0) {
             e.preventDefault();
-            if (k === "p") toast("Printing is not available");
+            if (k === "p") toast(t("Printing is not available"));
         }
     });
 
@@ -105,13 +106,16 @@
     // ---------- Bookmarks ----------
     var marks = JSON.parse($("marksData").textContent || "[]");
     function markLabel(m) {
-        return (mode === "page" ? "Page " : "Section ") + (m.position + 1) + (m.note ? " · " + m.note : "");
+        return t(mode === "page" ? "Page {0}" : "Section {0}", m.position + 1) + (m.note ? " · " + m.note : "");
     }
     function renderMarks() {
         var box = $("marks");
         box.innerHTML = "";
         if (marks.length === 0) {
-            box.innerHTML = '<div class="px-3 py-1 small text-muted">No bookmarks yet.</div>';
+            var empty = document.createElement("div");
+            empty.className = "px-3 py-1 small text-muted";
+            empty.textContent = t("No bookmarks yet.");
+            box.appendChild(empty);
             return;
         }
         marks.sort(function (a, b) { return a.position - b.position || a.offset - b.offset; });
@@ -124,7 +128,7 @@
             go.addEventListener("click", function () { goTo(m.position, m.offset); });
             var del = document.createElement("button");
             del.className = "btn btn-sm btn-link text-muted";
-            del.title = "Remove bookmark";
+            del.title = t("Remove bookmark");
             del.innerHTML = '<i class="bi bi-x-lg"></i>';
             del.addEventListener("click", function (e) {
                 e.stopPropagation();
@@ -139,14 +143,14 @@
         });
     }
     on("addMark", "click", function () {
-        var note = window.prompt("Optional note for this bookmark:", "");
+        var note = window.prompt(t("Optional note for this bookmark:"), "");
         if (note === null) return;
         api("POST", "/read/" + bookId + "/bookmarks", { position: position, offset: stageOffset(), note: note })
             .then(function (r) { return r.json(); })
             .then(function (m) {
                 marks.push({ id: m.id, position: m.position, offset: m.offset, note: m.note });
                 renderMarks();
-                toast("Bookmark added");
+                toast(t("Bookmark added"));
             });
     });
     renderMarks();
@@ -280,7 +284,7 @@
                 .catch(function (err) {
                     if (token !== renderToken) return;
                     wrap.classList.remove("loading");
-                    toast(err.message === "slow" ? "You are turning pages very fast. Please wait a moment." : "This page could not be loaded. Try again.");
+                    toast(t(err.message === "slow" ? "You are turning pages very fast. Please wait a moment." : "This page could not be loaded. Try again."));
                 });
         }
 
@@ -382,7 +386,12 @@
 
         // Table of contents.
         var tocBox = $("toc");
-        if (toc.length === 0) tocBox.innerHTML = '<div class="px-3 py-1 small text-muted">No contents list.</div>';
+        if (toc.length === 0) {
+            var none = document.createElement("div");
+            none.className = "px-3 py-1 small text-muted";
+            none.textContent = t("No contents list.");
+            tocBox.appendChild(none);
+        }
         toc.forEach(function (t) {
             var b = document.createElement("button");
             b.className = "dropdown-item";
@@ -418,7 +427,7 @@
                     });
                 })
                 .catch(function (err) {
-                    toast(err.message === "slow" ? "You are moving very fast. Please wait a moment." : "This part could not be loaded. Try again.");
+                    toast(t(err.message === "slow" ? "You are moving very fast. Please wait a moment." : "This part could not be loaded. Try again."));
                 });
         }
 

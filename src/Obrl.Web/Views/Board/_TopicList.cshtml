@@ -5,9 +5,9 @@
         <li class="@(t.IsHidden ? "is-hidden" : "")">
             <a href="/board/@t.Id" class="topic-link">
                 <span class="topic-title">
-                    @if (t.IsPinned) { <i class="bi bi-pin-angle-fill text-primary" title="Pinned"></i> }
-                    @if (t.IsLocked) { <i class="bi bi-lock-fill text-muted" title="Locked"></i> }
-                    @if (t.IsHidden) { <span class="badge text-bg-secondary">Hidden</span> }
+                    @if (t.IsPinned) { <i class="bi bi-pin-angle-fill text-primary" title="@L["Pinned"]"></i> }
+                    @if (t.IsLocked) { <i class="bi bi-lock-fill text-muted" title="@L["Locked"]"></i> }
+                    @if (t.IsHidden) { <span class="badge text-bg-secondary">@L["Hidden"]</span> }
                     @t.Title
                 </span>
                 <span class="topic-meta">
@@ -15,8 +15,8 @@
                 </span>
             </a>
             <span class="topic-stats">
-                <span title="Replies"><i class="bi bi-chat"></i> @t.Replies</span>
-                <span class="d-none d-sm-inline text-muted" title="Last activity">@t.LastActivityAt.ToString("d MMM HH:mm")</span>
+                <span title="@L["Replies"]"><i class="bi bi-chat"></i> @t.Replies</span>
+                <span class="d-none d-sm-inline text-muted" title="@L["Last activity"]">@t.LastActivityAt.ToString("d MMM HH:mm")</span>
             </span>
         </li>
     }

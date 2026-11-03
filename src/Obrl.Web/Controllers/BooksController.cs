@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ using Obrl.Web.Services;
 
 namespace Obrl.Web.Controllers;
 
-public class BooksController(ObrlDbContext db, AccessService access, BookStorage storage, ActivityLog log) : Controller
+public class BooksController(ObrlDbContext db, AccessService access, BookStorage storage, ActivityLog log, IStringLocalizer<SharedResource> L) : Controller
 {
     [HttpGet("/books/{id:guid}")]
     public async Task<IActionResult> Details(Guid id, CancellationToken ct)
@@ -73,7 +74,7 @@ public class BooksController(ObrlDbContext db, AccessService access, BookStorage
             .SetProperty(b => b.RatingCount, b => db.Ratings.Count(r => r.BookId == id))
             .SetProperty(b => b.RatingAverage, b => db.Ratings.Where(r => r.BookId == id).Average(r => (double?)r.Stars) ?? 0), ct);
 
-        TempData["Message"] = stars == 0 ? "Your rating was removed." : "Thanks for rating this book.";
+        TempData["Message"] = (stars == 0 ? L["Your rating was removed."] : L["Thanks for rating this book."]).Value;
         return Redirect($"/books/{id}#rating");
     }
 

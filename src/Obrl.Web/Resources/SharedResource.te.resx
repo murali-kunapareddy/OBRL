@@ -1,0 +1,1400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- OBRL interface text in Telugu. The name of each entry is the English text; keep {0}-style placeholders and HTML tags as they are. -->
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Access denied" xml:space="preserve">
+    <value>ప్రవేశం నిరాకరించబడింది</value>
+  </data>
+  <data name="You do not have access to this resource." xml:space="preserve">
+    <value>ఈ పేజీని చూసే అనుమతి మీకు లేదు.</value>
+  </data>
+  <data name="Back to dashboard" xml:space="preserve">
+    <value>డాష్‌బోర్డ్‌కు తిరిగి వెళ్ళండి</value>
+  </data>
+  <data name="Locked out" xml:space="preserve">
+    <value>ఖాతా లాక్ అయింది</value>
+  </data>
+  <data name="This account has been locked out, please try again later." xml:space="preserve">
+    <value>ఈ ఖాతా లాక్ చేయబడింది. దయచేసి కొంతసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.</value>
+  </data>
+  <data name="Back to sign in" xml:space="preserve">
+    <value>సైన్ ఇన్‌కు తిరిగి వెళ్ళండి</value>
+  </data>
+  <data name="Sign in" xml:space="preserve">
+    <value>సైన్ ఇన్</value>
+  </data>
+  <data name="OBRL is for members only. Accounts are created by an administrator." xml:space="preserve">
+    <value>OBRL సభ్యులకు మాత్రమే. ఖాతాలను అడ్మిన్ సృష్టిస్తారు.</value>
+  </data>
+  <data name="You were signed out because your account signed in on another device." xml:space="preserve">
+    <value>మీ ఖాతా మరో పరికరంలో సైన్ ఇన్ అయినందున మీరు సైన్ అవుట్ అయ్యారు.</value>
+  </data>
+  <data name="Your sign-in settings changed. Please sign in again." xml:space="preserve">
+    <value>మీ సైన్-ఇన్ సెట్టింగ్‌లు మారాయి. దయచేసి మళ్ళీ సైన్ ఇన్ చేయండి.</value>
+  </data>
+  <data name="That passkey was not accepted. Try again, or use your password and authenticator code." xml:space="preserve">
+    <value>ఆ పాస్‌కీ అంగీకరించబడలేదు. మళ్ళీ ప్రయత్నించండి, లేదా మీ పాస్‌వర్డ్ మరియు ఆథెంటికేటర్ కోడ్ ఉపయోగించండి.</value>
+  </data>
+  <data name="You were signed out because nothing happened for a while. Please sign in again to carry on where you left off." xml:space="preserve">
+    <value>కొంతసేపు ఎలాంటి కార్యకలాపం లేనందున మీరు సైన్ అవుట్ అయ్యారు. ఆపిన చోటు నుండి కొనసాగించడానికి దయచేసి మళ్ళీ సైన్ ఇన్ చేయండి.</value>
+  </data>
+  <data name="Your session ended. Please sign in again." xml:space="preserve">
+    <value>మీ సెషన్ ముగిసింది. దయచేసి మళ్ళీ సైన్ ఇన్ చేయండి.</value>
+  </data>
+  <data name="Your account signs in with a passkey. Choose &lt;strong&gt;Sign in with a passkey&lt;/strong&gt; below." xml:space="preserve">
+    <value>మీ ఖాతా పాస్‌కీతో సైన్ ఇన్ అవుతుంది. క్రింద &lt;strong&gt;పాస్‌కీతో సైన్ ఇన్&lt;/strong&gt; ఎంచుకోండి.</value>
+  </data>
+  <data name="Sign in with a passkey" xml:space="preserve">
+    <value>పాస్‌కీతో సైన్ ఇన్</value>
+  </data>
+  <data name="or with your password" xml:space="preserve">
+    <value>లేదా మీ పాస్‌వర్డ్‌తో</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>ఈమెయిల్</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>పాస్‌వర్డ్</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>కొనసాగించండి</value>
+  </data>
+  <data name="Forgot your password or lost your authenticator or passkey? Ask an administrator to reset it. After 5 wrong attempts the account is locked for 15 minutes." xml:space="preserve">
+    <value>పాస్‌వర్డ్ మరిచిపోయారా లేదా ఆథెంటికేటర్ లేదా పాస్‌కీ పోయిందా? రీసెట్ చేయమని అడ్మిన్‌ను అడగండి. 5 తప్పు ప్రయత్నాల తర్వాత ఖాతా 15 నిమిషాల పాటు లాక్ అవుతుంది.</value>
+  </data>
+  <data name="Two-factor authentication" xml:space="preserve">
+    <value>రెండు-దశల ధృవీకరణ</value>
+  </data>
+  <data name="Your login is protected with an authenticator app. Enter your authenticator code below." xml:space="preserve">
+    <value>మీ లాగిన్ ఆథెంటికేటర్ యాప్‌తో రక్షించబడింది. మీ ఆథెంటికేటర్ కోడ్‌ను క్రింద నమోదు చేయండి.</value>
+  </data>
+  <data name="Log in" xml:space="preserve">
+    <value>లాగిన్</value>
+  </data>
+  <data name="Don't have access to your authenticator device?" xml:space="preserve">
+    <value>మీ ఆథెంటికేటర్ పరికరం అందుబాటులో లేదా?</value>
+  </data>
+  <data name="Log in with a recovery code" xml:space="preserve">
+    <value>రికవరీ కోడ్‌తో లాగిన్ అవ్వండి</value>
+  </data>
+  <data name="Recovery code verification" xml:space="preserve">
+    <value>రికవరీ కోడ్ ధృవీకరణ</value>
+  </data>
+  <data name="You have requested to log in with a recovery code. This login will not be remembered until you provide an authenticator app code at log in." xml:space="preserve">
+    <value>మీరు రికవరీ కోడ్‌తో లాగిన్ అవ్వాలని కోరారు. లాగిన్ సమయంలో ఆథెంటికేటర్ యాప్ కోడ్ ఇచ్చే వరకు ఈ లాగిన్ గుర్తుంచుకోబడదు.</value>
+  </data>
+  <data name="Sign out" xml:space="preserve">
+    <value>సైన్ అవుట్</value>
+  </data>
+  <data name="You have signed out." xml:space="preserve">
+    <value>మీరు సైన్ అవుట్ అయ్యారు.</value>
+  </data>
+  <data name="Change password" xml:space="preserve">
+    <value>పాస్‌వర్డ్ మార్చండి</value>
+  </data>
+  <data name="Update password" xml:space="preserve">
+    <value>పాస్‌వర్డ్ నవీకరించండి</value>
+  </data>
+  <data name="Configure authenticator app" xml:space="preserve">
+    <value>ఆథెంటికేటర్ యాప్‌ను సెటప్ చేయండి</value>
+  </data>
+  <data name="To use an authenticator app go through the following steps:" xml:space="preserve">
+    <value>ఆథెంటికేటర్ యాప్ ఉపయోగించడానికి ఈ దశలను అనుసరించండి:</value>
+  </data>
+  <data name="Download a two-factor authenticator app like Microsoft Authenticator, Google Authenticator or any other TOTP app for your phone." xml:space="preserve">
+    <value>మీ ఫోన్‌లో Microsoft Authenticator, Google Authenticator లేదా ఇంకేదైనా TOTP ఆథెంటికేటర్ యాప్‌ను డౌన్‌లోడ్ చేసుకోండి.</value>
+  </data>
+  <data name="Scan the QR Code or enter this key &lt;kbd&gt;{0}&lt;/kbd&gt; into your two factor authenticator app. Spaces and casing do not matter." xml:space="preserve">
+    <value>QR కోడ్‌ను స్కాన్ చేయండి లేదా ఈ కీ &lt;kbd&gt;{0}&lt;/kbd&gt; ను మీ ఆథెంటికేటర్ యాప్‌లో నమోదు చేయండి. ఖాళీలు, పెద్ద/చిన్న అక్షరాలు పట్టింపు లేదు.</value>
+  </data>
+  <data name="Once you have scanned the QR code or input the key above, your two factor authentication app will provide you with a unique code. Enter the code in the confirmation box below." xml:space="preserve">
+    <value>QR కోడ్‌ను స్కాన్ చేసిన తర్వాత లేదా పై కీని నమోదు చేసిన తర్వాత, మీ ఆథెంటికేటర్ యాప్ ఒక ప్రత్యేక కోడ్ ఇస్తుంది. ఆ కోడ్‌ను క్రింది పెట్టెలో నమోదు చేయండి.</value>
+  </data>
+  <data name="Verification code" xml:space="preserve">
+    <value>ధృవీకరణ కోడ్</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>ధృవీకరించండి</value>
+  </data>
+  <data name="Generate recovery codes" xml:space="preserve">
+    <value>రికవరీ కోడ్‌లను సృష్టించండి</value>
+  </data>
+  <data name="Put these codes in a safe place." xml:space="preserve">
+    <value>ఈ కోడ్‌లను సురక్షితమైన చోట ఉంచండి.</value>
+  </data>
+  <data name="If you lose your device and don't have the recovery codes you will lose access to your account." xml:space="preserve">
+    <value>మీ పరికరం పోయి, రికవరీ కోడ్‌లు కూడా లేకపోతే మీ ఖాతాకు ప్రవేశం కోల్పోతారు.</value>
+  </data>
+  <data name="Generating new recovery codes does not change the keys used in authenticator apps. If you wish to change the key used in an authenticator app you should &lt;a href=&quot;/Identity/Account/Manage/ResetAuthenticator&quot;&gt;reset your authenticator keys&lt;/a&gt;." xml:space="preserve">
+    <value>కొత్త రికవరీ కోడ్‌లు సృష్టించడం వల్ల ఆథెంటికేటర్ యాప్ కీలు మారవు. ఆథెంటికేటర్ యాప్ కీని మార్చాలనుకుంటే &lt;a href="/Identity/Account/Manage/ResetAuthenticator"&gt;మీ ఆథెంటికేటర్ కీలను రీసెట్ చేయండి&lt;/a&gt;.</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>ప్రొఫైల్</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>సేవ్ చేయండి</value>
+  </data>
+  <data name="Passkeys" xml:space="preserve">
+    <value>పాస్‌కీలు</value>
+  </data>
+  <data name="A passkey lets you sign in with your fingerprint, face or device PIN instead of a password and code. It only works on this site, so it cannot be phished. You can add one for each device you use." xml:space="preserve">
+    <value>పాస్‌కీతో మీరు పాస్‌వర్డ్, కోడ్ బదులు మీ వేలిముద్ర, ముఖం లేదా పరికర PIN తో సైన్ ఇన్ చేయవచ్చు. ఇది ఈ సైట్‌లో మాత్రమే పనిచేస్తుంది, కాబట్టి దీన్ని ఫిషింగ్ ద్వారా దొంగిలించలేరు. మీరు ఉపయోగించే ప్రతి పరికరానికి ఒకటి జోడించవచ్చు.</value>
+  </data>
+  <data name="Add a passkey, or &lt;a href=&quot;/Identity/Account/Manage/EnableAuthenticator&quot;&gt;set up an authenticator app&lt;/a&gt;, before using OBRL." xml:space="preserve">
+    <value>OBRL ఉపయోగించే ముందు పాస్‌కీ జోడించండి, లేదా &lt;a href="/Identity/Account/Manage/EnableAuthenticator"&gt;ఆథెంటికేటర్ యాప్‌ను సెటప్ చేయండి&lt;/a&gt;.</value>
+  </data>
+  <data name="This browser cannot create passkeys. Use a recent version of Chrome, Edge, Firefox or Safari." xml:space="preserve">
+    <value>ఈ బ్రౌజర్ పాస్‌కీలను సృష్టించలేదు. Chrome, Edge, Firefox లేదా Safari యొక్క తాజా వెర్షన్ ఉపయోగించండి.</value>
+  </data>
+  <data name="Added {0}" xml:space="preserve">
+    <value>{0} న జోడించబడింది</value>
+  </data>
+  <data name="synced across your devices" xml:space="preserve">
+    <value>మీ అన్ని పరికరాల్లో సింక్ అవుతుంది</value>
+  </data>
+  <data name="stays on one device" xml:space="preserve">
+    <value>ఒకే పరికరంలో ఉంటుంది</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>పేరు మార్చండి</value>
+  </data>
+  <data name="New name" xml:space="preserve">
+    <value>కొత్త పేరు</value>
+  </data>
+  <data name="Remove the passkey “{0}”? You will not be able to sign in with it any more." xml:space="preserve">
+    <value>“{0}” పాస్‌కీని తొలగించాలా? ఇకపై దానితో సైన్ ఇన్ చేయలేరు.</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>తొలగించండి</value>
+  </data>
+  <data name="Name this passkey" xml:space="preserve">
+    <value>ఈ పాస్‌కీకి పేరు పెట్టండి</value>
+  </data>
+  <data name="e.g. My phone, Work laptop" xml:space="preserve">
+    <value>ఉదా. నా ఫోన్, ఆఫీస్ ల్యాప్‌టాప్</value>
+  </data>
+  <data name="Add a passkey" xml:space="preserve">
+    <value>పాస్‌కీ జోడించండి</value>
+  </data>
+  <data name="You have the maximum of {0} passkeys." xml:space="preserve">
+    <value>మీకు గరిష్ఠంగా అనుమతించిన {0} పాస్‌కీలు ఉన్నాయి.</value>
+  </data>
+  <data name="Your browser did not create a passkey. Please try again." xml:space="preserve">
+    <value>మీ బ్రౌజర్ పాస్‌కీని సృష్టించలేదు. దయచేసి మళ్ళీ ప్రయత్నించండి.</value>
+  </data>
+  <data name="You can have up to {0} passkeys. Remove one first." xml:space="preserve">
+    <value>మీకు గరిష్ఠంగా {0} పాస్‌కీలు ఉండవచ్చు. ముందుగా ఒకదాన్ని తొలగించండి.</value>
+  </data>
+  <data name="This passkey request expired. Please try again." xml:space="preserve">
+    <value>ఈ పాస్‌కీ అభ్యర్థన గడువు ముగిసింది. దయచేసి మళ్ళీ ప్రయత్నించండి.</value>
+  </data>
+  <data name="This passkey could not be added: {0}" xml:space="preserve">
+    <value>ఈ పాస్‌కీని జోడించలేకపోయాం: {0}</value>
+  </data>
+  <data name="This passkey could not be saved. {0}" xml:space="preserve">
+    <value>ఈ పాస్‌కీని సేవ్ చేయలేకపోయాం. {0}</value>
+  </data>
+  <data name="Passkey “{0}” added. Next time, choose “Sign in with a passkey”." xml:space="preserve">
+    <value>“{0}” పాస్‌కీ జోడించబడింది. తదుపరిసారి “పాస్‌కీతో సైన్ ఇన్” ఎంచుకోండి.</value>
+  </data>
+  <data name="Passkey renamed." xml:space="preserve">
+    <value>పాస్‌కీ పేరు మార్చబడింది.</value>
+  </data>
+  <data name="Passkey “{0}” removed. Also delete it from your device or password manager." xml:space="preserve">
+    <value>“{0}” పాస్‌కీ తొలగించబడింది. మీ పరికరం లేదా పాస్‌వర్డ్ మేనేజర్ నుండి కూడా దాన్ని తొలగించండి.</value>
+  </data>
+  <data name="Personal data" xml:space="preserve">
+    <value>వ్యక్తిగత డేటా</value>
+  </data>
+  <data name="Your account contains personal data that you have given us. You can download a copy of it here." xml:space="preserve">
+    <value>మీరు మాకు ఇచ్చిన వ్యక్తిగత డేటా మీ ఖాతాలో ఉంది. దాని కాపీని ఇక్కడ డౌన్‌లోడ్ చేసుకోవచ్చు.</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>డౌన్‌లోడ్</value>
+  </data>
+  <data name="Reset authenticator key" xml:space="preserve">
+    <value>ఆథెంటికేటర్ కీని రీసెట్ చేయండి</value>
+  </data>
+  <data name="If you reset your authenticator key your authenticator app will not work until you reconfigure it." xml:space="preserve">
+    <value>ఆథెంటికేటర్ కీని రీసెట్ చేస్తే, మళ్ళీ సెటప్ చేసే వరకు మీ ఆథెంటికేటర్ యాప్ పనిచేయదు.</value>
+  </data>
+  <data name="This process disables 2FA until you verify your authenticator app. If you do not complete your authenticator app configuration you may lose access to your account." xml:space="preserve">
+    <value>మీ ఆథెంటికేటర్ యాప్‌ను ధృవీకరించే వరకు ఇది రెండు-దశల ధృవీకరణను ఆపివేస్తుంది. సెటప్ పూర్తి చేయకపోతే మీ ఖాతాకు ప్రవేశం కోల్పోవచ్చు.</value>
+  </data>
+  <data name="Recovery codes" xml:space="preserve">
+    <value>రికవరీ కోడ్‌లు</value>
+  </data>
+  <data name="Authenticator app" xml:space="preserve">
+    <value>ఆథెంటికేటర్ యాప్</value>
+  </data>
+  <data name="You have no recovery codes left." xml:space="preserve">
+    <value>మీకు రికవరీ కోడ్‌లు ఏవీ మిగలలేదు.</value>
+  </data>
+  <data name="You must &lt;a href=&quot;/Identity/Account/Manage/GenerateRecoveryCodes&quot;&gt;generate a new set of recovery codes&lt;/a&gt; before you can log in with a recovery code." xml:space="preserve">
+    <value>రికవరీ కోడ్‌తో లాగిన్ అవ్వాలంటే ముందుగా &lt;a href="/Identity/Account/Manage/GenerateRecoveryCodes"&gt;కొత్త రికవరీ కోడ్‌లను సృష్టించాలి&lt;/a&gt;.</value>
+  </data>
+  <data name="You have 1 recovery code left." xml:space="preserve">
+    <value>మీకు 1 రికవరీ కోడ్ మాత్రమే మిగిలింది.</value>
+  </data>
+  <data name="You can &lt;a href=&quot;/Identity/Account/Manage/GenerateRecoveryCodes&quot;&gt;generate a new set of recovery codes&lt;/a&gt;." xml:space="preserve">
+    <value>మీరు &lt;a href="/Identity/Account/Manage/GenerateRecoveryCodes"&gt;కొత్త రికవరీ కోడ్‌లను సృష్టించవచ్చు&lt;/a&gt;.</value>
+  </data>
+  <data name="You have {0} recovery codes left." xml:space="preserve">
+    <value>మీకు {0} రికవరీ కోడ్‌లు మిగిలాయి.</value>
+  </data>
+  <data name="You should &lt;a href=&quot;/Identity/Account/Manage/GenerateRecoveryCodes&quot;&gt;generate a new set of recovery codes&lt;/a&gt;." xml:space="preserve">
+    <value>మీరు &lt;a href="/Identity/Account/Manage/GenerateRecoveryCodes"&gt;కొత్త రికవరీ కోడ్‌లను సృష్టించడం&lt;/a&gt; మంచిది.</value>
+  </data>
+  <data name="Your sign-in is protected with an authenticator app." xml:space="preserve">
+    <value>మీ సైన్-ఇన్ ఆథెంటికేటర్ యాప్‌తో రక్షించబడింది.</value>
+  </data>
+  <data name="Use an authenticator app on your phone to get a code each time you sign in with your password." xml:space="preserve">
+    <value>పాస్‌వర్డ్‌తో సైన్ ఇన్ చేసిన ప్రతిసారీ కోడ్ పొందడానికి మీ ఫోన్‌లో ఆథెంటికేటర్ యాప్ ఉపయోగించండి.</value>
+  </data>
+  <data name="Add authenticator app" xml:space="preserve">
+    <value>ఆథెంటికేటర్ యాప్ జోడించండి</value>
+  </data>
+  <data name="Set up authenticator app" xml:space="preserve">
+    <value>ఆథెంటికేటర్ యాప్‌ను సెటప్ చేయండి</value>
+  </data>
+  <data name="Reset authenticator app" xml:space="preserve">
+    <value>ఆథెంటికేటర్ యాప్‌ను రీసెట్ చేయండి</value>
+  </data>
+  <data name="Reset recovery codes" xml:space="preserve">
+    <value>రికవరీ కోడ్‌లను రీసెట్ చేయండి</value>
+  </data>
+  <data name="Forget this browser" xml:space="preserve">
+    <value>ఈ బ్రౌజర్‌ను మరచిపోండి</value>
+  </data>
+  <data name="Manage your account" xml:space="preserve">
+    <value>మీ ఖాతాను నిర్వహించండి</value>
+  </data>
+  <data name="Change your account settings" xml:space="preserve">
+    <value>మీ ఖాతా సెట్టింగ్‌లను మార్చండి</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>మూసివేయండి</value>
+  </data>
+  <data name="Unknown role." xml:space="preserve">
+    <value>తెలియని పాత్ర.</value>
+  </data>
+  <data name="Created {0}. Give them the temporary password; they will set up two-factor sign-in at first login." xml:space="preserve">
+    <value>{0} సృష్టించబడింది. వారికి తాత్కాలిక పాస్‌వర్డ్ ఇవ్వండి; మొదటి లాగిన్‌లో వారు రెండు-దశల సైన్-ఇన్‌ను సెటప్ చేస్తారు.</value>
+  </data>
+  <data name="You cannot change your own role." xml:space="preserve">
+    <value>మీ స్వంత పాత్రను మీరు మార్చలేరు.</value>
+  </data>
+  <data name="{0} is now {1}." xml:space="preserve">
+    <value>{0} ఇప్పుడు {1}.</value>
+  </data>
+  <data name="You cannot lock your own account." xml:space="preserve">
+    <value>మీ స్వంత ఖాతాను మీరు లాక్ చేయలేరు.</value>
+  </data>
+  <data name="{0} is locked out." xml:space="preserve">
+    <value>{0} లాక్ చేయబడింది.</value>
+  </data>
+  <data name="{0} is unlocked." xml:space="preserve">
+    <value>{0} అన్‌లాక్ చేయబడింది.</value>
+  </data>
+  <data name="New temporary password set for {0}." xml:space="preserve">
+    <value>{0} కోసం కొత్త తాత్కాలిక పాస్‌వర్డ్ సెట్ చేయబడింది.</value>
+  </data>
+  <data name="Authenticator app and passkeys reset for {0}. They will set up a strong sign-in again at next login." xml:space="preserve">
+    <value>{0} కోసం ఆథెంటికేటర్ యాప్ మరియు పాస్‌కీలు రీసెట్ చేయబడ్డాయి. తదుపరి లాగిన్‌లో వారు మళ్ళీ బలమైన సైన్-ఇన్‌ను సెటప్ చేస్తారు.</value>
+  </data>
+  <data name="{0} was signed out." xml:space="preserve">
+    <value>{0} సైన్ అవుట్ చేయబడ్డారు.</value>
+  </data>
+  <data name="Members are now signed out after {0} minutes without activity." xml:space="preserve">
+    <value>ఇకపై {0} నిమిషాలు ఎలాంటి కార్యకలాపం లేకపోతే సభ్యులు సైన్ అవుట్ అవుతారు.</value>
+  </data>
+  <data name="The disclaimer cannot be empty." xml:space="preserve">
+    <value>నిరాకరణ ఖాళీగా ఉండకూడదు.</value>
+  </data>
+  <data name="No changes." xml:space="preserve">
+    <value>మార్పులు లేవు.</value>
+  </data>
+  <data name="Saved. Every user must accept the new version at their next page view." xml:space="preserve">
+    <value>సేవ్ చేయబడింది. ప్రతి వినియోగదారు తదుపరి పేజీ తెరిచినప్పుడు కొత్త వెర్షన్‌ను అంగీకరించాలి.</value>
+  </data>
+  <data name="Give the topic a title." xml:space="preserve">
+    <value>అంశానికి ఒక శీర్షిక ఇవ్వండి.</value>
+  </data>
+  <data name="Write a message." xml:space="preserve">
+    <value>ఒక సందేశం రాయండి.</value>
+  </data>
+  <data name="This topic is locked." xml:space="preserve">
+    <value>ఈ అంశం లాక్ చేయబడింది.</value>
+  </data>
+  <data name="Write something before posting." xml:space="preserve">
+    <value>పోస్ట్ చేసే ముందు ఏదైనా రాయండి.</value>
+  </data>
+  <data name="Your post was deleted." xml:space="preserve">
+    <value>మీ పోస్ట్ తొలగించబడింది.</value>
+  </data>
+  <data name="Your rating was removed." xml:space="preserve">
+    <value>మీ రేటింగ్ తొలగించబడింది.</value>
+  </data>
+  <data name="Thanks for rating this book." xml:space="preserve">
+    <value>ఈ పుస్తకానికి రేటింగ్ ఇచ్చినందుకు ధన్యవాదాలు.</value>
+  </data>
+  <data name="Parent not found." xml:space="preserve">
+    <value>పై వర్గం కనబడలేదు.</value>
+  </data>
+  <data name="Added “{0}”." xml:space="preserve">
+    <value>“{0}” జోడించబడింది.</value>
+  </data>
+  <data name="A category cannot be moved inside itself." xml:space="preserve">
+    <value>ఒక వర్గాన్ని దాని లోపలికే తరలించలేరు.</value>
+  </data>
+  <data name="Saved “{0}”." xml:space="preserve">
+    <value>“{0}” సేవ్ చేయబడింది.</value>
+  </data>
+  <data name="“{0}” has sub categories. Move or delete them first." xml:space="preserve">
+    <value>“{0}” లో ఉప వర్గాలు ఉన్నాయి. ముందుగా వాటిని తరలించండి లేదా తొలగించండి.</value>
+  </data>
+  <data name="“{0}” still has books. Move them to another category first." xml:space="preserve">
+    <value>“{0}” లో ఇంకా పుస్తకాలు ఉన్నాయి. ముందుగా వాటిని మరో వర్గానికి తరలించండి.</value>
+  </data>
+  <data name="Deleted “{0}”." xml:space="preserve">
+    <value>“{0}” తొలగించబడింది.</value>
+  </data>
+  <data name="A category with this name already exists here." xml:space="preserve">
+    <value>ఈ పేరుతో ఒక వర్గం ఇక్కడ ఇప్పటికే ఉంది.</value>
+  </data>
+  <data name="Your comment was deleted." xml:space="preserve">
+    <value>మీ వ్యాఖ్య తొలగించబడింది.</value>
+  </data>
+  <data name="Thanks. A Moderator will take a look." xml:space="preserve">
+    <value>ధన్యవాదాలు. ఒక మోడరేటర్ పరిశీలిస్తారు.</value>
+  </data>
+  <data name="“{0}” is now in the library." xml:space="preserve">
+    <value>“{0}” ఇప్పుడు గ్రంథాలయంలో ఉంది.</value>
+  </data>
+  <data name="“{0}” was sent back to the uploader." xml:space="preserve">
+    <value>“{0}” అప్‌లోడ్ చేసినవారికి తిరిగి పంపబడింది.</value>
+  </data>
+  <data name="Subscribe to this book or one of its categories to read it." xml:space="preserve">
+    <value>చదవడానికి ఈ పుస్తకానికి లేదా దాని వర్గాల్లో ఒకదానికి సబ్‌స్క్రైబ్ చేయండి.</value>
+  </data>
+  <data name="Choose a file to upload." xml:space="preserve">
+    <value>అప్‌లోడ్ చేయడానికి ఒక ఫైల్ ఎంచుకోండి.</value>
+  </data>
+  <data name="This file type is not supported." xml:space="preserve">
+    <value>ఈ ఫైల్ రకానికి మద్దతు లేదు.</value>
+  </data>
+  <data name="“{0}” was uploaded and is being prepared. It usually takes under a minute." xml:space="preserve">
+    <value>“{0}” అప్‌లోడ్ అయింది, సిద్ధం చేయబడుతోంది. సాధారణంగా ఒక నిమిషం కంటే తక్కువ పడుతుంది.</value>
+  </data>
+  <data name="“{0}” was uploaded. Readers will see it once a Moderator has approved it." xml:space="preserve">
+    <value>“{0}” అప్‌లోడ్ అయింది. మోడరేటర్ ఆమోదించిన తర్వాత పాఠకులకు కనిపిస్తుంది.</value>
+  </data>
+  <data name="Saved and sent back for review." xml:space="preserve">
+    <value>సేవ్ చేయబడింది, మళ్ళీ సమీక్షకు పంపబడింది.</value>
+  </data>
+  <data name="Saved." xml:space="preserve">
+    <value>సేవ్ చేయబడింది.</value>
+  </data>
+  <data name="This book is being converted right now. Try again in a minute." xml:space="preserve">
+    <value>ఈ పుస్తకం ప్రస్తుతం మార్చబడుతోంది. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.</value>
+  </data>
+  <data name="“{0}” was deleted." xml:space="preserve">
+    <value>“{0}” తొలగించబడింది.</value>
+  </data>
+  <data name="Pick at least one category, so readers can find the book." xml:space="preserve">
+    <value>పాఠకులు పుస్తకాన్ని కనుగొనడానికి కనీసం ఒక వర్గాన్ని ఎంచుకోండి.</value>
+  </data>
+  <data name="One of the categories no longer exists." xml:space="preserve">
+    <value>వర్గాల్లో ఒకటి ఇప్పుడు లేదు.</value>
+  </data>
+  <data name="An unknown failure has occurred." xml:space="preserve">
+    <value>తెలియని లోపం జరిగింది.</value>
+  </data>
+  <data name="Someone else changed this account at the same time. Please try again." xml:space="preserve">
+    <value>అదే సమయంలో మరొకరు ఈ ఖాతాను మార్చారు. దయచేసి మళ్ళీ ప్రయత్నించండి.</value>
+  </data>
+  <data name="Incorrect password." xml:space="preserve">
+    <value>పాస్‌వర్డ్ తప్పు.</value>
+  </data>
+  <data name="Username '{0}' is invalid." xml:space="preserve">
+    <value>వినియోగదారు పేరు '{0}' చెల్లదు.</value>
+  </data>
+  <data name="Email '{0}' is invalid." xml:space="preserve">
+    <value>ఈమెయిల్ '{0}' చెల్లదు.</value>
+  </data>
+  <data name="Username '{0}' is already taken." xml:space="preserve">
+    <value>వినియోగదారు పేరు '{0}' ఇప్పటికే వాడుకలో ఉంది.</value>
+  </data>
+  <data name="Email '{0}' is already taken." xml:space="preserve">
+    <value>ఈమెయిల్ '{0}' ఇప్పటికే వాడుకలో ఉంది.</value>
+  </data>
+  <data name="This account already has a password." xml:space="preserve">
+    <value>ఈ ఖాతాకు ఇప్పటికే పాస్‌వర్డ్ ఉంది.</value>
+  </data>
+  <data name="Passwords must be at least {0} characters." xml:space="preserve">
+    <value>పాస్‌వర్డ్‌లో కనీసం {0} అక్షరాలు ఉండాలి.</value>
+  </data>
+  <data name="Passwords must use at least {0} different characters." xml:space="preserve">
+    <value>పాస్‌వర్డ్‌లో కనీసం {0} వేర్వేరు అక్షరాలు ఉండాలి.</value>
+  </data>
+  <data name="Passwords must have at least one character that is not a letter or digit." xml:space="preserve">
+    <value>పాస్‌వర్డ్‌లో అక్షరం లేదా అంకె కాని కనీసం ఒక గుర్తు ఉండాలి.</value>
+  </data>
+  <data name="Passwords must have at least one digit ('0'-'9')." xml:space="preserve">
+    <value>పాస్‌వర్డ్‌లో కనీసం ఒక అంకె ('0'-'9') ఉండాలి.</value>
+  </data>
+  <data name="Passwords must have at least one lowercase letter ('a'-'z')." xml:space="preserve">
+    <value>పాస్‌వర్డ్‌లో కనీసం ఒక చిన్న ఆంగ్ల అక్షరం ('a'-'z') ఉండాలి.</value>
+  </data>
+  <data name="Passwords must have at least one uppercase letter ('A'-'Z')." xml:space="preserve">
+    <value>పాస్‌వర్డ్‌లో కనీసం ఒక పెద్ద ఆంగ్ల అక్షరం ('A'-'Z') ఉండాలి.</value>
+  </data>
+  <data name="The value '{0}' is not valid." xml:space="preserve">
+    <value>'{0}' విలువ చెల్లదు.</value>
+  </data>
+  <data name="The value '{0}' is not valid for {1}." xml:space="preserve">
+    <value>{1} కోసం '{0}' విలువ చెల్లదు.</value>
+  </data>
+  <data name="The {0} field is required." xml:space="preserve">
+    <value>{0} తప్పనిసరి.</value>
+  </data>
+  <data name="A value is required." xml:space="preserve">
+    <value>ఒక విలువ అవసరం.</value>
+  </data>
+  <data name="{0} must be a number." xml:space="preserve">
+    <value>{0} ఒక సంఖ్య అయి ఉండాలి.</value>
+  </data>
+  <data name="This field must be a number." xml:space="preserve">
+    <value>ఈ ఫీల్డ్ ఒక సంఖ్య అయి ఉండాలి.</value>
+  </data>
+  <data name="The value is not valid for {0}." xml:space="preserve">
+    <value>{0} కోసం ఈ విలువ చెల్లదు.</value>
+  </data>
+  <data name="The value is not valid." xml:space="preserve">
+    <value>ఈ విలువ చెల్లదు.</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>శీర్షిక</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>సందేశం</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>రచయిత</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>వివరణ</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>వర్గాలు</value>
+  </data>
+  <data name="Book file" xml:space="preserve">
+    <value>పుస్తకం ఫైల్</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>పేరు</value>
+  </data>
+  <data name="Parent category" xml:space="preserve">
+    <value>పై వర్గం</value>
+  </data>
+  <data name="Sort order" xml:space="preserve">
+    <value>క్రమం</value>
+  </data>
+  <data name="Display name" xml:space="preserve">
+    <value>ప్రదర్శన పేరు</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>పాత్ర</value>
+  </data>
+  <data name="Temporary password" xml:space="preserve">
+    <value>తాత్కాలిక పాస్‌వర్డ్</value>
+  </data>
+  <data name="Activity" xml:space="preserve">
+    <value>కార్యకలాపం</value>
+  </data>
+  <data name="The latest 300 events. Full history is kept in the ActivityEvents table for analysis." xml:space="preserve">
+    <value>తాజా 300 సంఘటనలు. విశ్లేషణ కోసం పూర్తి చరిత్ర ActivityEvents పట్టికలో ఉంటుంది.</value>
+  </data>
+  <data name="All events" xml:space="preserve">
+    <value>అన్ని సంఘటనలు</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>ఫిల్టర్</value>
+  </data>
+  <data name="When (UTC)" xml:space="preserve">
+    <value>సమయం (UTC)</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>సంఘటన</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>వినియోగదారు</value>
+  </data>
+  <data name="Book" xml:space="preserve">
+    <value>పుస్తకం</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>వివరాలు</value>
+  </data>
+  <data name="(deleted)" xml:space="preserve">
+    <value>(తొలగించబడింది)</value>
+  </data>
+  <data name="Add user" xml:space="preserve">
+    <value>వినియోగదారుని జోడించండి</value>
+  </data>
+  <data name="Share the temporary password with the person privately. At first sign-in they must set up an authenticator app and accept the disclaimer." xml:space="preserve">
+    <value>తాత్కాలిక పాస్‌వర్డ్‌ను ఆ వ్యక్తికి రహస్యంగా తెలియజేయండి. మొదటి సైన్-ఇన్‌లో వారు ఆథెంటికేటర్ యాప్‌ను సెటప్ చేసి, నిరాకరణను అంగీకరించాలి.</value>
+  </data>
+  <data name="User reads · Contributor also uploads · Moderator also manages categories and all books · Admin has full rights." xml:space="preserve">
+    <value>వినియోగదారు చదువుతారు · కంట్రిబ్యూటర్ అప్‌లోడ్ కూడా చేస్తారు · మోడరేటర్ వర్గాలను, అన్ని పుస్తకాలను కూడా నిర్వహిస్తారు · అడ్మిన్‌కు పూర్తి హక్కులు ఉంటాయి.</value>
+  </data>
+  <data name="At least 12 characters. Common leaked passwords are refused." xml:space="preserve">
+    <value>కనీసం 12 అక్షరాలు. బయటపడిన సాధారణ పాస్‌వర్డ్‌లు అంగీకరించబడవు.</value>
+  </data>
+  <data name="Create account" xml:space="preserve">
+    <value>ఖాతా సృష్టించండి</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>రద్దు చేయండి</value>
+  </data>
+  <data name="Disclaimer" xml:space="preserve">
+    <value>నిరాకరణ</value>
+  </data>
+  <data name="Users must accept this before they can use OBRL. Saving a change creates a new version that everyone must accept again." xml:space="preserve">
+    <value>OBRL ఉపయోగించే ముందు వినియోగదారులు దీన్ని అంగీకరించాలి. మార్పును సేవ్ చేస్తే కొత్త వెర్షన్ తయారవుతుంది, దాన్ని అందరూ మళ్ళీ అంగీకరించాలి.</value>
+  </data>
+  <data name="Current version: {0}, saved {1}." xml:space="preserve">
+    <value>ప్రస్తుత వెర్షన్: {0}, {1} న సేవ్ చేయబడింది.</value>
+  </data>
+  <data name="Have the final wording checked by someone who knows the law where you operate." xml:space="preserve">
+    <value>తుది పాఠాన్ని మీ ప్రాంతపు చట్టం తెలిసినవారితో సరిచూపించుకోండి.</value>
+  </data>
+  <data name="Publish a new version? Every user will be asked to accept it." xml:space="preserve">
+    <value>కొత్త వెర్షన్ ప్రచురించాలా? ప్రతి వినియోగదారుని దాన్ని అంగీకరించమని అడుగుతాం.</value>
+  </data>
+  <data name="Publish new version" xml:space="preserve">
+    <value>కొత్త వెర్షన్ ప్రచురించండి</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>సెట్టింగ్‌లు</value>
+  </data>
+  <data name="Library-wide settings. Changes apply straight away to everyone." xml:space="preserve">
+    <value>గ్రంథాలయం మొత్తానికి వర్తించే సెట్టింగ్‌లు. మార్పులు వెంటనే అందరికీ వర్తిస్తాయి.</value>
+  </data>
+  <data name="Sign out after inactivity" xml:space="preserve">
+    <value>కార్యకలాపం లేనప్పుడు సైన్ అవుట్</value>
+  </data>
+  <data name="Members are signed out when nothing has happened for this long: no scrolling, typing, clicking or page turns. A notice one minute before lets them stay signed in. Shorter is safer on shared computers; longer suits people who read one page for a long time." xml:space="preserve">
+    <value>ఇంతసేపు స్క్రోలింగ్, టైపింగ్, క్లిక్ లేదా పేజీ తిప్పడం వంటివి ఏమీ జరగకపోతే సభ్యులు సైన్ అవుట్ అవుతారు. ఒక నిమిషం ముందు వచ్చే సూచనతో వారు సైన్ ఇన్‌లోనే ఉండవచ్చు. పంచుకునే కంప్యూటర్లలో తక్కువ సమయం సురక్షితం; ఒకే పేజీని ఎక్కువసేపు చదివేవారికి ఎక్కువ సమయం అనుకూలం.</value>
+  </data>
+  <data name="Minutes" xml:space="preserve">
+    <value>నిమిషాలు</value>
+  </data>
+  <data name="{0} minutes" xml:space="preserve">
+    <value>{0} నిమిషాలు</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>వినియోగదారులు</value>
+  </data>
+  <data name="Accounts are created here. Every user sets up two-factor sign-in at first login." xml:space="preserve">
+    <value>ఖాతాలు ఇక్కడ సృష్టించబడతాయి. ప్రతి వినియోగదారు మొదటి లాగిన్‌లో రెండు-దశల సైన్-ఇన్‌ను సెటప్ చేస్తారు.</value>
+  </data>
+  <data name="Search by email or name" xml:space="preserve">
+    <value>ఈమెయిల్ లేదా పేరుతో వెతకండి</value>
+  </data>
+  <data name="Sign-in" xml:space="preserve">
+    <value>సైన్-ఇన్</value>
+  </data>
+  <data name="Last sign-in" xml:space="preserve">
+    <value>చివరి సైన్-ఇన్</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>లాక్ అయింది</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>సెట్ చేయండి</value>
+  </data>
+  <data name="not yet" xml:space="preserve">
+    <value>ఇంకా లేదు</value>
+  </data>
+  <data name="never" xml:space="preserve">
+    <value>ఎప్పుడూ లేదు</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>చర్యలు</value>
+  </data>
+  <data name="New temporary password" xml:space="preserve">
+    <value>కొత్త తాత్కాలిక పాస్‌వర్డ్</value>
+  </data>
+  <data name="Reset the authenticator app and remove all passkeys for {0}?" xml:space="preserve">
+    <value>{0} కోసం ఆథెంటికేటర్ యాప్‌ను రీసెట్ చేసి, అన్ని పాస్‌కీలను తొలగించాలా?</value>
+  </data>
+  <data name="Reset authenticator and passkeys" xml:space="preserve">
+    <value>ఆథెంటికేటర్, పాస్‌కీలను రీసెట్ చేయండి</value>
+  </data>
+  <data name="Sign out now" xml:space="preserve">
+    <value>ఇప్పుడే సైన్ అవుట్ చేయండి</value>
+  </data>
+  <data name="Unlock {0}?" xml:space="preserve">
+    <value>{0} ను అన్‌లాక్ చేయాలా?</value>
+  </data>
+  <data name="Lock {0}?" xml:space="preserve">
+    <value>{0} ను లాక్ చేయాలా?</value>
+  </data>
+  <data name="Unlock account" xml:space="preserve">
+    <value>ఖాతాను అన్‌లాక్ చేయండి</value>
+  </data>
+  <data name="Lock account" xml:space="preserve">
+    <value>ఖాతాను లాక్ చేయండి</value>
+  </data>
+  <data name="Message board" xml:space="preserve">
+    <value>సందేశ బోర్డు</value>
+  </data>
+  <data name="News, questions and reading suggestions for everyone in the library." xml:space="preserve">
+    <value>గ్రంథాలయంలోని అందరి కోసం వార్తలు, ప్రశ్నలు, చదవదగిన సూచనలు.</value>
+  </data>
+  <data name="New topic" xml:space="preserve">
+    <value>కొత్త అంశం</value>
+  </data>
+  <data name="No topics yet. Be the first to post." xml:space="preserve">
+    <value>ఇంకా అంశాలు లేవు. మొదట మీరే పోస్ట్ చేయండి.</value>
+  </data>
+  <data name="Newer" xml:space="preserve">
+    <value>కొత్తవి</value>
+  </data>
+  <data name="Older" xml:space="preserve">
+    <value>పాతవి</value>
+  </data>
+  <data name="Everyone in the library can read and reply. Be kind; Moderators can hide posts." xml:space="preserve">
+    <value>గ్రంథాలయంలోని అందరూ చదివి ప్రత్యుత్తరం ఇవ్వగలరు. మర్యాదగా ఉండండి; మోడరేటర్లు పోస్ట్‌లను దాచగలరు.</value>
+  </data>
+  <data name="Post topic" xml:space="preserve">
+    <value>అంశాన్ని పోస్ట్ చేయండి</value>
+  </data>
+  <data name="Pinned" xml:space="preserve">
+    <value>పిన్ చేయబడింది</value>
+  </data>
+  <data name="Unpin" xml:space="preserve">
+    <value>పిన్ తీసివేయండి</value>
+  </data>
+  <data name="Pin" xml:space="preserve">
+    <value>పిన్ చేయండి</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>అన్‌లాక్</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>లాక్</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>చూపించు</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>దాచు</value>
+  </data>
+  <data name="This topic is hidden from members." xml:space="preserve">
+    <value>ఈ అంశం సభ్యులకు కనిపించకుండా దాచబడింది.</value>
+  </data>
+  <data name="This topic is locked. No new replies." xml:space="preserve">
+    <value>ఈ అంశం లాక్ చేయబడింది. కొత్త ప్రత్యుత్తరాలు వీలుకావు.</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>ప్రత్యుత్తరం</value>
+  </data>
+  <data name="Post reply" xml:space="preserve">
+    <value>ప్రత్యుత్తరం పోస్ట్ చేయండి</value>
+  </data>
+  <data name="Hidden" xml:space="preserve">
+    <value>దాచబడింది</value>
+  </data>
+  <data name="Delete this topic?" xml:space="preserve">
+    <value>ఈ అంశాన్ని తొలగించాలా?</value>
+  </data>
+  <data name="Delete this reply?" xml:space="preserve">
+    <value>ఈ ప్రత్యుత్తరాన్ని తొలగించాలా?</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>తొలగించు</value>
+  </data>
+  <data name="Replies" xml:space="preserve">
+    <value>ప్రత్యుత్తరాలు</value>
+  </data>
+  <data name="Last activity" xml:space="preserve">
+    <value>చివరి కార్యకలాపం</value>
+  </data>
+  <data name="{0} pages" xml:space="preserve">
+    <value>{0} పేజీలు</value>
+  </data>
+  <data name="Reflowable text" xml:space="preserve">
+    <value>సర్దుకునే పాఠ్యం</value>
+  </data>
+  <data name="Cover of {0}" xml:space="preserve">
+    <value>{0} ముఖచిత్రం</value>
+  </data>
+  <data name="Waiting for review" xml:space="preserve">
+    <value>సమీక్ష కోసం వేచి ఉంది</value>
+  </data>
+  <data name="Not approved" xml:space="preserve">
+    <value>ఆమోదించబడలేదు</value>
+  </data>
+  <data name="{0} from 1 rating" xml:space="preserve">
+    <value>1 రేటింగ్ ఆధారంగా {0}</value>
+  </data>
+  <data name="{0} from {1} ratings" xml:space="preserve">
+    <value>{1} రేటింగ్‌ల ఆధారంగా {0}</value>
+  </data>
+  <data name="Start reading" xml:space="preserve">
+    <value>చదవడం ప్రారంభించండి</value>
+  </data>
+  <data name="Continue ({0}%)" xml:space="preserve">
+    <value>కొనసాగించండి ({0}%)</value>
+  </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>సబ్‌స్క్రైబ్ అయ్యారు</value>
+  </data>
+  <data name="Subscribe to read" xml:space="preserve">
+    <value>చదవడానికి సబ్‌స్క్రైబ్ చేయండి</value>
+  </data>
+  <data name="Edit details" xml:space="preserve">
+    <value>వివరాలు సవరించండి</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>ఆమోదించండి</value>
+  </data>
+  <data name="Take “{0}” out of the library? The uploader can edit it and resubmit." xml:space="preserve">
+    <value>“{0}” ను గ్రంథాలయం నుండి తీసివేయాలా? అప్‌లోడ్ చేసినవారు దాన్ని సవరించి మళ్ళీ పంపవచ్చు.</value>
+  </data>
+  <data name="Taken down by a Moderator." xml:space="preserve">
+    <value>ఒక మోడరేటర్ తీసివేశారు.</value>
+  </data>
+  <data name="Take down" xml:space="preserve">
+    <value>తీసివేయండి</value>
+  </data>
+  <data name="Moderator note:" xml:space="preserve">
+    <value>మోడరేటర్ గమనిక:</value>
+  </data>
+  <data name="About this book" xml:space="preserve">
+    <value>ఈ పుస్తకం గురించి</value>
+  </data>
+  <data name="Your bookmarks" xml:space="preserve">
+    <value>మీ బుక్‌మార్క్‌లు</value>
+  </data>
+  <data name="Page {0}" xml:space="preserve">
+    <value>పేజీ {0}</value>
+  </data>
+  <data name="Section {0}" xml:space="preserve">
+    <value>భాగం {0}</value>
+  </data>
+  <data name="Rate this book" xml:space="preserve">
+    <value>ఈ పుస్తకానికి రేటింగ్ ఇవ్వండి</value>
+  </data>
+  <data name="Your rating" xml:space="preserve">
+    <value>మీ రేటింగ్</value>
+  </data>
+  <data name="Rate from 1 to 5 stars" xml:space="preserve">
+    <value>1 నుండి 5 నక్షత్రాల వరకు రేటింగ్ ఇవ్వండి</value>
+  </data>
+  <data name="1 star" xml:space="preserve">
+    <value>1 నక్షత్రం</value>
+  </data>
+  <data name="{0} stars" xml:space="preserve">
+    <value>{0} నక్షత్రాలు</value>
+  </data>
+  <data name="Remove my rating" xml:space="preserve">
+    <value>నా రేటింగ్ తొలగించండి</value>
+  </data>
+  <data name="Comments" xml:space="preserve">
+    <value>వ్యాఖ్యలు</value>
+  </data>
+  <data name="Share what you thought of this book" xml:space="preserve">
+    <value>ఈ పుస్తకం గురించి మీ అభిప్రాయం పంచుకోండి</value>
+  </data>
+  <data name="Write a comment" xml:space="preserve">
+    <value>వ్యాఖ్య రాయండి</value>
+  </data>
+  <data name="Post comment" xml:space="preserve">
+    <value>వ్యాఖ్య పోస్ట్ చేయండి</value>
+  </data>
+  <data name="Subscribe to this book to rate it and join the discussion." xml:space="preserve">
+    <value>రేటింగ్ ఇవ్వడానికి, చర్చలో పాల్గొనడానికి ఈ పుస్తకానికి సబ్‌స్క్రైబ్ చేయండి.</value>
+  </data>
+  <data name="No comments yet." xml:space="preserve">
+    <value>ఇంకా వ్యాఖ్యలు లేవు.</value>
+  </data>
+  <data name="This comment was removed." xml:space="preserve">
+    <value>ఈ వ్యాఖ్య తొలగించబడింది.</value>
+  </data>
+  <data name="1 report" xml:space="preserve">
+    <value>1 ఫిర్యాదు</value>
+  </data>
+  <data name="{0} reports" xml:space="preserve">
+    <value>{0} ఫిర్యాదులు</value>
+  </data>
+  <data name="Write a reply" xml:space="preserve">
+    <value>ప్రత్యుత్తరం రాయండి</value>
+  </data>
+  <data name="Delete your comment?" xml:space="preserve">
+    <value>మీ వ్యాఖ్యను తొలగించాలా?</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>ఫిర్యాదు చేయండి</value>
+  </data>
+  <data name="What is wrong with it? (optional)" xml:space="preserve">
+    <value>ఇందులో సమస్య ఏమిటి? (ఐచ్ఛికం)</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>కారణం</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>పంపండి</value>
+  </data>
+  <data name="You reported this" xml:space="preserve">
+    <value>మీరు దీనిపై ఫిర్యాదు చేశారు</value>
+  </data>
+  <data name="Show again" xml:space="preserve">
+    <value>మళ్ళీ చూపించు</value>
+  </data>
+  <data name="New category" xml:space="preserve">
+    <value>కొత్త వర్గం</value>
+  </data>
+  <data name="Edit category" xml:space="preserve">
+    <value>వర్గాన్ని సవరించండి</value>
+  </data>
+  <data name="(top level)" xml:space="preserve">
+    <value>(అగ్ర స్థాయి)</value>
+  </data>
+  <data name="Categories can be nested to any depth. A subscription to a category includes everything below it." xml:space="preserve">
+    <value>వర్గాలను ఎంత లోతుకైనా ఒకదానిలో ఒకటి ఉంచవచ్చు. ఒక వర్గానికి సబ్‌స్క్రిప్షన్‌లో దాని క్రింద ఉన్నవన్నీ ఉంటాయి.</value>
+  </data>
+  <data name="New top-level category" xml:space="preserve">
+    <value>కొత్త అగ్ర స్థాయి వర్గం</value>
+  </data>
+  <data name="No categories yet. Create the first one." xml:space="preserve">
+    <value>ఇంకా వర్గాలు లేవు. మొదటిదాన్ని సృష్టించండి.</value>
+  </data>
+  <data name="Books" xml:space="preserve">
+    <value>పుస్తకాలు</value>
+  </data>
+  <data name="Add sub category" xml:space="preserve">
+    <value>ఉప వర్గం జోడించండి</value>
+  </data>
+  <data name="Rename or move" xml:space="preserve">
+    <value>పేరు మార్చండి లేదా తరలించండి</value>
+  </data>
+  <data name="Delete the category “{0}”?" xml:space="preserve">
+    <value>“{0}” వర్గాన్ని తొలగించాలా?</value>
+  </data>
+  <data name="Before you continue" xml:space="preserve">
+    <value>కొనసాగే ముందు</value>
+  </data>
+  <data name="I have read and accept these terms." xml:space="preserve">
+    <value>నేను ఈ నిబంధనలను చదివి అంగీకరిస్తున్నాను.</value>
+  </data>
+  <data name="Accept and continue" xml:space="preserve">
+    <value>అంగీకరించి కొనసాగించండి</value>
+  </data>
+  <data name="Sign out instead" xml:space="preserve">
+    <value>బదులుగా సైన్ అవుట్ చేయండి</value>
+  </data>
+  <data name="Version {0}" xml:space="preserve">
+    <value>వెర్షన్ {0}</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>డాష్‌బోర్డ్</value>
+  </data>
+  <data name="Welcome back" xml:space="preserve">
+    <value>మళ్ళీ స్వాగతం</value>
+  </data>
+  <data name="Welcome back, {0}" xml:space="preserve">
+    <value>మళ్ళీ స్వాగతం, {0}</value>
+  </data>
+  <data name="You have not subscribed to any categories yet. &lt;a href=&quot;/Library&quot;&gt;Browse the library&lt;/a&gt; to choose what you want to read." xml:space="preserve">
+    <value>మీరు ఇంకా ఏ వర్గానికీ సబ్‌స్క్రైబ్ చేయలేదు. ఏమి చదవాలో ఎంచుకోవడానికి &lt;a href="/Library"&gt;గ్రంథాలయాన్ని చూడండి&lt;/a&gt;.</value>
+  </data>
+  <data name="You follow 1 category. &lt;a href=&quot;/Library&quot;&gt;Find more&lt;/a&gt;." xml:space="preserve">
+    <value>మీరు 1 వర్గాన్ని అనుసరిస్తున్నారు. &lt;a href="/Library"&gt;మరిన్ని కనుగొనండి&lt;/a&gt;.</value>
+  </data>
+  <data name="You follow {0} categories. &lt;a href=&quot;/Library&quot;&gt;Find more&lt;/a&gt;." xml:space="preserve">
+    <value>మీరు {0} వర్గాలను అనుసరిస్తున్నారు. &lt;a href="/Library"&gt;మరిన్ని కనుగొనండి&lt;/a&gt;.</value>
+  </data>
+  <data name="See all" xml:space="preserve">
+    <value>అన్నీ చూడండి</value>
+  </data>
+  <data name="No messages yet. &lt;a href=&quot;/board/new&quot;&gt;Start the first topic&lt;/a&gt;." xml:space="preserve">
+    <value>ఇంకా సందేశాలు లేవు. &lt;a href="/board/new"&gt;మొదటి అంశాన్ని ప్రారంభించండి&lt;/a&gt;.</value>
+  </data>
+  <data name="Continue reading" xml:space="preserve">
+    <value>చదవడం కొనసాగించండి</value>
+  </data>
+  <data name="Books you start will appear here, ready to pick up where you left off." xml:space="preserve">
+    <value>మీరు చదవడం ప్రారంభించిన పుస్తకాలు ఇక్కడ కనిపిస్తాయి, ఆపిన చోటు నుండి కొనసాగించడానికి సిద్ధంగా.</value>
+  </data>
+  <data name="Bookmarked" xml:space="preserve">
+    <value>బుక్‌మార్క్ చేసినవి</value>
+  </data>
+  <data name="Add a bookmark in the reader and the book shows up here." xml:space="preserve">
+    <value>రీడర్‌లో బుక్‌మార్క్ జోడిస్తే ఆ పుస్తకం ఇక్కడ కనిపిస్తుంది.</value>
+  </data>
+  <data name="New in your subscriptions" xml:space="preserve">
+    <value>మీ సబ్‌స్క్రిప్షన్‌లలో కొత్తవి</value>
+  </data>
+  <data name="No books in your subscriptions yet." xml:space="preserve">
+    <value>మీ సబ్‌స్క్రిప్షన్‌లలో ఇంకా పుస్తకాలు లేవు.</value>
+  </data>
+  <data name="Most read this month" xml:space="preserve">
+    <value>ఈ నెల ఎక్కువగా చదివినవి</value>
+  </data>
+  <data name="Nobody has opened a book in the last 30 days." xml:space="preserve">
+    <value>గత 30 రోజుల్లో ఎవరూ పుస్తకం తెరవలేదు.</value>
+  </data>
+  <data name="Top rated" xml:space="preserve">
+    <value>అత్యధిక రేటింగ్</value>
+  </data>
+  <data name="Books need {0} ratings to show here." xml:space="preserve">
+    <value>ఇక్కడ కనిపించడానికి పుస్తకాలకు {0} రేటింగ్‌లు కావాలి.</value>
+  </data>
+  <data name="Library" xml:space="preserve">
+    <value>గ్రంథాలయం</value>
+  </data>
+  <data name="All books" xml:space="preserve">
+    <value>అన్ని పుస్తకాలు</value>
+  </data>
+  <data name="No categories yet." xml:space="preserve">
+    <value>ఇంకా వర్గాలు లేవు.</value>
+  </data>
+  <data name="Results for “{0}”" xml:space="preserve">
+    <value>“{0}” కోసం ఫలితాలు</value>
+  </data>
+  <data name="My subscriptions" xml:space="preserve">
+    <value>నా సబ్‌స్క్రిప్షన్‌లు</value>
+  </data>
+  <data name="Included in a parent subscription" xml:space="preserve">
+    <value>పై వర్గం సబ్‌స్క్రిప్షన్‌లో భాగం</value>
+  </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>సబ్‌స్క్రైబ్ చేయండి</value>
+  </data>
+  <data name="Subscribing includes every sub category below this one. It is free." xml:space="preserve">
+    <value>సబ్‌స్క్రైబ్ చేస్తే దీని క్రింద ఉన్న అన్ని ఉప వర్గాలు కూడా వస్తాయి. ఇది ఉచితం.</value>
+  </data>
+  <data name="No books here yet." xml:space="preserve">
+    <value>ఇక్కడ ఇంకా పుస్తకాలు లేవు.</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>మునుపటి</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>తదుపరి</value>
+  </data>
+  <data name="Review queue" xml:space="preserve">
+    <value>సమీక్ష జాబితా</value>
+  </data>
+  <data name="Books from Contributors wait here until you approve them. Comments readers report show up below." xml:space="preserve">
+    <value>కంట్రిబ్యూటర్ల పుస్తకాలు మీరు ఆమోదించే వరకు ఇక్కడ వేచి ఉంటాయి. పాఠకులు ఫిర్యాదు చేసిన వ్యాఖ్యలు క్రింద కనిపిస్తాయి.</value>
+  </data>
+  <data name="Books waiting for approval" xml:space="preserve">
+    <value>ఆమోదం కోసం వేచి ఉన్న పుస్తకాలు</value>
+  </data>
+  <data name="Nothing to review." xml:space="preserve">
+    <value>సమీక్షించడానికి ఏమీ లేదు.</value>
+  </data>
+  <data name="Unknown author" xml:space="preserve">
+    <value>తెలియని రచయిత</value>
+  </data>
+  <data name="by {0}" xml:space="preserve">
+    <value>{0} ద్వారా</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+    <value>తిరస్కరించండి</value>
+  </data>
+  <data name="Note for the uploader" xml:space="preserve">
+    <value>అప్‌లోడ్ చేసినవారికి గమనిక</value>
+  </data>
+  <data name="Reported comments" xml:space="preserve">
+    <value>ఫిర్యాదు వచ్చిన వ్యాఖ్యలు</value>
+  </data>
+  <data name="No open reports." xml:space="preserve">
+    <value>తెరిచి ఉన్న ఫిర్యాదులు లేవు.</value>
+  </data>
+  <data name="&lt;strong class=&quot;text-body&quot;&gt;{0}&lt;/strong&gt; on &lt;a href=&quot;{1}&quot;&gt;{2}&lt;/a&gt;" xml:space="preserve">
+    <value>&lt;a href="{1}"&gt;{2}&lt;/a&gt; పై &lt;strong class="text-body"&gt;{0}&lt;/strong&gt;</value>
+  </data>
+  <data name="Keep" xml:space="preserve">
+    <value>ఉంచండి</value>
+  </data>
+  <data name="Close the book" xml:space="preserve">
+    <value>పుస్తకాన్ని మూసివేయండి</value>
+  </data>
+  <data name="Previous (←)" xml:space="preserve">
+    <value>మునుపటి (←)</value>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>పేజీ</value>
+  </data>
+  <data name="Section" xml:space="preserve">
+    <value>భాగం</value>
+  </data>
+  <data name="Next (→)" xml:space="preserve">
+    <value>తదుపరి (→)</value>
+  </data>
+  <data name="Zoom out (−)" xml:space="preserve">
+    <value>చిన్నదిగా (−)</value>
+  </data>
+  <data name="Zoom in (+)" xml:space="preserve">
+    <value>పెద్దదిగా (+)</value>
+  </data>
+  <data name="Fit to width (W)" xml:space="preserve">
+    <value>వెడల్పుకు సరిపోయేలా (W)</value>
+  </data>
+  <data name="Fit whole page (P)" xml:space="preserve">
+    <value>పూర్తి పేజీ సరిపోయేలా (P)</value>
+  </data>
+  <data name="Smaller text" xml:space="preserve">
+    <value>చిన్న అక్షరాలు</value>
+  </data>
+  <data name="Larger text" xml:space="preserve">
+    <value>పెద్ద అక్షరాలు</value>
+  </data>
+  <data name="Text settings" xml:space="preserve">
+    <value>పాఠ్య సెట్టింగ్‌లు</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>ఫాంట్</value>
+  </data>
+  <data name="Line spacing" xml:space="preserve">
+    <value>పంక్తుల మధ్య దూరం</value>
+  </data>
+  <data name="Tight" xml:space="preserve">
+    <value>దగ్గరగా</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>సాధారణం</value>
+  </data>
+  <data name="Loose" xml:space="preserve">
+    <value>దూరంగా</value>
+  </data>
+  <data name="Width" xml:space="preserve">
+    <value>వెడల్పు</value>
+  </data>
+  <data name="Narrow" xml:space="preserve">
+    <value>ఇరుకు</value>
+  </data>
+  <data name="Wide" xml:space="preserve">
+    <value>విశాలం</value>
+  </data>
+  <data name="Contents" xml:space="preserve">
+    <value>విషయసూచిక</value>
+  </data>
+  <data name="Bookmarks" xml:space="preserve">
+    <value>బుక్‌మార్క్‌లు</value>
+  </data>
+  <data name="Bookmark this place" xml:space="preserve">
+    <value>ఈ చోటును బుక్‌మార్క్ చేయండి</value>
+  </data>
+  <data name="Paper colour" xml:space="preserve">
+    <value>కాగితం రంగు</value>
+  </data>
+  <data name="Light" xml:space="preserve">
+    <value>లేత</value>
+  </data>
+  <data name="Sepia" xml:space="preserve">
+    <value>సెపియా</value>
+  </data>
+  <data name="Dark" xml:space="preserve">
+    <value>ముదురు</value>
+  </data>
+  <data name="Match device" xml:space="preserve">
+    <value>పరికరానికి తగినట్లు</value>
+  </data>
+  <data name="Full screen (F)" xml:space="preserve">
+    <value>పూర్తి స్క్రీన్ (F)</value>
+  </data>
+  <data name="Book page" xml:space="preserve">
+    <value>పుస్తకం పేజీ</value>
+  </data>
+  <data name="Printing is not available for OBRL books." xml:space="preserve">
+    <value>OBRL పుస్తకాలను ప్రింట్ చేయడం వీలుకాదు.</value>
+  </data>
+  <data name="Something went wrong" xml:space="preserve">
+    <value>ఏదో పొరపాటు జరిగింది</value>
+  </data>
+  <data name="The page could not be shown. Try again, or go back to the dashboard." xml:space="preserve">
+    <value>ఈ పేజీని చూపించలేకపోయాం. మళ్ళీ ప్రయత్నించండి, లేదా డాష్‌బోర్డ్‌కు తిరిగి వెళ్ళండి.</value>
+  </data>
+  <data name="Reference for the administrator:" xml:space="preserve">
+    <value>అడ్మిన్ కోసం సూచిక సంఖ్య:</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>భాష</value>
+  </data>
+  <data name="Online Book Reading Library · members only" xml:space="preserve">
+    <value>ఆన్‌లైన్ పుస్తక పఠన గ్రంథాలయం · సభ్యులకు మాత్రమే</value>
+  </data>
+  <data name="Contribute" xml:space="preserve">
+    <value>సహకరించండి</value>
+  </data>
+  <data name="My uploads" xml:space="preserve">
+    <value>నా అప్‌లోడ్‌లు</value>
+  </data>
+  <data name="Moderate" xml:space="preserve">
+    <value>మోడరేషన్</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>అడ్మిన్</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>థీమ్</value>
+  </data>
+  <data name="Search titles, authors and descriptions" xml:space="preserve">
+    <value>శీర్షికలు, రచయితలు, వివరణలలో వెతకండి</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>వెతకండి</value>
+  </data>
+  <data name="&lt;strong&gt;A strong sign-in is required.&lt;/strong&gt; Set up an authenticator app below, or &lt;a href=&quot;/Identity/Account/Manage/Passkeys&quot;&gt;add a passkey instead&lt;/a&gt;, before using OBRL." xml:space="preserve">
+    <value>&lt;strong&gt;బలమైన సైన్-ఇన్ అవసరం.&lt;/strong&gt; OBRL ఉపయోగించే ముందు క్రింద ఆథెంటికేటర్ యాప్‌ను సెటప్ చేయండి, లేదా &lt;a href="/Identity/Account/Manage/Passkeys"&gt;బదులుగా పాస్‌కీ జోడించండి&lt;/a&gt;.</value>
+  </data>
+  <data name="Main" xml:space="preserve">
+    <value>ప్రధాన మెనూ</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>హోమ్</value>
+  </data>
+  <data name="Board" xml:space="preserve">
+    <value>బోర్డు</value>
+  </data>
+  <data name="Uploads" xml:space="preserve">
+    <value>అప్‌లోడ్‌లు</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>ఖాతా</value>
+  </data>
+  <data name="{0} out of 5" xml:space="preserve">
+    <value>5 లో {0}</value>
+  </data>
+  <data name="Rated {0} out of 5" xml:space="preserve">
+    <value>5 లో {0} రేటింగ్</value>
+  </data>
+  <data name="Upload a book" xml:space="preserve">
+    <value>పుస్తకాన్ని అప్‌లోడ్ చేయండి</value>
+  </data>
+  <data name="Edit book" xml:space="preserve">
+    <value>పుస్తకాన్ని సవరించండి</value>
+  </data>
+  <data name="PDF and Word files are shown as pages. EPUB and text files reflow to fit any screen. Up to {0} MB." xml:space="preserve">
+    <value>PDF, Word ఫైళ్లు పేజీలుగా చూపబడతాయి. EPUB, టెక్స్ట్ ఫైళ్లు ఏ స్క్రీన్‌కైనా సరిపోయేలా సర్దుకుంటాయి. గరిష్ఠం {0} MB.</value>
+  </data>
+  <data name="Change the details readers see. To replace the file, delete the book and upload it again." xml:space="preserve">
+    <value>పాఠకులు చూసే వివరాలను మార్చండి. ఫైల్‌ను మార్చాలంటే, పుస్తకాన్ని తొలగించి మళ్ళీ అప్‌లోడ్ చేయండి.</value>
+  </data>
+  <data name="Filled in from the e-book when left empty" xml:space="preserve">
+    <value>ఖాళీగా వదిలితే ఈ-పుస్తకం నుండి తీసుకోబడుతుంది</value>
+  </data>
+  <data name="There are no categories yet. Ask a moderator to create some first." xml:space="preserve">
+    <value>ఇంకా వర్గాలు లేవు. ముందుగా కొన్నింటిని సృష్టించమని మోడరేటర్‌ను అడగండి.</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>అప్‌లోడ్ చేయండి</value>
+  </data>
+  <data name="Uploads are converted in the background. Refresh to see the latest status." xml:space="preserve">
+    <value>అప్‌లోడ్‌లు నేపథ్యంలో మార్చబడతాయి. తాజా స్థితిని చూడటానికి పేజీని రిఫ్రెష్ చేయండి.</value>
+  </data>
+  <data name="Nothing uploaded yet." xml:space="preserve">
+    <value>ఇంకా ఏమీ అప్‌లోడ్ చేయలేదు.</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>ఫార్మాట్</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>స్థితి</value>
+  </data>
+  <data name="Uploaded by" xml:space="preserve">
+    <value>అప్‌లోడ్ చేసినవారు</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>జోడించిన తేదీ</value>
+  </data>
+  <data name="pages" xml:space="preserve">
+    <value>పేజీలు</value>
+  </data>
+  <data name="text" xml:space="preserve">
+    <value>పాఠ్యం</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>సిద్ధం</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>విఫలమైంది</value>
+  </data>
+  <data name="A Moderator turned this book down." xml:space="preserve">
+    <value>ఒక మోడరేటర్ ఈ పుస్తకాన్ని తిరస్కరించారు.</value>
+  </data>
+  <data name="Edit the details to send it back for review." xml:space="preserve">
+    <value>మళ్ళీ సమీక్షకు పంపడానికి వివరాలను సవరించండి.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>సవరించండి</value>
+  </data>
+  <data name="Try again" xml:space="preserve">
+    <value>మళ్ళీ ప్రయత్నించండి</value>
+  </data>
+  <data name="Delete “{0}” for everyone? This cannot be undone." xml:space="preserve">
+    <value>“{0}” ను అందరికీ తొలగించాలా? దీన్ని రద్దు చేయలేరు.</value>
+  </data>
+  <data name="You will be signed out in a minute because nothing has happened for a while." xml:space="preserve">
+    <value>కొంతసేపు ఎలాంటి కార్యకలాపం లేనందున ఒక నిమిషంలో మీరు సైన్ అవుట్ అవుతారు.</value>
+  </data>
+  <data name="Stay signed in" xml:space="preserve">
+    <value>సైన్ ఇన్‌లోనే ఉండండి</value>
+  </data>
+  <data name="The server did not answer ({0})." xml:space="preserve">
+    <value>సర్వర్ స్పందించలేదు ({0}).</value>
+  </data>
+  <data name="The passkey prompt was cancelled or timed out." xml:space="preserve">
+    <value>పాస్‌కీ అభ్యర్థన రద్దయింది లేదా సమయం ముగిసింది.</value>
+  </data>
+  <data name="This device already has a passkey for your account." xml:space="preserve">
+    <value>ఈ పరికరంలో మీ ఖాతాకు ఇప్పటికే పాస్‌కీ ఉంది.</value>
+  </data>
+  <data name="Something went wrong: {0}" xml:space="preserve">
+    <value>ఏదో పొరపాటు జరిగింది: {0}</value>
+  </data>
+  <data name="Printing is not available" xml:space="preserve">
+    <value>ప్రింట్ చేయడం వీలుకాదు</value>
+  </data>
+  <data name="No bookmarks yet." xml:space="preserve">
+    <value>ఇంకా బుక్‌మార్క్‌లు లేవు.</value>
+  </data>
+  <data name="Remove bookmark" xml:space="preserve">
+    <value>బుక్‌మార్క్ తొలగించండి</value>
+  </data>
+  <data name="Optional note for this bookmark:" xml:space="preserve">
+    <value>ఈ బుక్‌మార్క్‌కు గమనిక (ఐచ్ఛికం):</value>
+  </data>
+  <data name="Bookmark added" xml:space="preserve">
+    <value>బుక్‌మార్క్ జోడించబడింది</value>
+  </data>
+  <data name="You are turning pages very fast. Please wait a moment." xml:space="preserve">
+    <value>మీరు పేజీలను చాలా వేగంగా తిప్పుతున్నారు. దయచేసి కొంచెం ఆగండి.</value>
+  </data>
+  <data name="This page could not be loaded. Try again." xml:space="preserve">
+    <value>ఈ పేజీని లోడ్ చేయలేకపోయాం. మళ్ళీ ప్రయత్నించండి.</value>
+  </data>
+  <data name="You are moving very fast. Please wait a moment." xml:space="preserve">
+    <value>మీరు చాలా వేగంగా కదులుతున్నారు. దయచేసి కొంచెం ఆగండి.</value>
+  </data>
+  <data name="This part could not be loaded. Try again." xml:space="preserve">
+    <value>ఈ భాగాన్ని లోడ్ చేయలేకపోయాం. మళ్ళీ ప్రయత్నించండి.</value>
+  </data>
+  <data name="No contents list." xml:space="preserve">
+    <value>విషయసూచిక లేదు.</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>వరుసలో ఉంది</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>సిద్ధం చేస్తోంది</value>
+  </data>
+  <data name="Contributor" xml:space="preserve">
+    <value>కంట్రిబ్యూటర్</value>
+  </data>
+  <data name="Moderator" xml:space="preserve">
+    <value>మోడరేటర్</value>
+  </data>
+  <data name="Remember me?" xml:space="preserve">
+    <value>నన్ను గుర్తుంచుకోవాలా?</value>
+  </data>
+  <data name="Authenticator code" xml:space="preserve">
+    <value>ఆథెంటికేటర్ కోడ్</value>
+  </data>
+  <data name="Remember this machine" xml:space="preserve">
+    <value>ఈ పరికరాన్ని గుర్తుంచుకో</value>
+  </data>
+  <data name="Recovery Code" xml:space="preserve">
+    <value>రికవరీ కోడ్</value>
+  </data>
+  <data name="Current password" xml:space="preserve">
+    <value>ప్రస్తుత పాస్‌వర్డ్</value>
+  </data>
+  <data name="New password" xml:space="preserve">
+    <value>కొత్త పాస్‌వర్డ్</value>
+  </data>
+  <data name="Confirm new password" xml:space="preserve">
+    <value>కొత్త పాస్‌వర్డ్‌ను నిర్ధారించండి</value>
+  </data>
+  <data name="Phone number" xml:space="preserve">
+    <value>ఫోన్ నంబర్</value>
+  </data>
+  <data name="Verification Code" xml:space="preserve">
+    <value>ధృవీకరణ కోడ్</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>వినియోగదారు పేరు</value>
+  </data>
+  <data name="The {0} must be at least {2} and at max {1} characters long." xml:space="preserve">
+    <value>{0} కనీసం {2}, గరిష్ఠంగా {1} అక్షరాలు ఉండాలి.</value>
+  </data>
+  <data name="The new password and confirmation password do not match." xml:space="preserve">
+    <value>కొత్త పాస్‌వర్డ్, నిర్ధారణ పాస్‌వర్డ్ సరిపోలలేదు.</value>
+  </data>
+  <data name="Invalid login attempt." xml:space="preserve">
+    <value>లాగిన్ వివరాలు సరికావు.</value>
+  </data>
+  <data name="Invalid authenticator code." xml:space="preserve">
+    <value>ఆథెంటికేటర్ కోడ్ సరికాదు.</value>
+  </data>
+  <data name="Invalid recovery code entered." xml:space="preserve">
+    <value>నమోదు చేసిన రికవరీ కోడ్ సరికాదు.</value>
+  </data>
+  <data name="Verification code is invalid." xml:space="preserve">
+    <value>ధృవీకరణ కోడ్ సరికాదు.</value>
+  </data>
+  <data name="Your profile has been updated" xml:space="preserve">
+    <value>మీ ప్రొఫైల్ నవీకరించబడింది</value>
+  </data>
+  <data name="Unexpected error when trying to set phone number." xml:space="preserve">
+    <value>ఫోన్ నంబర్ సెట్ చేస్తున్నప్పుడు అనుకోని లోపం జరిగింది.</value>
+  </data>
+  <data name="Your password has been changed." xml:space="preserve">
+    <value>మీ పాస్‌వర్డ్ మార్చబడింది.</value>
+  </data>
+  <data name="Your authenticator app has been verified." xml:space="preserve">
+    <value>మీ ఆథెంటికేటర్ యాప్ ధృవీకరించబడింది.</value>
+  </data>
+  <data name="Your authenticator app key has been reset, you will need to configure your authenticator app using the new key." xml:space="preserve">
+    <value>మీ ఆథెంటికేటర్ యాప్ కీ రీసెట్ చేయబడింది. కొత్త కీతో మీ ఆథెంటికేటర్ యాప్‌ను మళ్ళీ సెటప్ చేయాలి.</value>
+  </data>
+  <data name="You have generated new recovery codes." xml:space="preserve">
+    <value>మీరు కొత్త రికవరీ కోడ్‌లను సృష్టించారు.</value>
+  </data>
+  <data name="The current browser has been forgotten. When you login again from this browser you will be prompted for your 2fa code." xml:space="preserve">
+    <value>ఈ బ్రౌజర్ మరచిపోబడింది. ఈ బ్రౌజర్ నుండి మళ్ళీ లాగిన్ అయినప్పుడు మీ ఆథెంటికేటర్ కోడ్ అడుగుతాం.</value>
+  </data>
+  <data name="This password appears in lists of leaked passwords. Choose another one." xml:space="preserve">
+    <value>ఈ పాస్‌వర్డ్ బయటపడిన పాస్‌వర్డ్‌ల జాబితాల్లో ఉంది. మరొకటి ఎంచుకోండి.</value>
+  </data>
+  <data name="The password must not contain your email name." xml:space="preserve">
+    <value>పాస్‌వర్డ్‌లో మీ ఈమెయిల్ పేరు ఉండకూడదు.</value>
+  </data>
+  <data name="{0} can be at most {1} characters." xml:space="preserve">
+    <value>{0} గరిష్ఠంగా {1} అక్షరాలు ఉండవచ్చు.</value>
+  </data>
+  <data name="{0} must be between {2} and {1} characters." xml:space="preserve">
+    <value>{0} {2} నుండి {1} అక్షరాల మధ్య ఉండాలి.</value>
+  </data>
+  <data name="{0} is not a valid email address." xml:space="preserve">
+    <value>{0} సరైన ఈమెయిల్ చిరునామా కాదు.</value>
+  </data>
+  <data name="{0} is not a valid phone number." xml:space="preserve">
+    <value>{0} సరైన ఫోన్ నంబర్ కాదు.</value>
+  </data>
+  <data name="{0} must be between {1} and {2}." xml:space="preserve">
+    <value>{0} {1} నుండి {2} మధ్య ఉండాలి.</value>
+  </data>
+  <data name="{0} and {1} do not match." xml:space="preserve">
+    <value>{0}, {1} సరిపోలలేదు.</value>
+  </data>
+</root>

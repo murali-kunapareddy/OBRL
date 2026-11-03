@@ -99,6 +99,27 @@ journalctl -u obrl -f
 sudo systemctl start obrl-backup     # run a backup now
 ```
 
+## Languages
+
+The interface is available in English, Telugu (తెలుగు) and Kannada (ಕನ್ನಡ). Members pick a language from the
+switcher in the top bar (or under the sign-in form). The choice is saved on their account and follows them to every
+device they sign in on; before signing in, the browser's language is used. Book content is never translated.
+
+Text lives in `src/Obrl.Web/Resources/SharedResource.{code}.resx`. Each entry's name is the English text, so English
+needs no file and anything not yet translated falls back to English. Views use `L["..."]` for plain text and `H["..."]`
+for text that contains HTML.
+
+**To add a language** (Hindi, for example):
+
+1. Copy `Resources/SharedResource.te.resx` to `Resources/SharedResource.hi.resx` and replace every value
+   (Visual Studio's resource editor shows both columns). Keep `{0}`-style placeholders and HTML tags as they are.
+2. Add `new("hi", "हिन्दी")` to `Languages.All` in `src/Obrl.Web/Localization/Languages.cs`.
+3. Run `dotnet test`: it lists any entries the new file is missing and any translation that lost a placeholder or tag.
+
+When you add new interface text, wrap it in `L["..."]` and add the entry to every language file; the same test
+catches anything left out. Text that reaches the interface at run time (Identity's own messages, script text, role
+names) is listed in `Localization/ExtraText.cs`.
+
 ## Configuration
 
 Set these in `appsettings.json`, or as environment variables in `/etc/obrl/obrl.env` (use `__` instead of `:`).
@@ -124,6 +145,8 @@ src/Obrl.Web/
   Controllers/        MVC controllers (Library, Books, Reader, Uploads, Categories, Admin, ...)
   Domain/             Entities and roles
   Data/               EF Core DbContext, migrations, seeding
+  Localization/       Interface languages, translated validation and Identity messages
+  Resources/          Translations (SharedResource.{language}.resx)
   Security/           Session rules (single session, required 2FA, disclaimer), sign-in manager, password check
   Services/           Access rules, encryption, signed URLs, storage, activity log
   Services/Ingest/    Upload conversion (LibreOffice, Calibre, EPUB/TXT import) and the background worker

@@ -1,0 +1,12 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Manage.Internal.PersonalDataModel
+@{
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+    ViewData["Title"] = L["Personal data"].Value;
+    ViewData["ActivePage"] = "PersonalData";
+}
+<h3 class="h5">@L["Personal data"]</h3>
+<p>@L["Your account contains personal data that you have given us. You can download a copy of it here."]</p>
+<form id="download-data" asp-page="DownloadPersonalData" method="post">
+    <button class="btn btn-primary" type="submit">@L["Download"]</button>
+</form>

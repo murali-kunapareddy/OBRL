@@ -16,6 +16,7 @@
     var lastActivity = Date.now();
     var lastPing = Date.now();
     var notice = null;
+    var t = (window.obrl && window.obrl.t ? window.obrl.t : function (s) { return s; });
 
     function post(url) {
         return fetch(url, { method: "POST", headers: { "X-CSRF-TOKEN": csrf.content }, credentials: "same-origin" });
@@ -49,11 +50,13 @@
         notice.className = "idle-notice";
         notice.setAttribute("role", "alertdialog");
         notice.setAttribute("aria-live", "assertive");
-        notice.innerHTML = '<span>You will be signed out in a minute because nothing has happened for a while.</span> ';
+        var text = document.createElement("span");
+        text.textContent = t("You will be signed out in a minute because nothing has happened for a while.") + " ";
+        notice.appendChild(text);
         var button = document.createElement("button");
         button.type = "button";
         button.className = "btn btn-sm btn-primary";
-        button.textContent = "Stay signed in";
+        button.textContent = t("Stay signed in");
         button.addEventListener("click", function () { lastPing = 0; activity(); });
         notice.appendChild(button);
         document.body.appendChild(notice);

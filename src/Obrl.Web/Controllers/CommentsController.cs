@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -12,7 +13,7 @@ namespace Obrl.Web.Controllers;
 /// Comments on books. Readers of a book can comment and reply (one level deep),
 /// delete their own comments and report others. Moderators hide and restore comments.
 /// </summary>
-public class CommentsController(ObrlDbContext db, AccessService access, ActivityLog log) : Controller
+public class CommentsController(ObrlDbContext db, AccessService access, ActivityLog log, IStringLocalizer<SharedResource> L) : Controller
 {
     [HttpPost("/books/{bookId:guid}/comments"), ValidateAntiForgeryToken, EnableRateLimiting("posting")]
     public async Task<IActionResult> Create(Guid bookId, string? body, long? parentId, CancellationToken ct)
@@ -21,7 +22,7 @@ public class CommentsController(ObrlDbContext db, AccessService access, Activity
         var text = Community.CleanText(body, Community.MaxCommentLength);
         if (text is null)
         {
-            TempData["Message"] = "Write something before posting.";
+            TempData["Message"] = L["Write something before posting."].Value;
             return Redirect($"/books/{bookId}#comments");
         }
 
@@ -62,7 +63,7 @@ public class CommentsController(ObrlDbContext db, AccessService access, Activity
         }
         log.Add(ActivityTypes.CommentDeleted, userId, comment.BookId, new { commentId = id });
         await db.SaveChangesAsync(ct);
-        TempData["Message"] = "Your comment was deleted.";
+        TempData["Message"] = L["Your comment was deleted."].Value;
         return Redirect($"/books/{comment.BookId}#comments");
     }
 
@@ -87,7 +88,7 @@ public class CommentsController(ObrlDbContext db, AccessService access, Activity
                 // Reported twice at once; one report is kept.
             }
         }
-        TempData["Message"] = "Thanks. A Moderator will take a look.";
+        TempData["Message"] = L["Thanks. A Moderator will take a look."].Value;
         return Redirect($"/books/{comment.BookId}#comment-{id}");
     }
 

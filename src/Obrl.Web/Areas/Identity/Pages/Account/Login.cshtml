@@ -1,7 +1,7 @@
 @page
 @model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal.LoginModel
 @{
-    ViewData["Title"] = "Sign in";
+    ViewData["Title"] = L["Sign in"].Value;
     var reason = Request.Query["reason"].ToString();
     // Set when OBRL ends a session for inactivity.
     if (Request.Cookies.ContainsKey(Obrl.Web.Security.IdleTimeout.SignedOutCookie))
@@ -17,61 +17,61 @@
     }
     var passkeyOnly = ViewContext.HttpContext.Items.ContainsKey(Obrl.Web.Security.ObrlSignInManager.PasskeyOnlyItem);
 }
-<h1 class="h4 mb-1">Sign in</h1>
-<p class="text-muted small mb-4">OBRL is for members only. Accounts are created by an administrator.</p>
+<h1 class="h4 mb-1">@L["Sign in"]</h1>
+<p class="text-muted small mb-4">@L["OBRL is for members only. Accounts are created by an administrator."]</p>
 
 @if (reason == "elsewhere")
 {
-    <div class="alert alert-warning small">You were signed out because your account signed in on another device.</div>
+    <div class="alert alert-warning small">@L["You were signed out because your account signed in on another device."]</div>
 }
 else if (reason == "changed")
 {
-    <div class="alert alert-info small">Your sign-in settings changed. Please sign in again.</div>
+    <div class="alert alert-info small">@L["Your sign-in settings changed. Please sign in again."]</div>
 }
 else if (reason == "passkey")
 {
-    <div class="alert alert-warning small">That passkey was not accepted. Try again, or use your password and authenticator code.</div>
+    <div class="alert alert-warning small">@L["That passkey was not accepted. Try again, or use your password and authenticator code."]</div>
 }
 else if (reason == "idle")
 {
-    <div class="alert alert-info small">You were signed out because nothing happened for a while. Please sign in again to carry on where you left off.</div>
+    <div class="alert alert-info small">@L["You were signed out because nothing happened for a while. Please sign in again to carry on where you left off."]</div>
 }
 else if (reason == "ended")
 {
-    <div class="alert alert-info small">Your session ended. Please sign in again.</div>
+    <div class="alert alert-info small">@L["Your session ended. Please sign in again."]</div>
 }
 @if (passkeyOnly)
 {
-    <div class="alert alert-warning small"><i class="bi bi-key me-1"></i>Your account signs in with a passkey. Choose <strong>Sign in with a passkey</strong> below.</div>
+    <div class="alert alert-warning small"><i class="bi bi-key me-1"></i>@H["Your account signs in with a passkey. Choose <strong>Sign in with a passkey</strong> below."]</div>
 }
 
 <form id="passkey-signin" method="post" action="/passkeys/sign-in" data-options-url="/passkeys/request-options" class="mb-3">
     @Html.AntiForgeryToken()
     <input type="hidden" name="credential" />
     <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
-    <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-key me-1"></i> Sign in with a passkey</button>
+    <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-key me-1"></i> @L["Sign in with a passkey"]</button>
     <div class="small text-danger mt-2" data-passkey-error hidden></div>
 </form>
-<div class="divider-text small text-muted mb-3"><span>or with your password</span></div>
+<div class="divider-text small text-muted mb-3"><span>@L["or with your password"]</span></div>
 
 <form id="account" method="post">
     @if (!passkeyOnly)
     {
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+        <partial name="_ErrorSummary" />
     }
     <div class="mb-3">
-        <label asp-for="Input.Email" class="form-label fw-semibold">Email</label>
+        <label asp-for="Input.Email" class="form-label fw-semibold">@L["Email"]</label>
         <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" autofocus />
         <span asp-validation-for="Input.Email" class="text-danger small"></span>
     </div>
     <div class="mb-4">
-        <label asp-for="Input.Password" class="form-label fw-semibold">Password</label>
+        <label asp-for="Input.Password" class="form-label fw-semibold">@L["Password"]</label>
         <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
         <span asp-validation-for="Input.Password" class="text-danger small"></span>
     </div>
-    <button id="login-submit" type="submit" class="btn btn-primary w-100">Continue</button>
+    <button id="login-submit" type="submit" class="btn btn-primary w-100">@L["Continue"]</button>
 </form>
-<p class="small text-muted mt-3 mb-0">Forgot your password or lost your authenticator or passkey? Ask an administrator to reset it. After 5 wrong attempts the account is locked for 15 minutes.</p>
+<p class="small text-muted mt-3 mb-0">@L["Forgot your password or lost your authenticator or passkey? Ask an administrator to reset it. After 5 wrong attempts the account is locked for 15 minutes."]</p>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,21 +1,21 @@
 @model DisclaimerVm
 @{
-    ViewData["Title"] = "Before you continue";
+    ViewData["Title"] = L["Before you continue"].Value;
     ViewData["Shell"] = "auth";
 }
-<h1 class="h4 mb-3">Before you continue</h1>
+<h1 class="h4 mb-3">@L["Before you continue"]</h1>
 <div class="disclaimer-text border rounded p-3 mb-3" style="max-height:50vh;overflow:auto">@Model.Disclaimer.Text</div>
 <form method="post" asp-action="Accept">
     <input type="hidden" name="version" value="@Model.Disclaimer.Version" />
     <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
     <div class="form-check mb-3">
         <input class="form-check-input" type="checkbox" name="agree" value="true" id="agree" required />
-        <label class="form-check-label" for="agree">I have read and accept these terms.</label>
+        <label class="form-check-label" for="agree">@L["I have read and accept these terms."]</label>
     </div>
-    <button class="btn btn-primary w-100" type="submit">Accept and continue</button>
+    <button class="btn btn-primary w-100" type="submit">@L["Accept and continue"]</button>
 </form>
 <form method="post" action="/Identity/Account/Logout?returnUrl=%2F" class="mt-2">
     @Html.AntiForgeryToken()
-    <button class="btn btn-link w-100" type="submit">Sign out instead</button>
+    <button class="btn btn-link w-100" type="submit">@L["Sign out instead"]</button>
 </form>
-<p class="small text-muted mt-2 mb-0">Version @Model.Disclaimer.Version · @Model.Disclaimer.CreatedAt.ToString("d MMM yyyy")</p>
+<p class="small text-muted mt-2 mb-0">@L["Version {0}", Model.Disclaimer.Version] · @Model.Disclaimer.CreatedAt.ToString("d MMM yyyy")</p>

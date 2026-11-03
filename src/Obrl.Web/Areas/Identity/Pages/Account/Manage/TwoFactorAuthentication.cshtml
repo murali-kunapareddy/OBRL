@@ -1,0 +1,59 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Manage.Internal.TwoFactorAuthenticationModel
+@{
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+    ViewData["Title"] = L["Authenticator app"].Value;
+    ViewData["ActivePage"] = "TwoFactorAuthentication";
+}
+<partial name="_StatusMessage" for="StatusMessage" />
+<h3 class="h5">@L["Authenticator app"]</h3>
+@if (Model.Is2faEnabled)
+{
+    if (Model.RecoveryCodesLeft == 0)
+    {
+        <div class="alert alert-danger">
+            <strong>@L["You have no recovery codes left."]</strong>
+            <p class="mb-0">@H["You must <a href=\"/Identity/Account/Manage/GenerateRecoveryCodes\">generate a new set of recovery codes</a> before you can log in with a recovery code."]</p>
+        </div>
+    }
+    else if (Model.RecoveryCodesLeft == 1)
+    {
+        <div class="alert alert-danger">
+            <strong>@L["You have 1 recovery code left."]</strong>
+            <p class="mb-0">@H["You can <a href=\"/Identity/Account/Manage/GenerateRecoveryCodes\">generate a new set of recovery codes</a>."]</p>
+        </div>
+    }
+    else if (Model.RecoveryCodesLeft <= 3)
+    {
+        <div class="alert alert-warning">
+            <strong>@L["You have {0} recovery codes left.", Model.RecoveryCodesLeft]</strong>
+            <p class="mb-0">@H["You should <a href=\"/Identity/Account/Manage/GenerateRecoveryCodes\">generate a new set of recovery codes</a>."]</p>
+        </div>
+    }
+    <p class="text-muted">@L["Your sign-in is protected with an authenticator app."]</p>
+}
+else
+{
+    <p class="text-muted">@L["Use an authenticator app on your phone to get a code each time you sign in with your password."]</p>
+}
+<div class="d-flex flex-wrap gap-2">
+    @if (!Model.HasAuthenticator)
+    {
+        <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">@L["Add authenticator app"]</a>
+    }
+    else
+    {
+        <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">@L["Set up authenticator app"]</a>
+        <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-outline-secondary">@L["Reset authenticator app"]</a>
+    }
+    @if (Model.Is2faEnabled)
+    {
+        <a asp-page="./GenerateRecoveryCodes" class="btn btn-outline-secondary">@L["Reset recovery codes"]</a>
+        if (Model.IsMachineRemembered)
+        {
+            <form method="post" class="d-inline">
+                <button type="submit" class="btn btn-outline-secondary">@L["Forget this browser"]</button>
+            </form>
+        }
+    }
+</div>

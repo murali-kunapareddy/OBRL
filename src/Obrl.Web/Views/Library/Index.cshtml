@@ -1,6 +1,6 @@
 @model LibraryVm
 @{
-    ViewData["Title"] = Model.Current?.Name ?? "Library";
+    ViewData["Title"] = Model.Current?.Name ?? L["Library"].Value;
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
     var covered = Model.Current is not null && Model.IsCovered(Model.Current);
     var direct = Model.Current is not null && Model.SubscribedIds.Contains(Model.Current.Id);
@@ -9,12 +9,12 @@
     <aside>
         <div class="panel p-3">
             <div class="d-flex align-items-center justify-content-between mb-2">
-                <strong>Categories</strong>
-                <a class="small" href="/Library">All books</a>
+                <strong>@L["Categories"]</strong>
+                <a class="small" href="/Library">@L["All books"]</a>
             </div>
             @if (Model.Roots.Count == 0)
             {
-                <p class="small text-muted mb-0">No categories yet.</p>
+                <p class="small text-muted mb-0">@L["No categories yet."]</p>
             }
             else
             {
@@ -28,7 +28,7 @@
         {
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb small mb-2">
-                    <li class="breadcrumb-item"><a href="/Library">Library</a></li>
+                    <li class="breadcrumb-item"><a href="/Library">@L["Library"]</a></li>
                     @foreach (var c in Model.Breadcrumb)
                     {
                         if (c.Id == Model.Current!.Id)
@@ -49,15 +49,15 @@
                 <h1 class="page-title">
                     @if (Model.Query is not null)
                     {
-                        <text>Results for “@Model.Query”</text>
+                        @L["Results for “{0}”", Model.Query]
                     }
                     else if (Model.MySubscriptionsOnly)
                     {
-                        <text>My subscriptions</text>
+                        @L["My subscriptions"]
                     }
                     else
                     {
-                        @(Model.Current?.Name ?? "All books")
+                        @(Model.Current?.Name ?? L["All books"])
                     }
                 </h1>
                 @if (Model.Current?.Description is string d)
@@ -70,29 +70,29 @@
                 if (direct)
                 {
                     <form method="post" asp-action="Unsubscribe" asp-route-id="@Model.Current.Id" asp-route-returnUrl="@returnUrl">
-                        <button class="btn btn-outline-primary"><i class="bi bi-check2"></i> Subscribed</button>
+                        <button class="btn btn-outline-primary"><i class="bi bi-check2"></i> @L["Subscribed"]</button>
                     </form>
                 }
                 else if (covered)
                 {
-                    <span class="badge badge-soft p-2">Included in a parent subscription</span>
+                    <span class="badge badge-soft p-2">@L["Included in a parent subscription"]</span>
                 }
                 else
                 {
                     <form method="post" asp-action="Subscribe" asp-route-id="@Model.Current.Id" asp-route-returnUrl="@returnUrl">
-                        <button class="btn btn-primary"><i class="bi bi-plus-lg"></i> Subscribe</button>
+                        <button class="btn btn-primary"><i class="bi bi-plus-lg"></i> @L["Subscribe"]</button>
                     </form>
                 }
             }
         </div>
         @if (Model.Current is not null)
         {
-            <p class="small text-muted">Subscribing includes every sub category below this one. It is free.</p>
+            <p class="small text-muted">@L["Subscribing includes every sub category below this one. It is free."]</p>
         }
 
         @if (Model.Books.Count == 0)
         {
-            <div class="empty-shelf">No books here yet.</div>
+            <div class="empty-shelf">@L["No books here yet."]</div>
         }
         else
         {
@@ -105,11 +105,11 @@
             <div class="d-flex gap-2 mt-4">
                 @if (Model.Page > 1)
                 {
-                    <a class="btn btn-outline-secondary" href="?category=@Model.Current?.Id&q=@Model.Query&mine=@Model.MySubscriptionsOnly&page=@(Model.Page - 1)">Previous</a>
+                    <a class="btn btn-outline-secondary" href="?category=@Model.Current?.Id&q=@Model.Query&mine=@Model.MySubscriptionsOnly&page=@(Model.Page - 1)">@L["Previous"]</a>
                 }
                 @if (Model.HasMore)
                 {
-                    <a class="btn btn-outline-secondary" href="?category=@Model.Current?.Id&q=@Model.Query&mine=@Model.MySubscriptionsOnly&page=@(Model.Page + 1)">Next</a>
+                    <a class="btn btn-outline-secondary" href="?category=@Model.Current?.Id&q=@Model.Query&mine=@Model.MySubscriptionsOnly&page=@(Model.Page + 1)">@L["Next"]</a>
                 }
             </div>
         }

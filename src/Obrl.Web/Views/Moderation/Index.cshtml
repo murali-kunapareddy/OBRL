@@ -1,14 +1,14 @@
 @model ModerationVm
 @{
-    ViewData["Title"] = "Review queue";
+    ViewData["Title"] = L["Review queue"].Value;
 }
-<h1 class="page-title">Review queue</h1>
-<p class="page-sub">Books from Contributors wait here until you approve them. Comments readers report show up below.</p>
+<h1 class="page-title">@L["Review queue"]</h1>
+<p class="page-sub">@L["Books from Contributors wait here until you approve them. Comments readers report show up below."]</p>
 
-<h2 class="h5 mt-4">Books waiting for approval <span class="text-muted fw-normal">@Model.PendingBooks.Count</span></h2>
+<h2 class="h5 mt-4">@L["Books waiting for approval"] <span class="text-muted fw-normal">@Model.PendingBooks.Count</span></h2>
 @if (Model.PendingBooks.Count == 0)
 {
-    <div class="empty-shelf">Nothing to review.</div>
+    <div class="empty-shelf">@L["Nothing to review."]</div>
 }
 else
 {
@@ -23,21 +23,21 @@ else
                     <div class="flex-grow-1 min-w-0">
                         <a class="fw-semibold" href="/books/@b.Id">@b.Title</a>
                         <div class="small text-muted">
-                            @(b.Author ?? "Unknown author") · @b.Format.ToUpperInvariant() · by @b.UploadedBy · @b.CreatedAt.ToString("d MMM yyyy")
-                            @if (b.Status != BookStatus.Ready) { <span class="badge text-bg-secondary ms-1">@b.Status</span> }
+                            @(b.Author ?? L["Unknown author"]) · @b.Format.ToUpperInvariant() · @L["by {0}", b.UploadedBy] · @b.CreatedAt.ToString("d MMM yyyy")
+                            @if (b.Status != BookStatus.Ready) { <span class="badge text-bg-secondary ms-1">@L[b.Status.ToString()]</span> }
                         </div>
                     </div>
                     <div class="d-flex flex-wrap gap-2 align-items-start">
                         <form method="post" action="/moderation/books/@b.Id/approve">
                             @Html.AntiForgeryToken()
-                            <button class="btn btn-sm btn-success" type="submit"><i class="bi bi-check2"></i> Approve</button>
+                            <button class="btn btn-sm btn-success" type="submit"><i class="bi bi-check2"></i> @L["Approve"]</button>
                         </form>
                         <details>
-                            <summary class="btn btn-sm btn-outline-danger">Reject</summary>
+                            <summary class="btn btn-sm btn-outline-danger">@L["Reject"]</summary>
                             <form method="post" action="/moderation/books/@b.Id/reject" class="mt-2 d-flex gap-2">
                                 @Html.AntiForgeryToken()
-                                <input name="note" class="form-control form-control-sm" maxlength="1000" placeholder="Note for the uploader" aria-label="Note for the uploader" />
-                                <button class="btn btn-sm btn-danger" type="submit">Send</button>
+                                <input name="note" class="form-control form-control-sm" maxlength="1000" placeholder="@L["Note for the uploader"]" aria-label="@L["Note for the uploader"]" />
+                                <button class="btn btn-sm btn-danger" type="submit">@L["Send"]</button>
                             </form>
                         </details>
                     </div>
@@ -47,10 +47,10 @@ else
     </div>
 }
 
-<h2 class="h5 mt-4">Reported comments <span class="text-muted fw-normal">@Model.ReportedComments.Count</span></h2>
+<h2 class="h5 mt-4">@L["Reported comments"] <span class="text-muted fw-normal">@Model.ReportedComments.Count</span></h2>
 @if (Model.ReportedComments.Count == 0)
 {
-    <div class="empty-shelf">No open reports.</div>
+    <div class="empty-shelf">@L["No open reports."]</div>
 }
 else
 {
@@ -61,8 +61,8 @@ else
                 <li id="comment-@c.CommentId">
                     <div class="flex-grow-1 min-w-0">
                         <div class="small text-muted mb-1">
-                            <strong class="text-body">@c.AuthorName</strong> on <a href="/books/@c.BookId#comment-@c.CommentId">@c.BookTitle</a> · @c.CreatedAt.ToString("d MMM yyyy")
-                            @if (c.IsHidden) { <span class="badge text-bg-secondary ms-1">Hidden</span> }
+                            @H["<strong class=\"text-body\">{0}</strong> on <a href=\"{1}\">{2}</a>", c.AuthorName, $"/books/{c.BookId}#comment-{c.CommentId}", c.BookTitle] · @c.CreatedAt.ToString("d MMM yyyy")
+                            @if (c.IsHidden) { <span class="badge text-bg-secondary ms-1">@L["Hidden"]</span> }
                         </div>
                         <partial name="_UserText" model="c.Body" />
                         <ul class="small text-danger mb-0 mt-2 ps-3">
@@ -73,14 +73,14 @@ else
                         <form method="post" action="/comments/@c.CommentId/keep">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="returnUrl" value="/moderation" />
-                            <button class="btn btn-sm btn-outline-secondary" type="submit">Keep</button>
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">@L["Keep"]</button>
                         </form>
                         @if (!c.IsHidden)
                         {
                             <form method="post" action="/comments/@c.CommentId/hide">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="returnUrl" value="/moderation" />
-                                <button class="btn btn-sm btn-danger" type="submit"><i class="bi bi-eye-slash"></i> Hide</button>
+                                <button class="btn btn-sm btn-danger" type="submit"><i class="bi bi-eye-slash"></i> @L["Hide"]</button>
                             </form>
                         }
                     </div>

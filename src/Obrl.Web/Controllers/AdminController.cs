@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,8 @@ public class AdminController(
     UserManager<ApplicationUser> users,
     ActivityLog log,
     IMemoryCache cache,
-    IdleTimeout idle) : Controller
+    IdleTimeout idle,
+    IStringLocalizer<SharedResource> L) : Controller
 {
     public async Task<IActionResult> Users(string? q, CancellationToken ct)
     {
@@ -48,7 +50,7 @@ public class AdminController(
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateUser(CreateUserVm vm)
     {
-        if (!Roles.All.Contains(vm.Role)) ModelState.AddModelError(nameof(vm.Role), "Unknown role.");
+        if (!Roles.All.Contains(vm.Role)) ModelState.AddModelError(nameof(vm.Role), L["Unknown role."]);
         if (!ModelState.IsValid) return View(vm);
 
         var user = new ApplicationUser
@@ -61,12 +63,12 @@ public class AdminController(
         var result = await users.CreateAsync(user, vm.Password);
         if (!result.Succeeded)
         {
-            foreach (var e in result.Errors) ModelState.AddModelError("", e.Description);
+            foreach (var e in result.Errors) ModelState.AddModelError("", L[e.Description]);
             return View(vm);
         }
         await users.AddToRoleAsync(user, vm.Role);
         await log.WriteAsync(ActivityTypes.UserCreated, AccessService.UserId(User), data: new { user.Id, user.Email, vm.Role });
-        TempData["Message"] = $"Created {user.Email}. Give them the temporary password; they will set up two-factor sign-in at first login.";
+        TempData["Message"] = L["Created {0}. Give them the temporary password; they will set up two-factor sign-in at first login.", user.Email!].Value;
         return RedirectToAction(nameof(Users));
     }
 
@@ -74,26 +76,26 @@ public class AdminController(
     public async Task<IActionResult> SetRole(string id, string role)
     {
         if (!Roles.All.Contains(role)) return BadRequest();
-        if (id == AccessService.UserId(User)) return Back("You cannot change your own role.");
+        if (id == AccessService.UserId(User)) return Back(L["You cannot change your own role."]);
         var user = await users.FindByIdAsync(id);
         if (user is null) return NotFound();
         await users.RemoveFromRolesAsync(user, await users.GetRolesAsync(user));
         await users.AddToRoleAsync(user, role);
         await users.UpdateSecurityStampAsync(user); // their session picks up the new role
         await log.WriteAsync(ActivityTypes.RoleChanged, AccessService.UserId(User), data: new { user.Id, role });
-        return Back($"{user.Email} is now {role}.");
+        return Back(L["{0} is now {1}.", user.Email!, L[role]]);
     }
 
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Lock(string id, bool locked)
     {
-        if (id == AccessService.UserId(User)) return Back("You cannot lock your own account.");
+        if (id == AccessService.UserId(User)) return Back(L["You cannot lock your own account."]);
         var user = await users.FindByIdAsync(id);
         if (user is null) return NotFound();
         await users.SetLockoutEnabledAsync(user, true);
         await users.SetLockoutEndDateAsync(user, locked ? DateTimeOffset.MaxValue : null);
         if (!locked) await users.ResetAccessFailedCountAsync(user);
-        return Back(locked ? $"{user.Email} is locked out." : $"{user.Email} is unlocked.");
+        return Back(locked ? L["{0} is locked out.", user.Email!] : L["{0} is unlocked.", user.Email!]);
     }
 
     [HttpPost, ValidateAntiForgeryToken]
@@ -104,8 +106,8 @@ public class AdminController(
         var token = await users.GeneratePasswordResetTokenAsync(user);
         var result = await users.ResetPasswordAsync(user, token, password ?? "");
         return Back(result.Succeeded
-            ? $"New temporary password set for {user.Email}."
-            : string.Join(" ", result.Errors.Select(e => e.Description)));
+            ? L["New temporary password set for {0}.", user.Email!]
+            : string.Join(" ", result.Errors.Select(e => L[e.Description].Value)));
     }
 
     [HttpPost, ValidateAntiForgeryToken]
@@ -120,7 +122,7 @@ public class AdminController(
             await users.RemovePasskeyAsync(user, passkey.CredentialId);
         user.CurrentSessionId = null;
         await users.UpdateAsync(user);
-        return Back($"Authenticator app and passkeys reset for {user.Email}. They will set up a strong sign-in again at next login.");
+        return Back(L["Authenticator app and passkeys reset for {0}. They will set up a strong sign-in again at next login.", user.Email!]);
     }
 
     [HttpPost, ValidateAntiForgeryToken]
@@ -130,7 +132,7 @@ public class AdminController(
         if (user is null) return NotFound();
         user.CurrentSessionId = null;
         await users.UpdateAsync(user);
-        return Back($"{user.Email} was signed out.");
+        return Back(L["{0} was signed out.", user.Email!]);
     }
 
     [HttpGet]
@@ -144,7 +146,7 @@ public class AdminController(
         var adminId = AccessService.UserId(User);
         await idle.SaveAsync(db, idleMinutes, adminId);
         await log.WriteAsync(ActivityTypes.SettingChanged, adminId, data: new { setting = IdleTimeout.SettingKey, before, after = idleMinutes });
-        TempData["Message"] = $"Members are now signed out after {idleMinutes} minutes without activity.";
+        TempData["Message"] = L["Members are now signed out after {0} minutes without activity.", idleMinutes].Value;
         return RedirectToAction(nameof(Settings));
     }
 
@@ -155,9 +157,9 @@ public class AdminController(
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Disclaimer(string text, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(text)) return Back("The disclaimer cannot be empty.", nameof(Disclaimer));
+        if (string.IsNullOrWhiteSpace(text)) return Back(L["The disclaimer cannot be empty."], nameof(Disclaimer));
         var latest = await db.Disclaimers.OrderByDescending(d => d.Version).FirstOrDefaultAsync(ct);
-        if (latest?.Text.Trim() == text.Trim()) return Back("No changes.", nameof(Disclaimer));
+        if (latest?.Text.Trim() == text.Trim()) return Back(L["No changes."], nameof(Disclaimer));
         db.Disclaimers.Add(new Disclaimer
         {
             Version = (latest?.Version ?? 0) + 1,
@@ -166,7 +168,7 @@ public class AdminController(
         });
         await db.SaveChangesAsync(ct);
         cache.Remove(SessionRules.DisclaimerCacheKey);
-        return Back("Saved. Every user must accept the new version at their next page view.", nameof(Disclaimer));
+        return Back(L["Saved. Every user must accept the new version at their next page view."], nameof(Disclaimer));
     }
 
     public async Task<IActionResult> Activity(string? type, CancellationToken ct)

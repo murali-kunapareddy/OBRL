@@ -1,0 +1,18 @@
+@* OBRL's copy of Identity's account layout, so it can be shown in the member's language. *@
+@{
+    Layout = ViewData.TryGetValue("ParentLayout", out var parentLayout) ? (string)parentLayout! : "/Areas/Identity/Pages/_Layout.cshtml";
+}
+<h1 class="page-title">@L["Manage your account"]</h1>
+<p class="page-sub">@L["Change your account settings"]</p>
+<div class="row g-4">
+    <div class="col-lg-3">
+        <partial name="_ManageNav" />
+    </div>
+    <div class="col-lg-9">
+        @RenderBody()
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

@@ -1,0 +1,22 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal.LoginWithRecoveryCodeModel
+@* OBRL's copy of Identity's page, so it can be shown in the member's language. *@
+@{
+    Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    ViewData["Title"] = L["Recovery code verification"].Value;
+}
+<h1 class="h4 mb-1">@L["Recovery code verification"]</h1>
+<p class="text-muted small mb-4">@L["You have requested to log in with a recovery code. This login will not be remembered until you provide an authenticator app code at log in."]</p>
+<form method="post">
+    <partial name="_ErrorSummary" />
+    <div class="mb-4">
+        <label asp-for="Input.RecoveryCode" class="form-label fw-semibold"></label>
+        <input asp-for="Input.RecoveryCode" class="form-control" autocomplete="off" autofocus />
+        <span asp-validation-for="Input.RecoveryCode" class="text-danger small"></span>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">@L["Log in"]</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace Obrl.Web.Controllers;
 /// <summary>The Moderator's review queue: books waiting for approval and reported comments.</summary>
 [Authorize(Policy = Policies.CanModerate)]
 [Route("moderation")]
-public class ModerationController(ObrlDbContext db, ActivityLog log) : Controller
+public class ModerationController(ObrlDbContext db, ActivityLog log, IStringLocalizer<SharedResource> L) : Controller
 {
     /// <summary>Books waiting for a decision (not yet approved, not rejected).</summary>
     public static IQueryable<Book> Pending(ObrlDbContext db) =>
@@ -54,7 +55,7 @@ public class ModerationController(ObrlDbContext db, ActivityLog log) : Controlle
         book.ReviewNote = null;
         log.Add(ActivityTypes.BookApproved, userId, id);
         await db.SaveChangesAsync(ct);
-        TempData["Message"] = $"\"{book.Title}\" is now in the library.";
+        TempData["Message"] = L["“{0}” is now in the library.", book.Title].Value;
         return RedirectToAction(nameof(Index));
     }
 
@@ -71,7 +72,7 @@ public class ModerationController(ObrlDbContext db, ActivityLog log) : Controlle
         book.ReviewNote = Community.CleanText(note, 1000);
         log.Add(ActivityTypes.BookRejected, userId, id, new { note = book.ReviewNote });
         await db.SaveChangesAsync(ct);
-        TempData["Message"] = $"\"{book.Title}\" was sent back to the uploader.";
+        TempData["Message"] = L["“{0}” was sent back to the uploader.", book.Title].Value;
         return RedirectToAction(nameof(Index));
     }
 }
