@@ -19,6 +19,7 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<CommentReport> CommentReports => Set<CommentReport>();
     public DbSet<BoardPost> BoardPosts => Set<BoardPost>();
+    public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -145,6 +146,13 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
             e.HasIndex(x => x.ResolvedAt);
             e.HasOne(x => x.Comment).WithMany(x => x.Reports).HasForeignKey(x => x.CommentId).OnDelete(DeleteBehavior.Cascade);
             e.HasOne<ApplicationUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        b.Entity<SiteSetting>(e =>
+        {
+            e.HasKey(x => x.Key);
+            e.Property(x => x.Key).HasMaxLength(100);
+            e.Property(x => x.Value).HasMaxLength(1000);
         });
 
         b.Entity<BoardPost>(e =>

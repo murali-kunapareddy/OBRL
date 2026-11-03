@@ -445,3 +445,11 @@ details > summary.btn::-webkit-details-marker { display: none; }
     --bs-nav-link-color: var(--obrl-accent);
     --bs-nav-link-hover-color: var(--obrl-accent-hover);
 }
+
+/* ---------- Idle sign-out notice ---------- */
+.idle-notice {
+    position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%); z-index: 2000;
+    display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; max-width: calc(100% - 2rem);
+    padding: .75rem 1rem; border-radius: 12px; border: 1px solid var(--obrl-border);
+    background: var(--obrl-surface); color: var(--obrl-text); box-shadow: 0 8px 28px rgba(0, 0, 0, .25);
+}

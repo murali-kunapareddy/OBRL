@@ -1,5 +1,6 @@
 ﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @inject Obrl.Web.Data.ObrlDbContext Db
+@inject Obrl.Web.Security.IdleTimeout Idle
 @{
     var signedIn = User.Identity?.IsAuthenticated == true;
     var authShell = !signedIn || ViewData["Shell"] as string == "auth";
@@ -22,6 +23,7 @@
     @if (signedIn)
     {
         <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+        <meta name="obrl-idle-minutes" content="@Idle.Minutes" />
     }
     <title>@(ViewData["Title"] is string t ? t + " · OBRL" : "OBRL")</title>
     <script src="~/js/theme-init.js" asp-append-version="true"></script>
@@ -70,6 +72,7 @@ else
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() is "Users" or "CreateUser" ? "active" : "")" asp-controller="Admin" asp-action="Users"><i class="bi bi-people"></i> Users</a>
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Disclaimer" ? "active" : "")" asp-controller="Admin" asp-action="Disclaimer"><i class="bi bi-file-earmark-text"></i> Disclaimer</a>
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Activity" ? "active" : "")" asp-controller="Admin" asp-action="Activity"><i class="bi bi-activity"></i> Activity</a>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")" asp-controller="Admin" asp-action="Settings"><i class="bi bi-gear"></i> Settings</a>
             }
 
             <div class="sidebar-foot">
@@ -126,6 +129,10 @@ else
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/lib/qrcode/qrcode.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+@if (signedIn)
+{
+    <script src="~/js/session.js" asp-append-version="true"></script>
+}
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

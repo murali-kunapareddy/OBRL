@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.DataProtection;
@@ -76,19 +77,29 @@ builder.Services.Configure<IdentityPasskeyOptions>(o =>
     o.UserVerificationRequirement = "required";
 });
 
-builder.Services.Configure<SecurityStampValidatorOptions>(o => o.ValidationInterval = TimeSpan.FromMinutes(5));
+builder.Services.Configure<SecurityStampValidatorOptions>(o =>
+{
+    o.ValidationInterval = TimeSpan.FromMinutes(5);
+    // Every few minutes Identity rebuilds the sign-in from the database. Carry OBRL's session id over,
+    // or the single-session check sees a session without one and signs the member out mid-read.
+    o.OnRefreshingPrincipal = SessionRules.KeepSessionClaims;
+});
 builder.Services.ConfigureApplicationCookie(o =>
 {
     o.Cookie.Name = "obrl.auth";
     o.Cookie.HttpOnly = true;
     o.Cookie.SameSite = SameSiteMode.Lax;
     o.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
-    o.ExpireTimeSpan = TimeSpan.FromMinutes(obrl.IdleTimeoutMinutes);
     o.SlidingExpiration = true;
     o.LoginPath = "/Identity/Account/Login";
     o.AccessDeniedPath = "/Identity/Account/AccessDenied";
     o.Events.OnSigningIn = SessionRules.OnSigningIn;
+    o.Events.OnValidatePrincipal = SessionRules.ValidatePrincipal;
 });
+// The idle limit is an Admin setting, so the cookie expiry is read from it whenever the options are (re)built.
+builder.Services.AddSingleton<IdleTimeout>();
+builder.Services.AddOptions<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme)
+    .Configure<IdleTimeout>((o, idle) => o.ExpireTimeSpan = idle.Span);
 builder.Services.AddTransient<IEmailSender, LogOnlyEmailSender>();
 
 builder.Services.AddAuthorizationBuilder()
@@ -164,6 +175,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
 var app = builder.Build();
 
 await Seeder.RunAsync(app.Services);
+using (var scope = app.Services.CreateScope())
+    await app.Services.GetRequiredService<IdleTimeout>().LoadAsync(scope.ServiceProvider.GetRequiredService<ObrlDbContext>(), obrl.IdleTimeoutMinutes);
 
 // ---------- Pipeline ----------
 app.UseForwardedHeaders();

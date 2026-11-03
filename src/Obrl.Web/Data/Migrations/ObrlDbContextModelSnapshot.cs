@@ -721,6 +721,28 @@ namespace Obrl.Web.Data.Migrations
                     b.ToTable("ReadingProgress");
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.SiteSetting", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedById")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("SiteSettings");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Subscription", b =>
                 {
                     b.Property<long>("Id")

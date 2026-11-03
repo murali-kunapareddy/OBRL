@@ -1,0 +1,23 @@
+@model int
+@{
+    ViewData["Title"] = "Settings";
+}
+<h1 class="page-title">Settings</h1>
+<p class="page-sub">Library-wide settings. Changes apply straight away to everyone.</p>
+
+<form method="post" asp-action="Settings" class="panel p-4" style="max-width:640px">
+    <h2 class="h5">Sign out after inactivity</h2>
+    <p class="text-muted small">
+        Members are signed out when nothing has happened for this long: no scrolling, typing, clicking or page turns.
+        A notice one minute before lets them stay signed in. Shorter is safer on shared computers;
+        longer suits people who read one page for a long time.
+    </p>
+    <div class="d-flex flex-wrap gap-2 mb-3" role="radiogroup" aria-label="Minutes">
+        @foreach (var m in Obrl.Web.Security.IdleTimeout.Choices)
+        {
+            <input type="radio" class="btn-check" name="idleMinutes" id="idle-@m" value="@m" checked="@(m == Model)" />
+            <label class="btn btn-outline-primary" for="idle-@m">@m minutes</label>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

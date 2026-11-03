@@ -17,7 +17,8 @@ public class AdminController(
     ObrlDbContext db,
     UserManager<ApplicationUser> users,
     ActivityLog log,
-    IMemoryCache cache) : Controller
+    IMemoryCache cache,
+    IdleTimeout idle) : Controller
 {
     public async Task<IActionResult> Users(string? q, CancellationToken ct)
     {
@@ -130,6 +131,21 @@ public class AdminController(
         user.CurrentSessionId = null;
         await users.UpdateAsync(user);
         return Back($"{user.Email} was signed out.");
+    }
+
+    [HttpGet]
+    public IActionResult Settings() => View(idle.Minutes);
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> Settings(int idleMinutes)
+    {
+        if (!IdleTimeout.IsAllowed(idleMinutes)) return BadRequest();
+        var before = idle.Minutes;
+        var adminId = AccessService.UserId(User);
+        await idle.SaveAsync(db, idleMinutes, adminId);
+        await log.WriteAsync(ActivityTypes.SettingChanged, adminId, data: new { setting = IdleTimeout.SettingKey, before, after = idleMinutes });
+        TempData["Message"] = $"Members are now signed out after {idleMinutes} minutes without activity.";
+        return RedirectToAction(nameof(Settings));
     }
 
     [HttpGet]
