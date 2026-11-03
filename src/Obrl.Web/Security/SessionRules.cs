@@ -38,6 +38,7 @@ public static class SessionRules
         "/Identity/Account/Manage/Passkeys",
         "/Identity/Account/AccessDenied",
         "/Home/Error",
+        "/Language",
     ];
 
     /// <summary>Called by the cookie handler whenever a session cookie is issued (sign-in or refresh).</summary>
@@ -60,6 +61,9 @@ public static class SessionRules
         identity.AddClaim(new Claim(SessionClaim, sessionId));
 
         context.Response.Cookies.Append(ThemeCookie, user.Theme, ThemeCookieOptions(context.Request.IsHttps));
+        // The account's language follows the member to every device they sign in on.
+        if (Localization.Languages.IsSupported(user.Language))
+            Localization.Languages.WriteCookie(context.Response, user.Language!, context.Request.IsHttps);
     }
 
     /// <summary>

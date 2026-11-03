@@ -1,0 +1,17 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Manage.Internal.GenerateRecoveryCodesModel
+@{
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+    ViewData["Title"] = L["Generate recovery codes"].Value;
+    ViewData["ActivePage"] = "TwoFactorAuthentication";
+}
+<partial name="_StatusMessage" for="StatusMessage" />
+<h3 class="h5">@L["Generate recovery codes"]</h3>
+<div class="alert alert-warning" role="alert">
+    <p><strong>@L["Put these codes in a safe place."]</strong></p>
+    <p>@L["If you lose your device and don't have the recovery codes you will lose access to your account."]</p>
+    <p class="mb-0">@H["Generating new recovery codes does not change the keys used in authenticator apps. If you wish to change the key used in an authenticator app you should <a href=\"/Identity/Account/Manage/ResetAuthenticator\">reset your authenticator keys</a>."]</p>
+</div>
+<form method="post">
+    <button class="btn btn-danger" type="submit">@L["Generate recovery codes"]</button>
+</form>

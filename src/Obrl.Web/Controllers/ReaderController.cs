@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,6 +28,7 @@ public partial class ReaderController(
     PageRenderer renderer,
     UrlSigner signer,
     ActivityLog log,
+    IStringLocalizer<SharedResource> L,
     IOptions<ObrlOptions> options) : Controller
 {
     private const int MaxPagesPerRequest = 6;
@@ -40,7 +42,7 @@ public partial class ReaderController(
         if (!await access.CanReadAsync(User, id, ct))
         {
             await log.WriteAsync(ActivityTypes.AccessDenied, userId, id, ct: ct);
-            TempData["Message"] = "Subscribe to this book or one of its categories to read it.";
+            TempData["Message"] = L["Subscribe to this book or one of its categories to read it."].Value;
             return RedirectToAction("Details", "Books", new { id });
         }
 

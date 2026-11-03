@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Obrl.Web.Data;
 using Obrl.Web.Domain;
+using Obrl.Web.Localization;
 using Obrl.Web.Security;
 using Obrl.Web.Services;
 using Obrl.Web.Services.Ingest;
@@ -66,6 +68,7 @@ builder.Services
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ObrlDbContext>()
     .AddSignInManager<ObrlSignInManager>()
+    .AddErrorDescriber<LocalizedIdentityErrors>()
     .AddPasswordValidator<CommonPasswordValidator>();
 
 // Passkeys (WebAuthn): discoverable credentials so members can sign in without typing their email,
@@ -110,8 +113,24 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy(Policies.AdminOnly, p => p.RequireRole(Roles.Admin));
 
 builder.Services.AddAntiforgery(o => o.HeaderName = "X-CSRF-TOKEN");
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+// ---------- Interface languages ----------
+// Text lives in Resources/SharedResource.{language}.resx; see Localization/Languages.cs to add a language.
+builder.Services.AddLocalization(o => o.ResourcesPath = "Resources");
+builder.Services.AddTransient<Microsoft.Extensions.Options.IConfigureOptions<Microsoft.AspNetCore.Mvc.MvcOptions>, LocalizedMvcOptions>();
+builder.Services.Configure<RequestLocalizationOptions>(o =>
+{
+    string[] codes = [.. Languages.All.Select(l => l.Code)];
+    o.SetDefaultCulture(Languages.Default).AddSupportedCultures(codes).AddSupportedUICultures(codes);
+    // The member's choice (a cookie, set again from their account at every sign-in), else the browser's language.
+    o.RequestCultureProviders = [new CookieRequestCultureProvider(), new AcceptLanguageHeaderRequestCultureProvider()];
+});
+
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(o => o.DataAnnotationLocalizerProvider = (_, f) => f.Create(typeof(Obrl.Web.SharedResource)));
+builder.Services.AddRazorPages()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(o => o.DataAnnotationLocalizerProvider = (_, f) => f.Create(typeof(Obrl.Web.SharedResource)));
 
 // ---------- Uploads ----------
 var maxUpload = obrl.MaxUploadMegabytes * 1024L * 1024L;
@@ -218,6 +237,7 @@ app.Use(async (http, next) =>
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseRequestLocalization();
 app.UseAuthentication();
 app.Use(SessionRules.Enforce);
 app.UseAuthorization();

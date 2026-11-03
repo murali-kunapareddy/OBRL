@@ -1,0 +1,31 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal.LoginWith2faModel
+@* OBRL's copy of Identity's page, so it can be shown in the member's language. *@
+@{
+    Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    ViewData["Title"] = L["Two-factor authentication"].Value;
+}
+<h1 class="h4 mb-1">@L["Two-factor authentication"]</h1>
+<p class="text-muted small mb-4">@L["Your login is protected with an authenticator app. Enter your authenticator code below."]</p>
+<form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+    <input asp-for="RememberMe" type="hidden" />
+    <partial name="_ErrorSummary" />
+    <div class="mb-3">
+        <label asp-for="Input.TwoFactorCode" class="form-label fw-semibold"></label>
+        <input asp-for="Input.TwoFactorCode" class="form-control" autocomplete="one-time-code" inputmode="numeric" autofocus />
+        <span asp-validation-for="Input.TwoFactorCode" class="text-danger small"></span>
+    </div>
+    <div class="form-check mb-4">
+        <input asp-for="Input.RememberMachine" class="form-check-input" />
+        <label asp-for="Input.RememberMachine" class="form-check-label"></label>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">@L["Log in"]</button>
+</form>
+<p class="small text-muted mt-3 mb-0">
+    @L["Don't have access to your authenticator device?"]
+    <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">@L["Log in with a recovery code"]</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -7,7 +7,7 @@
         }
         @if (!Model.CanRead)
         {
-            <span class="lock" title="Subscribe to read"><i class="bi bi-lock-fill"></i></span>
+            <span class="lock" title="@L["Subscribe to read"]"><i class="bi bi-lock-fill"></i></span>
         }
         @if (Model.Percent is double p)
         {

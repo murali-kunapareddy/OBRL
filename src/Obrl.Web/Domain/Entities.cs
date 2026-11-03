@@ -9,6 +9,9 @@ public class ApplicationUser : IdentityUser
     /// <summary>auto, light, dark or sepia.</summary>
     public string Theme { get; set; } = "auto";
 
+    /// <summary>Interface language code, e.g. "en", "te" or "kn". Null until the member picks one.</summary>
+    public string? Language { get; set; }
+
     /// <summary>Id of the only session allowed to stay signed in. Changes at every sign-in.</summary>
     public string? CurrentSessionId { get; set; }
 

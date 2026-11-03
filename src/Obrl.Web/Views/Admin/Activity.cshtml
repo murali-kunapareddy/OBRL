@@ -1,26 +1,26 @@
 @model List<ActivityEvent>
 @{
-    ViewData["Title"] = "Activity";
+    ViewData["Title"] = L["Activity"].Value;
     var emails = (Dictionary<string, string?>)ViewBag.Emails;
     var titles = (Dictionary<Guid, string>)ViewBag.Titles;
     var types = typeof(ActivityTypes).GetFields().Select(f => (string)f.GetValue(null)!).Order().ToList();
 }
-<h1 class="page-title">Activity</h1>
-<p class="page-sub">The latest 300 events. Full history is kept in the ActivityEvents table for analysis.</p>
+<h1 class="page-title">@L["Activity"]</h1>
+<p class="page-sub">@L["The latest 300 events. Full history is kept in the ActivityEvents table for analysis."]</p>
 <form method="get" class="mb-3" style="max-width:280px">
     <select name="type" class="form-select" data-autosubmit>
-        <option value="">All events</option>
+        <option value="">@L["All events"]</option>
         @foreach (var t in types)
         {
             <option value="@t" selected="@(t == (string?)ViewBag.Type)">@t</option>
         }
     </select>
-    <noscript><button class="btn btn-sm btn-outline-secondary mt-2">Filter</button></noscript>
+    <noscript><button class="btn btn-sm btn-outline-secondary mt-2">@L["Filter"]</button></noscript>
 </form>
 <div class="panel p-0">
     <div class="table-responsive">
         <table class="table table-sm align-middle mb-0">
-            <thead><tr><th>When (UTC)</th><th>Event</th><th>User</th><th>Book</th><th>Details</th><th>IP</th></tr></thead>
+            <thead><tr><th>@L["When (UTC)"]</th><th>@L["Event"]</th><th>@L["User"]</th><th>@L["Book"]</th><th>@L["Details"]</th><th>IP</th></tr></thead>
             <tbody>
             @foreach (var e in Model)
             {
@@ -28,7 +28,7 @@
                     <td class="small text-nowrap">@e.At.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td><code>@e.Type</code></td>
                     <td class="small">@(e.UserId is null ? "" : emails.GetValueOrDefault(e.UserId) ?? e.UserId[..8])</td>
-                    <td class="small">@(e.BookId is Guid b ? titles.GetValueOrDefault(b) ?? "(deleted)" : "")</td>
+                    <td class="small">@(e.BookId is Guid b ? titles.GetValueOrDefault(b) ?? L["(deleted)"] : "")</td>
                     <td class="small text-muted"><code>@e.Data</code></td>
                     <td class="small text-muted">@e.IpAddress</td>
                 </tr>

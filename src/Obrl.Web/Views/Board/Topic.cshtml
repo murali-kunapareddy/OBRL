@@ -3,28 +3,28 @@
     var t = Model.Topic;
     ViewData["Title"] = t.Title;
 }
-<nav class="small mb-2"><a href="/board"><i class="bi bi-arrow-left"></i> Message board</a></nav>
+<nav class="small mb-2"><a href="/board"><i class="bi bi-arrow-left"></i> @L["Message board"]</a></nav>
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
     <h1 class="page-title mb-0">
-        @if (t.IsPinned) { <i class="bi bi-pin-angle-fill text-primary" title="Pinned"></i> }
+        @if (t.IsPinned) { <i class="bi bi-pin-angle-fill text-primary" title="@L["Pinned"]"></i> }
         @t.Title
     </h1>
     @if (Model.CanModerate)
     {
         <div class="d-flex flex-wrap gap-1">
-            <partial name="_ModerateButton" model="@((t.Id, t.IsPinned ? "unpin" : "pin", t.IsPinned ? "Unpin" : "Pin", "bi-pin-angle"))" />
-            <partial name="_ModerateButton" model="@((t.Id, t.IsLocked ? "unlock" : "lock", t.IsLocked ? "Unlock" : "Lock", t.IsLocked ? "bi-unlock" : "bi-lock"))" />
-            <partial name="_ModerateButton" model="@((t.Id, t.IsHidden ? "unhide" : "hide", t.IsHidden ? "Show" : "Hide", t.IsHidden ? "bi-eye" : "bi-eye-slash"))" />
+            <partial name="_ModerateButton" model="@((t.Id, t.IsPinned ? "unpin" : "pin", t.IsPinned ? L["Unpin"].Value : L["Pin"].Value, "bi-pin-angle"))" />
+            <partial name="_ModerateButton" model="@((t.Id, t.IsLocked ? "unlock" : "lock", t.IsLocked ? L["Unlock"].Value : L["Lock"].Value, t.IsLocked ? "bi-unlock" : "bi-lock"))" />
+            <partial name="_ModerateButton" model="@((t.Id, t.IsHidden ? "unhide" : "hide", t.IsHidden ? L["Show"].Value : L["Hide"].Value, t.IsHidden ? "bi-eye" : "bi-eye-slash"))" />
         </div>
     }
 </div>
 @if (t.IsHidden)
 {
-    <div class="alert alert-secondary"><i class="bi bi-eye-slash me-1"></i> This topic is hidden from members.</div>
+    <div class="alert alert-secondary"><i class="bi bi-eye-slash me-1"></i> @L["This topic is hidden from members."]</div>
 }
 @if (t.IsLocked)
 {
-    <div class="alert alert-secondary"><i class="bi bi-lock me-1"></i> This topic is locked. No new replies.</div>
+    <div class="alert alert-secondary"><i class="bi bi-lock me-1"></i> @L["This topic is locked. No new replies."]</div>
 }
 
 <div class="post-list">
@@ -39,8 +39,8 @@
 {
     <form id="reply" method="post" action="/board/@t.Id/reply" class="panel p-3 mt-3">
         @Html.AntiForgeryToken()
-        <label class="form-label fw-semibold" for="reply-body">Reply</label>
+        <label class="form-label fw-semibold" for="reply-body">@L["Reply"]</label>
         <textarea id="reply-body" name="body" class="form-control mb-2" rows="4" maxlength="8000" required></textarea>
-        <button class="btn btn-primary" type="submit"><i class="bi bi-reply me-1"></i> Post reply</button>
+        <button class="btn btn-primary" type="submit"><i class="bi bi-reply me-1"></i> @L["Post reply"]</button>
     </form>
 }

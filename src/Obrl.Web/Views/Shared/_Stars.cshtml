@@ -2,7 +2,7 @@
 @{
     var rounded = Math.Round(Model * 2, MidpointRounding.AwayFromZero) / 2;
 }
-<span class="stars" title="@Model.ToString("0.0") out of 5" aria-label="Rated @Model.ToString("0.0") out of 5">
+<span class="stars" title="@L["{0} out of 5", Model.ToString("0.0")]" aria-label="@L["Rated {0} out of 5", Model.ToString("0.0")]">
     @for (var i = 1; i <= 5; i++)
     {
         var icon = rounded >= i ? "bi-star-fill" : rounded >= i - 0.5 ? "bi-star-half" : "bi-star";

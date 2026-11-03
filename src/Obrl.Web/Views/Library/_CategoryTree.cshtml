@@ -8,7 +8,7 @@
                 <span class="text-truncate">@c.Name</span>
                 @if (Model.Vm.IsCovered(c))
                 {
-                    <i class="bi bi-check-circle-fill" title="Subscribed"></i>
+                    <i class="bi bi-check-circle-fill" title="@L["Subscribed"]"></i>
                 }
             </a>
             @if (c.Children.Count > 0)

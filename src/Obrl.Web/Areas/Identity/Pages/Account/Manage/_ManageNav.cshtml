@@ -4,9 +4,9 @@
     string Active(params string[] pages) => pages.Any(p => page.EndsWith("/Manage/" + p, StringComparison.OrdinalIgnoreCase)) ? "active" : "";
 }
 <ul class="nav nav-pills flex-column">
-    <li class="nav-item"><a class="nav-link @Active("Index")" id="profile" href="/Identity/Account/Manage">Profile</a></li>
-    <li class="nav-item"><a class="nav-link @Active("ChangePassword")" id="change-password" href="/Identity/Account/Manage/ChangePassword">Password</a></li>
-    <li class="nav-item"><a class="nav-link @Active("TwoFactorAuthentication", "EnableAuthenticator", "ResetAuthenticator", "GenerateRecoveryCodes", "ShowRecoveryCodes")" id="two-factor" href="/Identity/Account/Manage/TwoFactorAuthentication">Authenticator app</a></li>
-    <li class="nav-item"><a class="nav-link @Active("Passkeys")" id="passkeys" href="/Identity/Account/Manage/Passkeys">Passkeys</a></li>
-    <li class="nav-item"><a class="nav-link @Active("PersonalData", "DownloadPersonalData")" id="personal-data" href="/Identity/Account/Manage/PersonalData">Personal data</a></li>
+    <li class="nav-item"><a class="nav-link @Active("Index")" id="profile" href="/Identity/Account/Manage">@L["Profile"]</a></li>
+    <li class="nav-item"><a class="nav-link @Active("ChangePassword")" id="change-password" href="/Identity/Account/Manage/ChangePassword">@L["Password"]</a></li>
+    <li class="nav-item"><a class="nav-link @Active("TwoFactorAuthentication", "EnableAuthenticator", "ResetAuthenticator", "GenerateRecoveryCodes", "ShowRecoveryCodes")" id="two-factor" href="/Identity/Account/Manage/TwoFactorAuthentication">@L["Authenticator app"]</a></li>
+    <li class="nav-item"><a class="nav-link @Active("Passkeys")" id="passkeys" href="/Identity/Account/Manage/Passkeys">@L["Passkeys"]</a></li>
+    <li class="nav-item"><a class="nav-link @Active("PersonalData", "DownloadPersonalData")" id="personal-data" href="/Identity/Account/Manage/PersonalData">@L["Personal data"]</a></li>
 </ul>

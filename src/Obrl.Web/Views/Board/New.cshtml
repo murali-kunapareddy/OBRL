@@ -1,10 +1,10 @@
 @model NewTopicVm
 @{
-    ViewData["Title"] = "New topic";
+    ViewData["Title"] = L["New topic"].Value;
 }
-<nav class="small mb-2"><a href="/board"><i class="bi bi-arrow-left"></i> Message board</a></nav>
-<h1 class="page-title">New topic</h1>
-<p class="page-sub">Everyone in the library can read and reply. Be kind; Moderators can hide posts.</p>
+<nav class="small mb-2"><a href="/board"><i class="bi bi-arrow-left"></i> @L["Message board"]</a></nav>
+<h1 class="page-title">@L["New topic"]</h1>
+<p class="page-sub">@L["Everyone in the library can read and reply. Be kind; Moderators can hide posts."]</p>
 
 <form method="post" asp-controller="Board" asp-action="New" class="panel p-4" style="max-width:760px">
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
@@ -18,7 +18,7 @@
         <textarea asp-for="Body" class="form-control" rows="8" maxlength="8000"></textarea>
         <span asp-validation-for="Body" class="text-danger small"></span>
     </div>
-    <button class="btn btn-primary" type="submit"><i class="bi bi-send me-1"></i> Post topic</button>
+    <button class="btn btn-primary" type="submit"><i class="bi bi-send me-1"></i> @L["Post topic"]</button>
 </form>
 
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }

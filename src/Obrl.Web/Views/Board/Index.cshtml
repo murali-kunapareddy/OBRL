@@ -1,18 +1,18 @@
 @model BoardIndexVm
 @{
-    ViewData["Title"] = "Message board";
+    ViewData["Title"] = L["Message board"].Value;
 }
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
     <div>
-        <h1 class="page-title">Message board</h1>
-        <p class="page-sub">News, questions and reading suggestions for everyone in the library.</p>
+        <h1 class="page-title">@L["Message board"]</h1>
+        <p class="page-sub">@L["News, questions and reading suggestions for everyone in the library."]</p>
     </div>
-    <a class="btn btn-primary" href="/board/new"><i class="bi bi-plus-lg me-1"></i> New topic</a>
+    <a class="btn btn-primary" href="/board/new"><i class="bi bi-plus-lg me-1"></i> @L["New topic"]</a>
 </div>
 
 @if (Model.Topics.Count == 0)
 {
-    <div class="empty-shelf">No topics yet. Be the first to post.</div>
+    <div class="empty-shelf">@L["No topics yet. Be the first to post."]</div>
 }
 else
 {
@@ -20,7 +20,7 @@ else
         <partial name="_TopicList" model="Model.Topics" />
     </div>
     <nav class="d-flex justify-content-between mt-3">
-        @if (Model.Page > 1) { <a class="btn btn-outline-secondary btn-sm" href="/board?page=@(Model.Page - 1)">Newer</a> } else { <span></span> }
-        @if (Model.HasMore) { <a class="btn btn-outline-secondary btn-sm" href="/board?page=@(Model.Page + 1)">Older</a> }
+        @if (Model.Page > 1) { <a class="btn btn-outline-secondary btn-sm" href="/board?page=@(Model.Page - 1)">@L["Newer"]</a> } else { <span></span> }
+        @if (Model.HasMore) { <a class="btn btn-outline-secondary btn-sm" href="/board?page=@(Model.Page + 1)">@L["Older"]</a> }
     </nav>
 }

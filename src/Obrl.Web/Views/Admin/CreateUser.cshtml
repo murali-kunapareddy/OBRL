@@ -1,9 +1,9 @@
 @model CreateUserVm
 @{
-    ViewData["Title"] = "Add user";
+    ViewData["Title"] = L["Add user"].Value;
 }
-<h1 class="page-title">Add user</h1>
-<p class="page-sub">Share the temporary password with the person privately. At first sign-in they must set up an authenticator app and accept the disclaimer.</p>
+<h1 class="page-title">@L["Add user"]</h1>
+<p class="page-sub">@L["Share the temporary password with the person privately. At first sign-in they must set up an authenticator app and accept the disclaimer."]</p>
 <form method="post" class="panel" style="max-width:560px">
     <div asp-validation-summary="All" class="alert alert-danger"></div>
     <div class="mb-3">
@@ -16,14 +16,16 @@
     </div>
     <div class="mb-3">
         <label asp-for="Role" class="form-label fw-semibold"></label>
-        <select asp-for="Role" class="form-select" asp-items="@(new SelectList(Roles.All))"></select>
-        <div class="form-text">User reads · Contributor also uploads · Moderator also manages categories and all books · Admin has full rights.</div>
+        <select asp-for="Role" class="form-select" >
+            @foreach (var r in Roles.All) { <option value="@r">@L[r]</option> }
+        </select>
+        <div class="form-text">@L["User reads · Contributor also uploads · Moderator also manages categories and all books · Admin has full rights."]</div>
     </div>
     <div class="mb-4">
         <label asp-for="Password" class="form-label fw-semibold"></label>
         <input asp-for="Password" class="form-control" type="text" autocomplete="off" />
-        <div class="form-text">At least 12 characters. Common leaked passwords are refused.</div>
+        <div class="form-text">@L["At least 12 characters. Common leaked passwords are refused."]</div>
     </div>
-    <button class="btn btn-primary">Create account</button>
-    <a class="btn btn-link" asp-action="Users">Cancel</a>
+    <button class="btn btn-primary">@L["Create account"]</button>
+    <a class="btn btn-link" asp-action="Users">@L["Cancel"]</a>
 </form>

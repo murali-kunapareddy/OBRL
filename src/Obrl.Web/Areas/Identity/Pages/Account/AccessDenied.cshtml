@@ -1,0 +1,11 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal.AccessDeniedModel
+@{
+    Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    ViewData["Title"] = L["Access denied"].Value;
+}
+<div class="panel" style="max-width:560px">
+    <h1 class="page-title text-danger">@L["Access denied"]</h1>
+    <p class="text-muted">@L["You do not have access to this resource."]</p>
+    <a class="btn btn-primary" href="/">@L["Back to dashboard"]</a>
+</div>

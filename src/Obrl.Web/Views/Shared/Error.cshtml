@@ -1,13 +1,13 @@
 @model ErrorViewModel
 @{
-    ViewData["Title"] = "Something went wrong";
+    ViewData["Title"] = L["Something went wrong"].Value;
 }
 <div class="panel" style="max-width:560px">
-    <h1 class="page-title">Something went wrong</h1>
-    <p class="text-muted">The page could not be shown. Try again, or go back to the dashboard.</p>
+    <h1 class="page-title">@L["Something went wrong"]</h1>
+    <p class="text-muted">@L["The page could not be shown. Try again, or go back to the dashboard."]</p>
     @if (Model.ShowRequestId)
     {
-        <p class="small text-muted mb-3">Reference for the administrator: <code>@Model.RequestId</code></p>
+        <p class="small text-muted mb-3">@L["Reference for the administrator:"] <code>@Model.RequestId</code></p>
     }
-    <a class="btn btn-primary" href="/">Back to dashboard</a>
+    <a class="btn btn-primary" href="/">@L["Back to dashboard"]</a>
 </div>

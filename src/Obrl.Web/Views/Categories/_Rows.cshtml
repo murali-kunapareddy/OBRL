@@ -10,10 +10,10 @@
         </td>
         <td class="text-muted small">@(Model.Counts.GetValueOrDefault(c.Id))</td>
         <td class="text-end text-nowrap">
-            <a class="btn btn-sm btn-outline-secondary" asp-action="Create" asp-route-parentId="@c.Id" title="Add sub category"><i class="bi bi-plus-lg"></i></a>
-            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@c.Id" title="Rename or move"><i class="bi bi-pencil"></i></a>
-            <form class="d-inline" method="post" asp-action="Delete" asp-route-id="@c.Id" data-confirm="Delete the category “@c.Name”?">
-                <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Create" asp-route-parentId="@c.Id" title="@L["Add sub category"]"><i class="bi bi-plus-lg"></i></a>
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@c.Id" title="@L["Rename or move"]"><i class="bi bi-pencil"></i></a>
+            <form class="d-inline" method="post" asp-action="Delete" asp-route-id="@c.Id" data-confirm="@L["Delete the category “{0}”?", c.Name]">
+                <button class="btn btn-sm btn-outline-danger" title="@L["Delete"]"><i class="bi bi-trash"></i></button>
             </form>
         </td>
     </tr>

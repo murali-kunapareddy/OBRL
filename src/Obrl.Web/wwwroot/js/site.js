@@ -6,6 +6,16 @@
     window.obrl = window.obrl || {};
     window.obrl.csrf = csrf ? csrf.content : "";
 
+    // ----- Interface text in the member's language (see Views/Shared/_ScriptText.cshtml) -----
+    var textEl = document.getElementById("obrl-text");
+    var text = {};
+    try { text = textEl ? JSON.parse(textEl.textContent) : {}; } catch (e) { /* keep English */ }
+    // obrl.t("Page {0}", 5): the translation of an English text, with {0}, {1}... filled in.
+    window.obrl.t = function (key) {
+        var args = arguments;
+        return (text[key] || key).replace(/\{(\d+)\}/g, function (m, i) { return args[+i + 1] !== undefined ? args[+i + 1] : m; });
+    };
+
     // ----- Theme switch -----
     function applyTheme(choice) {
         var theme = choice === "auto"

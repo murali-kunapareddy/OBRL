@@ -57,6 +57,8 @@
         });
     }
 
+    var t = (window.obrl && window.obrl.t ? window.obrl.t : function (s) { return s; });
+
     function token(form) {
         var input = form.querySelector('input[name="__RequestVerificationToken"]');
         return input ? input.value : (window.obrl && window.obrl.csrf) || "";
@@ -64,7 +66,7 @@
     function fetchOptions(url, form) {
         return fetch(url, { method: "POST", headers: { "X-CSRF-TOKEN": token(form) }, credentials: "same-origin" })
             .then(function (res) {
-                if (!res.ok) throw new Error("The server did not answer (" + res.status + ").");
+                if (!res.ok) throw new Error(t("The server did not answer ({0}).", res.status));
                 return res.json();
             });
     }
@@ -73,10 +75,10 @@
         if (!box) return;
         // Cancelling the browser prompt is not an error worth shouting about.
         box.textContent = err && err.name === "NotAllowedError"
-            ? "The passkey prompt was cancelled or timed out."
+            ? t("The passkey prompt was cancelled or timed out.")
             : err && err.name === "InvalidStateError"
-                ? "This device already has a passkey for your account."
-                : "Something went wrong: " + (err && err.message ? err.message : err);
+                ? t("This device already has a passkey for your account.")
+                : t("Something went wrong: {0}", err && err.message ? err.message : err);
         box.hidden = false;
     }
 

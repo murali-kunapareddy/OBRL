@@ -1,31 +1,31 @@
 @model DashboardVm
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = L["Dashboard"].Value;
     var name = User.Identity?.Name?.Split('@')[0];
 }
-<h1 class="page-title">Welcome back@(name is null ? "" : ", " + name)</h1>
+<h1 class="page-title">@(name is null ? L["Welcome back"] : L["Welcome back, {0}", name])</h1>
 <p class="page-sub">
     @if (Model.SubscribedCategories == 0)
     {
-        <text>You have not subscribed to any categories yet. <a href="/Library">Browse the library</a> to choose what you want to read.</text>
+        @H["You have not subscribed to any categories yet. <a href=\"/Library\">Browse the library</a> to choose what you want to read."]
     }
     else
     {
-        <text>You follow @Model.SubscribedCategories @(Model.SubscribedCategories == 1 ? "category" : "categories"). <a href="/Library">Find more</a>.</text>
+        @(Model.SubscribedCategories == 1 ? H["You follow 1 category. <a href=\"/Library\">Find more</a>."] : H["You follow {0} categories. <a href=\"/Library\">Find more</a>.", Model.SubscribedCategories])
     }
 </p>
 
 <section class="shelf board-strip">
     <div class="shelf-head">
-        <h2><i class="bi bi-chat-square-text me-1"></i> Message board</h2>
+        <h2><i class="bi bi-chat-square-text me-1"></i> @L["Message board"]</h2>
         <div class="d-flex gap-3 small">
-            <a href="/board/new">New topic</a>
-            <a href="/board">See all</a>
+            <a href="/board/new">@L["New topic"]</a>
+            <a href="/board">@L["See all"]</a>
         </div>
     </div>
     @if (Model.Board.Count == 0)
     {
-        <div class="empty-shelf">No messages yet. <a href="/board/new">Start the first topic</a>.</div>
+        <div class="empty-shelf">@H["No messages yet. <a href=\"/board/new\">Start the first topic</a>."]</div>
     }
     else
     {
@@ -35,8 +35,8 @@
     }
 </section>
 
-<partial name="_Shelf" model="@(("Continue reading", Model.ContinueReading, "Books you start will appear here, ready to pick up where you left off.", (string?)null))" />
-<partial name="_Shelf" model="@(("Bookmarked", Model.Bookmarked, "Add a bookmark in the reader and the book shows up here.", (string?)null))" />
-<partial name="_Shelf" model="@(("New in your subscriptions", Model.NewBooks, "No books in your subscriptions yet.", (string?)"/Library?mine=true"))" />
-<partial name="_Shelf" model="@(("Most read this month", Model.MostRead, "Nobody has opened a book in the last 30 days.", (string?)null))" />
-<partial name="_Shelf" model="@(("Top rated", Model.TopRated, $"Books need {Obrl.Web.Services.Community.TopRatedMinimumVotes} ratings to show here.", (string?)null))" />
+<partial name="_Shelf" model="@((L["Continue reading"].Value, Model.ContinueReading, L["Books you start will appear here, ready to pick up where you left off."].Value, (string?)null))" />
+<partial name="_Shelf" model="@((L["Bookmarked"].Value, Model.Bookmarked, L["Add a bookmark in the reader and the book shows up here."].Value, (string?)null))" />
+<partial name="_Shelf" model="@((L["New in your subscriptions"].Value, Model.NewBooks, L["No books in your subscriptions yet."].Value, (string?)"/Library?mine=true"))" />
+<partial name="_Shelf" model="@((L["Most read this month"].Value, Model.MostRead, L["Nobody has opened a book in the last 30 days."].Value, (string?)null))" />
+<partial name="_Shelf" model="@((L["Top rated"].Value, Model.TopRated, L["Books need {0} ratings to show here.", Obrl.Web.Services.Community.TopRatedMinimumVotes].Value, (string?)null))" />

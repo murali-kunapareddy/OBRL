@@ -1,19 +1,19 @@
 @model List<Book>
 @{
-    ViewData["Title"] = "Uploads";
+    ViewData["Title"] = L["Uploads"].Value;
     var seesAll = ViewBag.SeesAll == true;
 }
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
     <div>
-        <h1 class="page-title">@(seesAll ? "All books" : "My uploads")</h1>
-        <p class="page-sub">Uploads are converted in the background. Refresh to see the latest status.</p>
+        <h1 class="page-title">@(seesAll ? L["All books"] : L["My uploads"])</h1>
+        <p class="page-sub">@L["Uploads are converted in the background. Refresh to see the latest status."]</p>
     </div>
-    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-cloud-arrow-up me-1"></i> Upload a book</a>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-cloud-arrow-up me-1"></i> @L["Upload a book"]</a>
 </div>
 
 @if (Model.Count == 0)
 {
-    <div class="empty-shelf">Nothing uploaded yet.</div>
+    <div class="empty-shelf">@L["Nothing uploaded yet."]</div>
 }
 else
 {
@@ -21,41 +21,41 @@ else
         <div class="table-responsive">
             <table class="table align-middle mb-0">
                 <thead>
-                    <tr><th>Title</th><th>Format</th><th>Status</th>@if (seesAll) { <th>Uploaded by</th> }<th>Added</th><th></th></tr>
+                    <tr><th>@L["Title"]</th><th>@L["Format"]</th><th>@L["Status"]</th>@if (seesAll) { <th>@L["Uploaded by"]</th> }<th>@L["Added"]</th><th></th></tr>
                 </thead>
                 <tbody>
                     @foreach (var b in Model)
                     {
                         <tr>
                             <td><a href="/books/@b.Id">@b.Title</a><div class="small text-muted">@b.Author</div></td>
-                            <td>@b.OriginalFormat.ToUpperInvariant() <span class="small text-muted">· @(b.Mode == ReaderMode.Page ? "pages" : "text")</span></td>
+                            <td>@b.OriginalFormat.ToUpperInvariant() <span class="small text-muted">· @(b.Mode == ReaderMode.Page ? L["pages"] : L["text"])</span></td>
                             <td>
                                 @switch (b.Status)
                                 {
-                                    case BookStatus.Ready: <span class="badge text-bg-success">Ready</span> break;
-                                    case BookStatus.Failed: <span class="badge text-bg-danger">Failed</span><div class="small text-danger">@b.StatusMessage</div> break;
-                                    default: <span class="badge text-bg-secondary">@b.Status</span> break;
+                                    case BookStatus.Ready: <span class="badge text-bg-success">@L["Ready"]</span> break;
+                                    case BookStatus.Failed: <span class="badge text-bg-danger">@L["Failed"]</span><div class="small text-danger">@b.StatusMessage</div> break;
+                                    default: <span class="badge text-bg-secondary">@L[b.Status.ToString()]</span> break;
                                 }
                                 @if (!b.IsApproved && b.RejectedAt is not null)
                                 {
-                                    <span class="badge text-bg-danger">Not approved</span>
-                                    <div class="small text-danger">@(b.ReviewNote ?? "A Moderator turned this book down.") Edit the details to send it back for review.</div>
+                                    <span class="badge text-bg-danger">@L["Not approved"]</span>
+                                    <div class="small text-danger">@(b.ReviewNote ?? L["A Moderator turned this book down."]) @L["Edit the details to send it back for review."]</div>
                                 }
                                 else if (!b.IsApproved)
                                 {
-                                    <span class="badge text-bg-warning">Waiting for review</span>
+                                    <span class="badge text-bg-warning">@L["Waiting for review"]</span>
                                 }
                             </td>
                             @if (seesAll) { <td class="small">@b.UploadedBy?.Email</td> }
                             <td class="small text-muted">@b.CreatedAt.ToString("yyyy-MM-dd")</td>
                             <td class="text-end text-nowrap">
-                                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@b.Id" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@b.Id" title="@L["Edit"]"><i class="bi bi-pencil"></i></a>
                                 @if (b.Status == BookStatus.Failed)
                                 {
-                                    <form class="d-inline" method="post" asp-action="Retry" asp-route-id="@b.Id"><button class="btn btn-sm btn-outline-secondary" title="Try again"><i class="bi bi-arrow-clockwise"></i></button></form>
+                                    <form class="d-inline" method="post" asp-action="Retry" asp-route-id="@b.Id"><button class="btn btn-sm btn-outline-secondary" title="@L["Try again"]"><i class="bi bi-arrow-clockwise"></i></button></form>
                                 }
-                                <form class="d-inline" method="post" asp-action="Delete" asp-route-id="@b.Id" data-confirm="Delete “@b.Title” for everyone? This cannot be undone.">
-                                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                                <form class="d-inline" method="post" asp-action="Delete" asp-route-id="@b.Id" data-confirm="@L["Delete “{0}” for everyone? This cannot be undone.", b.Title]">
+                                    <button class="btn btn-sm btn-outline-danger" title="@L["Delete"]"><i class="bi bi-trash"></i></button>
                                 </form>
                             </td>
                         </tr>

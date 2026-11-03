@@ -1,0 +1,9 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal.LockoutModel
+@{
+    Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    ViewData["Title"] = L["Locked out"].Value;
+}
+<h1 class="h4 mb-2 text-danger">@L["Locked out"]</h1>
+<p class="mb-3">@L["This account has been locked out, please try again later."]</p>
+<a class="btn btn-outline-primary w-100" href="/Identity/Account/Login">@L["Back to sign in"]</a>

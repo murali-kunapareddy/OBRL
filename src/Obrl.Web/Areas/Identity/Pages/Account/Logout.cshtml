@@ -1,0 +1,18 @@
+@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal.LogoutModel
+@{
+    Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    ViewData["Title"] = L["Sign out"].Value;
+}
+<h1 class="h4 mb-3">@L["Sign out"]</h1>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+        <button type="submit" class="btn btn-primary w-100">@L["Sign out"]</button>
+    </form>
+}
+else
+{
+    <p>@L["You have signed out."]</p>
+    <a class="btn btn-outline-primary w-100" href="/Identity/Account/Login">@L["Sign in"]</a>
+}

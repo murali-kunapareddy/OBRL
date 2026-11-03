@@ -1,0 +1,13 @@
+@* Shows form-wide errors in the member's language. Messages from Identity's own pages are English text that is also a resource key. *@
+@{
+    var errors = ViewData.ModelState.TryGetValue("", out var entry) ? entry.Errors.Select(e => e.ErrorMessage).ToList() : [];
+}
+@if (errors.Count > 0)
+{
+    <div class="alert alert-danger small" role="alert">
+        @foreach (var e in errors)
+        {
+            <div>@L[e]</div>
+        }
+    </div>
+}

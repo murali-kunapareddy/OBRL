@@ -29,6 +29,7 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
         {
             e.Property(x => x.DisplayName).HasMaxLength(100);
             e.Property(x => x.Theme).HasMaxLength(10);
+            e.Property(x => x.Language).HasMaxLength(10);
             e.Property(x => x.CurrentSessionId).HasMaxLength(64);
         });
 

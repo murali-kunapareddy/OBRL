@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -14,7 +15,7 @@ namespace Obrl.Web.Controllers;
 /// Moderators pin, lock and hide topics and replies.
 /// </summary>
 [Route("board")]
-public class BoardController(ObrlDbContext db, ActivityLog log) : Controller
+public class BoardController(ObrlDbContext db, ActivityLog log, IStringLocalizer<SharedResource> L) : Controller
 {
     private const int PageSize = 30;
 
@@ -49,8 +50,8 @@ public class BoardController(ObrlDbContext db, ActivityLog log) : Controller
     {
         var title = Community.CleanText(vm.Title?.Replace('\n', ' '), Community.MaxTitleLength);
         var body = Community.CleanText(vm.Body, Community.MaxPostLength);
-        if (title is null) ModelState.AddModelError(nameof(vm.Title), "Give the topic a title.");
-        if (body is null) ModelState.AddModelError(nameof(vm.Body), "Write a message.");
+        if (title is null) ModelState.AddModelError(nameof(vm.Title), L["Give the topic a title."]);
+        if (body is null) ModelState.AddModelError(nameof(vm.Body), L["Write a message."]);
         if (!ModelState.IsValid) return View(vm);
 
         var userId = AccessService.UserId(User);
@@ -93,13 +94,13 @@ public class BoardController(ObrlDbContext db, ActivityLog log) : Controller
         if (topic is null || (topic.IsHidden && !isModerator)) return NotFound();
         if (topic.IsLocked && !isModerator)
         {
-            TempData["Message"] = "This topic is locked.";
+            TempData["Message"] = L["This topic is locked."].Value;
             return Redirect($"/board/{id}");
         }
         var text = Community.CleanText(body, Community.MaxPostLength);
         if (text is null)
         {
-            TempData["Message"] = "Write something before posting.";
+            TempData["Message"] = L["Write something before posting."].Value;
             return Redirect($"/board/{id}#reply");
         }
 
@@ -127,7 +128,7 @@ public class BoardController(ObrlDbContext db, ActivityLog log) : Controller
         else
             db.BoardPosts.Remove(post);
         await db.SaveChangesAsync(ct);
-        TempData["Message"] = "Your post was deleted.";
+        TempData["Message"] = L["Your post was deleted."].Value;
         return topicId is long t ? Redirect($"/board/{t}") : Redirect("/board");
     }
 

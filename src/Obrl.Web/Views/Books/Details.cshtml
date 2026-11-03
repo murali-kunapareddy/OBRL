@@ -2,13 +2,13 @@
 @{
     var b = Model.Book;
     ViewData["Title"] = b.Title;
-    string FormatLabel() => b.Mode == ReaderMode.Page ? $"{b.UnitCount} pages" : "Reflowable text";
+    string FormatLabel() => b.Mode == ReaderMode.Page ? L["{0} pages", b.UnitCount] : L["Reflowable text"];
 }
 <div class="book-hero">
     <div class="cover">
         @if (b.HasCover)
         {
-            <img src="/books/@b.Id/cover" alt="Cover of @b.Title" />
+            <img src="/books/@b.Id/cover" alt="@L["Cover of {0}", b.Title]" />
         }
     </div>
     <div>
@@ -25,18 +25,18 @@
             }
             else
             {
-                <span class="badge text-bg-warning">@b.Status</span>
+                <span class="badge text-bg-warning">@L[b.Status.ToString()]</span>
             }
             @if (!b.IsApproved)
             {
-                <span class="badge text-bg-warning">@(b.RejectedAt is null ? "Waiting for review" : "Not approved")</span>
+                <span class="badge text-bg-warning">@(b.RejectedAt is null ? L["Waiting for review"] : L["Not approved"])</span>
             }
         </div>
         @if (b.RatingCount > 0)
         {
             <div class="mb-3 d-flex align-items-center gap-2">
                 <partial name="_Stars" model="b.RatingAverage" />
-                <span class="small text-muted">@b.RatingAverage.ToString("0.0") from @b.RatingCount @(b.RatingCount == 1 ? "rating" : "ratings")</span>
+                <span class="small text-muted">@(b.RatingCount == 1 ? L["{0} from 1 rating", b.RatingAverage.ToString("0.0")] : L["{0} from {1} ratings", b.RatingAverage.ToString("0.0"), b.RatingCount])</span>
             </div>
         }
 
@@ -55,7 +55,7 @@
         <div class="d-flex flex-wrap gap-2 my-4">
             @if (Model.CanRead)
             {
-                var label = Model.Progress is null ? "Start reading" : $"Continue ({Math.Round(Model.Progress.PercentComplete)}%)";
+                var label = Model.Progress is null ? L["Start reading"] : L["Continue ({0}%)", Math.Round(Model.Progress.PercentComplete)];
                 <a class="btn btn-primary btn-lg" href="/read/@b.Id"><i class="bi bi-book-half me-1"></i> @label</a>
             }
             @if (b.Status == BookStatus.Ready)
@@ -64,57 +64,57 @@
                 {
                     <form method="post" action="/books/@b.Id/unsubscribe">
                         @Html.AntiForgeryToken()
-                        <button class="btn btn-outline-primary btn-lg"><i class="bi bi-check2"></i> Subscribed</button>
+                        <button class="btn btn-outline-primary btn-lg"><i class="bi bi-check2"></i> @L["Subscribed"]</button>
                     </form>
                 }
                 else if (!Model.CanRead)
                 {
                     <form method="post" action="/books/@b.Id/subscribe">
                         @Html.AntiForgeryToken()
-                        <button class="btn btn-primary btn-lg"><i class="bi bi-plus-lg"></i> Subscribe to read</button>
+                        <button class="btn btn-primary btn-lg"><i class="bi bi-plus-lg"></i> @L["Subscribe to read"]</button>
                     </form>
                 }
             }
             @if (Model.CanEdit)
             {
-                <a class="btn btn-outline-secondary btn-lg" asp-controller="Uploads" asp-action="Edit" asp-route-id="@b.Id"><i class="bi bi-pencil"></i> Edit details</a>
+                <a class="btn btn-outline-secondary btn-lg" asp-controller="Uploads" asp-action="Edit" asp-route-id="@b.Id"><i class="bi bi-pencil"></i> @L["Edit details"]</a>
             }
             @if (Model.CanModerate && !b.IsApproved)
             {
                 <form method="post" action="/moderation/books/@b.Id/approve">
                     @Html.AntiForgeryToken()
-                    <button class="btn btn-success btn-lg"><i class="bi bi-check2-circle"></i> Approve</button>
+                    <button class="btn btn-success btn-lg"><i class="bi bi-check2-circle"></i> @L["Approve"]</button>
                 </form>
             }
             else if (Model.CanModerate)
             {
-                <form method="post" action="/moderation/books/@b.Id/reject" data-confirm="Take “@b.Title” out of the library? The uploader can edit it and resubmit.">
+                <form method="post" action="/moderation/books/@b.Id/reject" data-confirm="@L["Take “{0}” out of the library? The uploader can edit it and resubmit.", b.Title]">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="note" value="Taken down by a Moderator." />
-                    <button class="btn btn-outline-danger btn-lg"><i class="bi bi-slash-circle"></i> Take down</button>
+                    <input type="hidden" name="note" value="@L["Taken down by a Moderator."]" />
+                    <button class="btn btn-outline-danger btn-lg"><i class="bi bi-slash-circle"></i> @L["Take down"]</button>
                 </form>
             }
         </div>
         @if (!b.IsApproved && b.ReviewNote is not null && Model.CanEdit)
         {
-            <div class="alert alert-warning"><strong>Moderator note:</strong> @b.ReviewNote</div>
+            <div class="alert alert-warning"><strong>@L["Moderator note:"]</strong> @b.ReviewNote</div>
         }
 
         @if (!string.IsNullOrEmpty(b.Description))
         {
-            <h2 class="h5">About this book</h2>
+            <h2 class="h5">@L["About this book"]</h2>
             <p style="white-space:pre-line">@b.Description</p>
         }
 
         @if (Model.Bookmarks.Count > 0 && Model.CanRead)
         {
-            <h2 class="h5 mt-4">Your bookmarks</h2>
+            <h2 class="h5 mt-4">@L["Your bookmarks"]</h2>
             <div class="list-group" style="max-width:520px">
                 @foreach (var m in Model.Bookmarks)
                 {
                     <a class="list-group-item list-group-item-action" href="/read/@b.Id?at=@m.Position">
                         <i class="bi bi-bookmark-fill me-2"></i>
-                        @(b.Mode == ReaderMode.Page ? $"Page {m.Position + 1}" : $"Section {m.Position + 1}")
+                        @(b.Mode == ReaderMode.Page ? L["Page {0}", m.Position + 1] : L["Section {0}", m.Position + 1])
                         @if (m.Note is not null) { <span class="text-muted">· @m.Note</span> }
                     </a>
                 }
@@ -130,42 +130,42 @@
         {
             <div class="panel p-3 mb-4" id="rating">
                 <div class="d-flex flex-wrap align-items-center gap-3">
-                    <strong>@(Model.MyRating is null ? "Rate this book" : "Your rating")</strong>
-                    <form method="post" action="/books/@b.Id/rate" class="star-input" aria-label="Rate from 1 to 5 stars">
+                    <strong>@(Model.MyRating is null ? L["Rate this book"] : L["Your rating"])</strong>
+                    <form method="post" action="/books/@b.Id/rate" class="star-input" aria-label="@L["Rate from 1 to 5 stars"]">
                         @Html.AntiForgeryToken()
                         @for (var i = 5; i >= 1; i--)
                         {
-                            <button type="submit" name="stars" value="@i" class="@(Model.MyRating >= i ? "on" : "")" title="@i @(i == 1 ? "star" : "stars")" aria-label="@i @(i == 1 ? "star" : "stars")"><i class="bi bi-star-fill"></i></button>
+                            <button type="submit" name="stars" value="@i" class="@(Model.MyRating >= i ? "on" : "")" title="@(i == 1 ? L["1 star"] : L["{0} stars", i])" aria-label="@(i == 1 ? L["1 star"] : L["{0} stars", i])"><i class="bi bi-star-fill"></i></button>
                         }
                     </form>
                     @if (Model.MyRating is not null)
                     {
                         <form method="post" action="/books/@b.Id/rate">
                             @Html.AntiForgeryToken()
-                            <button type="submit" name="stars" value="0" class="btn btn-link btn-sm p-0">Remove my rating</button>
+                            <button type="submit" name="stars" value="0" class="btn btn-link btn-sm p-0">@L["Remove my rating"]</button>
                         </form>
                     }
                 </div>
             </div>
         }
 
-        <h2 class="h5" id="comments">Comments <span class="text-muted fw-normal">@Model.Comments.Sum(c => 1 + c.Replies.Count)</span></h2>
+        <h2 class="h5" id="comments">@L["Comments"] <span class="text-muted fw-normal">@Model.Comments.Sum(c => 1 + c.Replies.Count)</span></h2>
         @if (Model.CanRead)
         {
             <form method="post" action="/books/@b.Id/comments" class="comment-form mb-4">
                 @Html.AntiForgeryToken()
-                <textarea name="body" class="form-control mb-2" rows="3" maxlength="4000" placeholder="Share what you thought of this book" aria-label="Write a comment" required></textarea>
-                <button class="btn btn-primary btn-sm" type="submit"><i class="bi bi-send me-1"></i> Post comment</button>
+                <textarea name="body" class="form-control mb-2" rows="3" maxlength="4000" placeholder="@L["Share what you thought of this book"]" aria-label="@L["Write a comment"]" required></textarea>
+                <button class="btn btn-primary btn-sm" type="submit"><i class="bi bi-send me-1"></i> @L["Post comment"]</button>
             </form>
         }
         else
         {
-            <p class="text-muted small">Subscribe to this book to rate it and join the discussion.</p>
+            <p class="text-muted small">@L["Subscribe to this book to rate it and join the discussion."]</p>
         }
 
         @if (Model.Comments.Count == 0)
         {
-            <p class="text-muted">No comments yet.</p>
+            <p class="text-muted">@L["No comments yet."]</p>
         }
         <div class="comment-list">
             @foreach (var c in Model.Comments)

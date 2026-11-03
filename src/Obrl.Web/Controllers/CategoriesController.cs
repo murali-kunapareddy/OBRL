@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ namespace Obrl.Web.Controllers;
 
 /// <summary>Moderators manage the category tree: add, rename, move and remove categories at any depth.</summary>
 [Authorize(Policy = Policies.CanModerate)]
-public class CategoriesController(ObrlDbContext db) : Controller
+public class CategoriesController(ObrlDbContext db, IStringLocalizer<SharedResource> L) : Controller
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -27,7 +28,7 @@ public class CategoriesController(ObrlDbContext db) : Controller
     public async Task<IActionResult> Create(CategoryEditVm vm, CancellationToken ct)
     {
         var parent = vm.ParentId is int pid ? await db.Categories.FindAsync([pid], ct) : null;
-        if (vm.ParentId is not null && parent is null) ModelState.AddModelError(nameof(vm.ParentId), "Parent not found.");
+        if (vm.ParentId is not null && parent is null) ModelState.AddModelError(nameof(vm.ParentId), L["Parent not found."]);
         await CheckUniqueNameAsync(vm, ct);
         if (!ModelState.IsValid)
         {
@@ -49,7 +50,7 @@ public class CategoriesController(ObrlDbContext db) : Controller
         category.Path = CategoryTree.PathFor(parent?.Path, category.Id);
         await db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
-        TempData["Message"] = $"Added \"{category.Name}\".";
+        TempData["Message"] = L["Added “{0}”.", category.Name].Value;
         return RedirectToAction(nameof(Index));
     }
 
@@ -77,9 +78,9 @@ public class CategoriesController(ObrlDbContext db) : Controller
         if (c is null) return NotFound();
         vm.Id = id;
         var parent = vm.ParentId is int pid ? await db.Categories.FindAsync([pid], ct) : null;
-        if (vm.ParentId is not null && parent is null) ModelState.AddModelError(nameof(vm.ParentId), "Parent not found.");
+        if (vm.ParentId is not null && parent is null) ModelState.AddModelError(nameof(vm.ParentId), L["Parent not found."]);
         if (parent is not null && parent.Path.StartsWith(c.Path, StringComparison.Ordinal))
-            ModelState.AddModelError(nameof(vm.ParentId), "A category cannot be moved inside itself.");
+            ModelState.AddModelError(nameof(vm.ParentId), L["A category cannot be moved inside itself."]);
         await CheckUniqueNameAsync(vm, ct);
         if (!ModelState.IsValid)
         {
@@ -102,7 +103,7 @@ public class CategoriesController(ObrlDbContext db) : Controller
         }
         await db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
-        TempData["Message"] = $"Saved \"{c.Name}\".";
+        TempData["Message"] = L["Saved “{0}”.", c.Name].Value;
         return RedirectToAction(nameof(Index));
     }
 
@@ -112,14 +113,14 @@ public class CategoriesController(ObrlDbContext db) : Controller
         var c = await db.Categories.FindAsync([id], ct);
         if (c is null) return NotFound();
         if (await db.Categories.AnyAsync(x => x.ParentId == id, ct))
-            TempData["Message"] = $"\"{c.Name}\" has sub categories. Move or delete them first.";
+            TempData["Message"] = L["“{0}” has sub categories. Move or delete them first.", c.Name].Value;
         else if (await db.BookCategories.AnyAsync(x => x.CategoryId == id, ct))
-            TempData["Message"] = $"\"{c.Name}\" still has books. Move them to another category first.";
+            TempData["Message"] = L["“{0}” still has books. Move them to another category first.", c.Name].Value;
         else
         {
             db.Categories.Remove(c);
             await db.SaveChangesAsync(ct);
-            TempData["Message"] = $"Deleted \"{c.Name}\".";
+            TempData["Message"] = L["Deleted “{0}”.", c.Name].Value;
         }
         return RedirectToAction(nameof(Index));
     }
@@ -128,6 +129,6 @@ public class CategoriesController(ObrlDbContext db) : Controller
     {
         var name = vm.Name?.Trim() ?? "";
         if (await db.Categories.AnyAsync(x => x.ParentId == vm.ParentId && x.Name == name && x.Id != vm.Id, ct))
-            ModelState.AddModelError(nameof(vm.Name), "A category with this name already exists here.");
+            ModelState.AddModelError(nameof(vm.Name), L["A category with this name already exists here."]);
     }
 }

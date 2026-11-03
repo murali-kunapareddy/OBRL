@@ -1,14 +1,14 @@
 @model Disclaimer?
 @{
-    ViewData["Title"] = "Disclaimer";
+    ViewData["Title"] = L["Disclaimer"].Value;
 }
-<h1 class="page-title">Disclaimer</h1>
+<h1 class="page-title">@L["Disclaimer"]</h1>
 <p class="page-sub">
-    Users must accept this before they can use OBRL. Saving a change creates a new version that everyone must accept again.
-    @if (Model is not null) { <text>Current version: @Model.Version, saved @Model.CreatedAt.ToString("d MMM yyyy").</text> }
+    @L["Users must accept this before they can use OBRL. Saving a change creates a new version that everyone must accept again."]
+    @if (Model is not null) { @L["Current version: {0}, saved {1}.", Model.Version, Model.CreatedAt.ToString("d MMM yyyy")] }
 </p>
 <form method="post" class="panel" style="max-width:820px">
     <textarea name="text" class="form-control mb-3" rows="18" required>@Model?.Text</textarea>
-    <p class="small text-muted">Have the final wording checked by someone who knows the law where you operate.</p>
-    <button class="btn btn-primary" data-confirm="Publish a new version? Every user will be asked to accept it.">Publish new version</button>
+    <p class="small text-muted">@L["Have the final wording checked by someone who knows the law where you operate."]</p>
+    <button class="btn btn-primary" data-confirm="@L["Publish a new version? Every user will be asked to accept it."]">@L["Publish new version"]</button>
 </form>
