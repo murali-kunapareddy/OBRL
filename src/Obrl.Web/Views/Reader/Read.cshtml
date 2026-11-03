@@ -1,5 +1,6 @@
 @model ReaderVm
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject Obrl.Web.Security.IdleTimeout Idle
 @{
     Layout = null;
     var b = Model.Book;
@@ -13,6 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
+    <meta name="obrl-idle-minutes" content="@Idle.Minutes" />
     <title>@b.Title · OBRL</title>
     <script src="~/js/theme-init.js" asp-append-version="true"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -133,5 +135,6 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 <script src="~/js/reader.js" asp-append-version="true"></script>
+<script src="~/js/session.js" asp-append-version="true"></script>
 </body>
 </html>

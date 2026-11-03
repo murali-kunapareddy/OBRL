@@ -62,6 +62,39 @@ public static class SessionRules
         context.Response.Cookies.Append(ThemeCookie, user.Theme, ThemeCookieOptions(context.Request.IsHttps));
     }
 
+    /// <summary>
+    /// Runs on every request that carries a session cookie: ends sessions idle for longer than the Admin's limit,
+    /// then lets Identity re-check the security stamp as usual.
+    /// </summary>
+    public static async Task ValidatePrincipal(CookieValidatePrincipalContext context)
+    {
+        var services = context.HttpContext.RequestServices;
+        var now = services.GetRequiredService<TimeProvider>().GetUtcNow();
+        if (services.GetRequiredService<IdleTimeout>().IsIdle(context, now))
+        {
+            context.RejectPrincipal();
+            await context.HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+            context.HttpContext.Response.Cookies.Append(IdleTimeout.SignedOutCookie, "1", new CookieOptions
+            {
+                HttpOnly = true, Secure = context.Request.IsHttps, SameSite = SameSiteMode.Lax, MaxAge = TimeSpan.FromMinutes(5),
+            });
+            return;
+        }
+        // Slide against the current limit, not the one the cookie was issued under: a cookie from before an
+        // Admin shortened the limit would otherwise only renew at half its old, longer lifetime.
+        services.GetRequiredService<IdleTimeout>().Slide(context, now);
+        await SecurityStampValidator.ValidatePrincipalAsync(context);
+    }
+
+    /// <summary>Copies OBRL's own claims onto the principal Identity rebuilds when it re-validates the security stamp.</summary>
+    public static Task KeepSessionClaims(SecurityStampRefreshingPrincipalContext context)
+    {
+        var sessionId = context.CurrentPrincipal?.FindFirstValue(SessionClaim);
+        if (sessionId is not null && context.NewPrincipal?.Identity is ClaimsIdentity identity && !identity.HasClaim(c => c.Type == SessionClaim))
+            identity.AddClaim(new Claim(SessionClaim, sessionId));
+        return Task.CompletedTask;
+    }
+
     public static CookieOptions ThemeCookieOptions(bool secure) => new()
     {
         HttpOnly = false,

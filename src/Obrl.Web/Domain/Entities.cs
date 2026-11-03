@@ -152,6 +152,15 @@ public class Bookmark
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
 
+/// <summary>A library-wide setting that Admins change in the app (key/value).</summary>
+public class SiteSetting
+{
+    public string Key { get; set; } = "";
+    public string Value { get; set; } = "";
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public string? UpdatedById { get; set; }
+}
+
 public class Disclaimer
 {
     public int Id { get; set; }
@@ -284,4 +293,6 @@ public static class ActivityTypes
     public const string BoardModerated = "board_moderated";
     public const string PasskeyAdded = "passkey_added";
     public const string PasskeyRemoved = "passkey_removed";
+    public const string IdleSignOut = "idle_sign_out";
+    public const string SettingChanged = "setting_changed";
 }

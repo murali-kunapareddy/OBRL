@@ -3,6 +3,18 @@
 @{
     ViewData["Title"] = "Sign in";
     var reason = Request.Query["reason"].ToString();
+    // Set when OBRL ends a session for inactivity.
+    if (Request.Cookies.ContainsKey(Obrl.Web.Security.IdleTimeout.SignedOutCookie))
+    {
+        reason = "idle";
+        ViewContext.HttpContext.Response.Cookies.Delete(Obrl.Web.Security.IdleTimeout.SignedOutCookie);
+    }
+    // A session cookie that no longer signs anyone in has expired: every other sign-out deletes it.
+    else if (string.IsNullOrEmpty(reason) && User.Identity?.IsAuthenticated != true && Request.Cookies.ContainsKey("obrl.auth"))
+    {
+        reason = "idle";
+        ViewContext.HttpContext.Response.Cookies.Delete("obrl.auth");
+    }
     var passkeyOnly = ViewContext.HttpContext.Items.ContainsKey(Obrl.Web.Security.ObrlSignInManager.PasskeyOnlyItem);
 }
 <h1 class="h4 mb-1">Sign in</h1>
@@ -19,6 +31,10 @@ else if (reason == "changed")
 else if (reason == "passkey")
 {
     <div class="alert alert-warning small">That passkey was not accepted. Try again, or use your password and authenticator code.</div>
+}
+else if (reason == "idle")
+{
+    <div class="alert alert-info small">You were signed out because nothing happened for a while. Please sign in again to carry on where you left off.</div>
 }
 else if (reason == "ended")
 {
