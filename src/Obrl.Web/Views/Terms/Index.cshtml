@@ -1,0 +1,14 @@
+@model Disclaimer?
+@{
+    ViewData["Title"] = L["Terms & Conditions"].Value;
+}
+<h1 class="page-title">@L["Terms & Conditions"]</h1>
+@if (Model is null)
+{
+    <p class="page-sub">@L["No terms have been published yet."]</p>
+}
+else
+{
+    <p class="page-sub">@L["Version {0}", Model.Version] · @L["Last updated {0}", Model.CreatedAt.ToString("d MMM yyyy")]</p>
+    <div class="@(User.Identity?.IsAuthenticated == true ? "panel " : "")disclaimer-text" style="max-width:820px">@Model.Text</div>
+}

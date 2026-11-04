@@ -39,6 +39,7 @@ public static class SessionRules
         "/Identity/Account/AccessDenied",
         "/Home/Error",
         "/Language",
+        "/terms",
     ];
 
     /// <summary>Called by the cookie handler whenever a session cookie is issued (sign-in or refresh).</summary>

@@ -36,6 +36,9 @@ public class ObrlOptions
     /// </summary>
     public string? PasskeyServerDomain { get; set; }
 
+    /// <summary>Name shown after "©" in the footer. Defaults to "OBRL".</summary>
+    public string? CopyrightHolder { get; set; }
+
     public SeedOptions Seed { get; set; } = new();
 }
 

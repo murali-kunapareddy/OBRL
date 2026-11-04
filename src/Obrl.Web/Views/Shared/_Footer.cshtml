@@ -1,0 +1,11 @@
+@inject Microsoft.Extensions.Options.IOptions<Obrl.Web.Services.ObrlOptions> Options
+@using Obrl.Web.Services
+@{
+    var holder = string.IsNullOrWhiteSpace(Options.Value.CopyrightHolder) ? "OBRL" : Options.Value.CopyrightHolder;
+    var built = BuildInfo.BuiltAt is DateTime at ? L["Built {0} UTC", at.ToString("yyyy-MM-dd HH:mm:ss")].Value : null;
+}
+<footer class="site-footer">
+    <span>© @DateTime.UtcNow.Year @holder. @L["All rights reserved."]</span>
+    <a href="/terms">@L["Terms & Conditions"]</a>
+    <span class="build-info" title="@built">v@(BuildInfo.Version)</span>
+</footer>

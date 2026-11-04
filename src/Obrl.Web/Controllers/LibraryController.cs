@@ -8,7 +8,7 @@ using Obrl.Web.Services;
 namespace Obrl.Web.Controllers;
 
 /// <summary>Browse the category tree, search, and subscribe to categories.</summary>
-public class LibraryController(ObrlDbContext db, AccessService access, ActivityLog log) : Controller
+public class LibraryController(ObrlDbContext db, AccessService access, BookText bookText, ActivityLog log) : Controller
 {
     private const int PageSize = 36;
 
@@ -30,11 +30,16 @@ public class LibraryController(ObrlDbContext db, AccessService access, ActivityL
         var readable = access.ReadableBooks(User);
         if (mine) books = books.Where(b => readable.Any(r => r.Id == b.Id));
 
+        // Sort by the title the member sees: the one in their language, or the English one.
+        var lang = BookText.CurrentLanguage ?? "";
+        System.Linq.Expressions.Expression<Func<Book, string>> shownTitle = b =>
+            b.Translations.Where(t => t.Language == lang && t.Title != null).Select(t => t.Title).FirstOrDefault() ?? b.Title;
+
         IOrderedQueryable<Book> ordered;
         var search = q?.Trim();
         if (string.IsNullOrEmpty(search))
         {
-            ordered = books.OrderBy(b => b.Title);
+            ordered = books.OrderBy(shownTitle);
         }
         else if (db.Database.IsNpgsql())
         {
@@ -43,13 +48,18 @@ public class LibraryController(ObrlDbContext db, AccessService access, ActivityL
             ordered = books
                 .Where(b => b.SearchVector!.Matches(EF.Functions.WebSearchToTsQuery("simple", search))
                     || EF.Functions.ILike(b.Title, pattern)
-                    || (b.Author != null && EF.Functions.ILike(b.Author, pattern)))
+                    || (b.Author != null && EF.Functions.ILike(b.Author, pattern))
+                    // Details entered in other languages are searched too, whatever language the member reads in.
+                    || b.Translations.Any(t => EF.Functions.ILike(t.Title!, pattern) || EF.Functions.ILike(t.Author!, pattern)
+                        || EF.Functions.ILike(t.Description!, pattern)))
                 .OrderByDescending(b => b.SearchVector!.Rank(EF.Functions.WebSearchToTsQuery("simple", search)))
-                .ThenBy(b => b.Title);
+                .ThenBy(shownTitle);
         }
         else
         {
-            ordered = books.Where(b => b.Title.Contains(search) || (b.Author != null && b.Author.Contains(search))).OrderBy(b => b.Title);
+            ordered = books.Where(b => b.Title.Contains(search) || (b.Author != null && b.Author.Contains(search))
+                    || b.Translations.Any(t => (t.Title != null && t.Title.Contains(search)) || (t.Author != null && t.Author.Contains(search))))
+                .OrderBy(shownTitle);
         }
 
         var rows = await ordered.Skip((page - 1) * PageSize).Take(PageSize + 1)
@@ -63,7 +73,8 @@ public class LibraryController(ObrlDbContext db, AccessService access, ActivityL
             Breadcrumb = current is null ? [] : tree.Trail(current.Id),
             SubscribedIds = await access.SubscribedCategoryIdsAsync(userId, ct),
             SubscribedPaths = await access.SubscribedPathsAsync(userId, ct),
-            Books = rows.Take(PageSize).Select(r => new BookCard(r.Id, r.Title, r.Author, r.HasCover, r.Mode, r.CanRead, Rating: r.RatingCount > 0 ? r.RatingAverage : null)).ToList(),
+            Books = await bookText.LocalizeAsync(rows.Take(PageSize)
+                .Select(r => new BookCard(r.Id, r.Title, r.Author, r.HasCover, r.Mode, r.CanRead, Rating: r.RatingCount > 0 ? r.RatingAverage : null)).ToList(), ct),
             Query = q,
             MySubscriptionsOnly = mine,
             Page = page,

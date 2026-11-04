@@ -7,7 +7,17 @@
     <UserSecretsId>obrl-web</UserSecretsId>
     <!-- PDFtoImage is marked for desktop/mobile platforms only; OBRL runs on Linux, Windows and macOS, which are all supported. -->
     <NoWarn>$(NoWarn);CA1416</NoWarn>
+
+    <!-- Version shown in the footer as major.minor.build. Change major.minor by hand for a release.
+         The build number is the build time (UTC) as yyyyMMddHHmmss, shown in hexadecimal. -->
+    <ObrlVersion>1.0</ObrlVersion>
+    <ObrlBuildTimestamp Condition="'$(ObrlBuildTimestamp)' == ''">$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</ObrlBuildTimestamp>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyMetadata Include="ObrlVersion" Value="$(ObrlVersion)" />
+    <AssemblyMetadata Include="ObrlBuildTimestamp" Value="$(ObrlBuildTimestamp)" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="Resources\**" CopyToOutputDirectory="PreserveNewest" />

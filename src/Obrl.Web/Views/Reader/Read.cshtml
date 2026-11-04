@@ -15,7 +15,7 @@
     <meta name="robots" content="noindex, nofollow" />
     <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
     <meta name="obrl-idle-minutes" content="@Idle.Minutes" />
-    <title>@b.Title · OBRL</title>
+    <title>@Model.Text.Title · OBRL</title>
     <script src="~/js/theme-init.js" asp-append-version="true"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.min.css" />
@@ -35,7 +35,7 @@
     <header class="reader-bar" id="bar">
         <div class="bar-group bar-left">
             <a class="bar-btn" href="/books/@b.Id" title="@L["Close the book"]"><i class="bi bi-arrow-left"></i></a>
-            <div class="bar-title" title="@b.Title">@b.Title</div>
+            <div class="bar-title" title="@Model.Text.Title">@Model.Text.Title</div>
         </div>
 
         <div class="bar-group bar-center">
