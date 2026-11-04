@@ -308,6 +308,15 @@ h1, h2, h3, .serif { font-family: "Literata", Georgia, serif; letter-spacing: -.
 
 .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+/* Cover choice on the upload form */
+.cover-current { width: 120px; flex: none; }
+.cover-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: .6rem; max-height: 420px; overflow: auto; padding: .25rem; }
+.cover-tile { position: relative; padding: 0; border: 2px solid transparent; border-radius: .35rem; background: var(--obrl-surface-2); aspect-ratio: 2 / 3; overflow: hidden; cursor: pointer; }
+.cover-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-tile span { position: absolute; right: .25rem; bottom: .25rem; font-size: .75rem; padding: 0 .35rem; border-radius: .25rem; background: rgba(0, 0, 0, .6); color: #fff; }
+.cover-tile:hover, .cover-tile:focus-visible { border-color: var(--obrl-accent); }
+.cover-tile.selected { border-color: var(--obrl-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--obrl-accent) 35%, transparent); }
+
 .cover .lock {
     position: absolute;
     top: .4rem;

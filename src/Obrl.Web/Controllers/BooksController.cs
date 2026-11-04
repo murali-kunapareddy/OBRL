@@ -82,13 +82,19 @@ public class BooksController(ObrlDbContext db, AccessService access, BookText bo
         return Redirect($"/books/{id}#rating");
     }
 
-    /// <summary>Cover thumbnails are visible to every signed-in user, so they can browse what to subscribe to.</summary>
+    /// <summary>
+    /// Cover thumbnails are visible to every signed-in user, so they can browse what to subscribe to.
+    /// Browsers check back each time (a cheap 304 when unchanged), so a new cover shows up straight away.
+    /// </summary>
     [HttpGet("/books/{id:guid}/cover")]
-    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Client)]
     public IActionResult Cover(Guid id)
     {
-        var path = storage.CoverPath(id);
-        return System.IO.File.Exists(path) ? PhysicalFile(path, "image/webp") : NotFound();
+        var file = new FileInfo(storage.CoverPath(id));
+        if (!file.Exists) return NotFound();
+        Response.Headers.CacheControl = "private, no-cache";
+        var modified = new DateTimeOffset(file.LastWriteTimeUtc, TimeSpan.Zero);
+        var etag = new Microsoft.Net.Http.Headers.EntityTagHeaderValue($"\"{file.LastWriteTimeUtc.Ticks:x}-{file.Length:x}\"");
+        return PhysicalFile(file.FullName, "image/webp", modified, etag);
     }
 
     [HttpPost("/books/{id:guid}/subscribe"), ValidateAntiForgeryToken]

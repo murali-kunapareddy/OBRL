@@ -13,7 +13,7 @@ namespace Obrl.Web.Controllers;
 
 /// <summary>Contributors add and edit their books; Moderators and Admins can manage every book.</summary>
 [Authorize(Policy = Policies.CanContribute)]
-public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLog log, IOptions<ObrlOptions> options, IStringLocalizer<SharedResource> L) : Controller
+public class UploadsController(ObrlDbContext db, BookStorage storage, CoverService covers, ActivityLog log, IOptions<ObrlOptions> options, IStringLocalizer<SharedResource> L) : Controller
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -42,6 +42,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         if (vm.File is null || vm.File.Length == 0) ModelState.AddModelError(nameof(vm.File), L["Choose a file to upload."]);
         else if (format is null) ModelState.AddModelError(nameof(vm.File), L["This file type is not supported."]);
         await ValidateCategoriesAsync(vm, ct);
+        var customCover = await ReadCoverChoiceAsync(vm, hasSavedCustom: false, ct);
 
         if (!ModelState.IsValid)
         {
@@ -70,6 +71,8 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
             Categories = vm.CategoryIds.Distinct().Select(c => new BookCategory { CategoryId = c }).ToList(),
         };
         BookText.Apply(book, vm.Translations);
+        SetCoverChoice(book, vm);
+        if (customCover is not null) await covers.SaveCustomAsync(book.Id, customCover, ct);
 
         // The upload is encrypted before it touches the disk.
         using (var ms = new MemoryStream())
@@ -81,9 +84,12 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         db.Books.Add(book);
         log.Add(ActivityTypes.BookUploaded, userId, book.Id, new { format, size = book.OriginalSize });
         await db.SaveChangesAsync(ct);
-        TempData["Message"] = approvedOnUpload
+        var message = approvedOnUpload
             ? L["“{0}” was uploaded and is being prepared. It usually takes under a minute.", book.Title].Value
             : L["“{0}” was uploaded. Readers will see it once a Moderator has approved it.", book.Title].Value;
+        if (book.Mode == ReaderMode.Page && book.CoverSource == CoverSource.Default)
+            message += " " + L["The first page is used as the cover. Once the book is ready, you can pick another page with the edit button."].Value;
+        TempData["Message"] = message;
         return RedirectToAction(nameof(Index));
     }
 
@@ -101,8 +107,11 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
             Description = book.Description,
             CategoryIds = book.Categories.Select(c => c.CategoryId).ToList(),
             AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten(),
+            CoverSource = book.CoverSource,
+            CoverPage = book.CoverPage,
         };
         vm.FillTranslations(book.Translations);
+        FillBookInfo(vm, book);
         return View(vm);
     }
 
@@ -114,13 +123,25 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         if (!CanManage(book)) return Forbid();
         ModelState.Remove(nameof(vm.File));
         await ValidateCategoriesAsync(vm, ct);
+        if (vm.CoverSource == CoverSource.Page && book.Mode == ReaderMode.Page && book.Status == BookStatus.Ready
+            && vm.CoverImage is not { Length: > 0 } && (vm.CoverPage is not int p || p < 1 || p > book.UnitCount))
+            ModelState.AddModelError(nameof(vm.CoverPage), L["Pick a page between 1 and {0}.", book.UnitCount]);
+        var customCover = await ReadCoverChoiceAsync(vm, covers.HasCustom(id), ct);
         if (!ModelState.IsValid)
         {
             vm.Id = id;
             vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten();
             vm.FillTranslations(book.Translations);
+            FillBookInfo(vm, book);
             return View(vm);
         }
+
+        var (oldSource, oldPage) = (book.CoverSource, book.CoverPage);
+        covers.KeepDefault(book);
+        SetCoverChoice(book, vm);
+        if (customCover is not null) await covers.SaveCustomAsync(id, customCover, ct);
+        if (customCover is not null || oldSource != book.CoverSource || oldPage != book.CoverPage)
+            await covers.RefreshAsync(book, ct);
 
         book.Title = vm.Title.Trim();
         book.Author = Blank(vm.Author);
@@ -168,6 +189,63 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         storage.DeleteAll(id);
         TempData["Message"] = L["“{0}” was deleted.", book.Title].Value;
         return RedirectToAction(nameof(Index));
+    }
+
+    /// <summary>
+    /// How a page would look as the cover, for the page picker on the edit form. Only the uploader and
+    /// Moderators can see these, and only once the book is converted.
+    /// </summary>
+    [HttpGet]
+    [ResponseCache(Duration = 600, Location = ResponseCacheLocation.Client)]
+    public async Task<IActionResult> CoverPreview(Guid id, int page, CancellationToken ct)
+    {
+        var book = await db.Books.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id, ct);
+        if (book is null || book.Mode != ReaderMode.Page || book.Status != BookStatus.Ready) return NotFound();
+        if (!CanManage(book)) return Forbid();
+        if (page < 1 || page > book.UnitCount) return NotFound();
+        return File(await covers.PagePreviewAsync(book, page, ct), "image/webp");
+    }
+
+    /// <summary>
+    /// Checks the cover part of the form. An uploaded image always wins; returns it ready to save (or null when none
+    /// was uploaded). Adds model errors for an unreadable image, or for "use my image" with no image.
+    /// </summary>
+    private async Task<byte[]?> ReadCoverChoiceAsync(UploadVm vm, bool hasSavedCustom, CancellationToken ct)
+    {
+        if (vm.CoverImage is { Length: > 0 } image)
+        {
+            if (image.Length > CoverService.MaxImageMegabytes * 1024L * 1024L)
+            {
+                ModelState.AddModelError(nameof(vm.CoverImage), L["The cover image must be {0} MB or smaller.", CoverService.MaxImageMegabytes]);
+                return null;
+            }
+            var webp = await CoverService.PrepareCustomAsync(image, ct);
+            if (webp is null) ModelState.AddModelError(nameof(vm.CoverImage), L["The cover image could not be read. Use a JPEG, PNG or WebP picture."]);
+            else vm.CoverSource = CoverSource.Custom;
+            return webp;
+        }
+        if (vm.CoverSource == CoverSource.Custom && !hasSavedCustom)
+            ModelState.AddModelError(nameof(vm.CoverImage), L["Choose a cover image, or pick another cover option."]);
+        return null;
+    }
+
+    /// <summary>Copies the cover choice from the form. A page only applies to PDF and Word books.</summary>
+    private static void SetCoverChoice(Book book, UploadVm vm)
+    {
+        var source = vm.CoverSource;
+        if (!Enum.IsDefined(source) || (source == CoverSource.Page && (book.Mode != ReaderMode.Page || vm.CoverPage is null)))
+            source = CoverSource.Default;
+        book.CoverSource = source;
+        book.CoverPage = source == CoverSource.Page ? vm.CoverPage : null;
+    }
+
+    private void FillBookInfo(UploadVm vm, Book book)
+    {
+        vm.Status = book.Status;
+        vm.Mode = book.Mode;
+        vm.PageCount = book.Mode == ReaderMode.Page ? book.UnitCount : 0;
+        vm.HasCover = book.HasCover;
+        vm.HasCustomCover = covers.HasCustom(book.Id);
     }
 
     private bool CanManage(Book book) =>

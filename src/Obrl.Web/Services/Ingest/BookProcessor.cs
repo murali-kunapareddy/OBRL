@@ -6,7 +6,7 @@ using PDFtoImage;
 namespace Obrl.Web.Services.Ingest;
 
 /// <summary>Turns an uploaded original into what the reader serves: a PDF for page mode, or HTML sections for text mode.</summary>
-public sealed class BookProcessor(BookStorage storage, ExternalTools tools, ILogger<BookProcessor> logger)
+public sealed class BookProcessor(BookStorage storage, ExternalTools tools, CoverService covers, ILogger<BookProcessor> logger)
 {
     public async Task ProcessAsync(Book book, CancellationToken ct)
     {
@@ -55,8 +55,7 @@ public sealed class BookProcessor(BookStorage storage, ExternalTools tools, ILog
         if (pages < 1) throw new IngestException("The document has no pages.");
 
         await storage.WriteEncryptedAsync(storage.ContentPdfPath(book.Id), pdf, ct);
-        await SaveCoverAsync(book.Id, CoverMaker.FromPdf(pdf), ct);
-        book.HasCover = true;
+        await covers.WriteForPageBookAsync(book, pdf, pages, ct);
         book.UnitCount = pages;
         book.TocJson = null;
     }
@@ -92,17 +91,9 @@ public sealed class BookProcessor(BookStorage storage, ExternalTools tools, ILog
             book.Description = Trim(System.Text.RegularExpressions.Regex.Replace(text.Description, "<[^>]+>", ""), 4000);
 
         var cover = text.CoverImage is { Length: > 0 } ? CoverMaker.FromImage(text.CoverImage) : null;
-        await SaveCoverAsync(book.Id, cover ?? CoverMaker.Generated(book.Title, book.Author), ct);
-        book.HasCover = true;
+        await covers.WriteForTextBookAsync(book, cover ?? CoverMaker.Generated(book.Title, book.Author), ct);
         book.UnitCount = text.Sections.Count;
         book.TocJson = JsonSerializer.Serialize(text.Toc);
-    }
-
-    private async Task SaveCoverAsync(Guid id, byte[] webp, CancellationToken ct)
-    {
-        var path = storage.CoverPath(id);
-        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        await File.WriteAllBytesAsync(path, webp, ct);
     }
 
     private static string Trim(string s, int max) => s.Length <= max ? s : s[..max];

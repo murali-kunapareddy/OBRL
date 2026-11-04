@@ -370,6 +370,12 @@ namespace Obrl.Web.Data.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
 
+                    b.Property<int?>("CoverPage")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CoverSource")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -581,6 +587,31 @@ namespace Obrl.Web.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.CategoryTranslation", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Language")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("CategoryId", "Language");
+
+                    b.ToTable("CategoryTranslations");
                 });
 
             modelBuilder.Entity("Obrl.Web.Domain.Comment", b =>
@@ -1034,6 +1065,17 @@ namespace Obrl.Web.Data.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.CategoryTranslation", b =>
+                {
+                    b.HasOne("Obrl.Web.Domain.Category", "Category")
+                        .WithMany("Translations")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Comment", b =>
                 {
                     b.HasOne("Obrl.Web.Domain.Book", "Book")
@@ -1160,6 +1202,8 @@ namespace Obrl.Web.Data.Migrations
                     b.Navigation("Books");
 
                     b.Navigation("Children");
+
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("Obrl.Web.Domain.Comment", b =>

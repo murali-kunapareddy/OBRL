@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = L["Categories"].Value;
     var counts = (Dictionary<int, int>)ViewBag.BookCounts;
+    var translations = (Dictionary<int, List<CategoryTranslation>>)ViewBag.Translations;
 }
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
     <div>
@@ -19,7 +20,7 @@ else
     <div class="panel p-0">
         <table class="table align-middle mb-0">
             <thead><tr><th>@L["Name"]</th><th>@L["Books"]</th><th></th></tr></thead>
-            <tbody><partial name="_Rows" model="@((Model, counts))" /></tbody>
+            <tbody><partial name="_Rows" model="@((Model, counts, translations))" /></tbody>
         </table>
     </div>
 }

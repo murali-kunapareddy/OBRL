@@ -113,6 +113,84 @@
         }
         <span asp-validation-for="CategoryIds" class="text-danger small"></span>
     </div>
+    @{
+        var pageBook = Model.Mode == ReaderMode.Page;
+        var textBook = Model.Mode == ReaderMode.Text;
+        var canPreview = !creating && pageBook && Model.Status == BookStatus.Ready && Model.PageCount > 0;
+        const int firstTiles = 24;
+        var tiles = canPreview ? Math.Min(Model.PageCount, 600) : 0;
+    }
+    <div class="mb-4" id="cover">
+        <div class="mb-1 d-flex flex-wrap align-items-baseline gap-2">
+            <span class="form-label fw-semibold mb-0">@L["Cover"]</span>
+            <span class="small text-muted">@L["Use your own image if you have one. Otherwise pick a page from the book. If you do neither, the first page is used."]</span>
+        </div>
+        <div class="d-flex flex-wrap gap-3 align-items-start mt-2">
+            @if (!creating && Model.HasCover)
+            {
+                <div class="cover cover-current" title="@L["Current cover"]"><img src="/books/@Model.Id/cover" alt="@L["Current cover"]" /></div>
+            }
+            <div class="flex-grow-1" style="min-width:260px">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" asp-for="CoverSource" value="@CoverSource.Custom" id="cover-custom" />
+                    <label class="form-check-label" for="cover-custom">@L["My own cover image"]</label>
+                    <input asp-for="CoverImage" type="file" class="form-control form-control-sm mt-1" accept="@Obrl.Web.Services.CoverService.Accept" />
+                    <div class="small text-muted">
+                        @L["JPEG, PNG or WebP, up to {0} MB. It is cropped to a 2:3 book shape.", Obrl.Web.Services.CoverService.MaxImageMegabytes]
+                        @if (Model.HasCustomCover) { @L["Your earlier image is kept; choose a file only to replace it."] }
+                    </div>
+                    <span asp-validation-for="CoverImage" class="text-danger small"></span>
+                </div>
+                @if (!textBook)
+                {
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" asp-for="CoverSource" value="@CoverSource.Page" id="cover-page" />
+                        <label class="form-check-label" for="cover-page">@L["A page from the book"]</label>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <label for="CoverPage" class="small text-muted">@L["Page"]</label>
+                            <input asp-for="CoverPage" type="number" min="1" max="@(Model.PageCount > 0 ? Model.PageCount : null)" class="form-control form-control-sm" style="max-width:110px" />
+                            @if (Model.PageCount > 0) { <span class="small text-muted">@L["of {0}", Model.PageCount]</span> }
+                        </div>
+                        <div class="small text-muted">
+                            @if (creating)
+                            {
+                                @L["PDF and Word files only. You can also pick the page from pictures once the book is ready."]
+                            }
+                            else if (!canPreview)
+                            {
+                                @L["Pictures of the pages appear here once the book is ready."]
+                            }
+                        </div>
+                        <span asp-validation-for="CoverPage" class="text-danger small"></span>
+                    </div>
+                }
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="CoverSource" value="@CoverSource.Default" id="cover-default" />
+                    <label class="form-check-label" for="cover-default">
+                        @if (textBook) { @L["The e-book’s own cover, or one made from the title"] }
+                        else if (pageBook) { @L["The first page"] }
+                        else { @L["The first page (EPUB and text files use the e-book’s own cover)"] }
+                    </label>
+                </div>
+            </div>
+        </div>
+        @if (tiles > 0)
+        {
+            <div class="cover-picker mt-3" data-cover-picker>
+                @for (var p = 1; p <= tiles; p++)
+                {
+                    <button type="button" class="cover-tile @(Model.CoverSource == CoverSource.Page && Model.CoverPage == p ? "selected" : "")" data-cover-page="@p" hidden="@(p > firstTiles)" aria-label="@L["Use page {0} as the cover", p]">
+                        <img src="/Uploads/CoverPreview/@Model.Id?page=@p" alt="" loading="lazy" />
+                        <span>@p</span>
+                    </button>
+                }
+            </div>
+            @if (tiles > firstTiles)
+            {
+                <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-cover-more="@firstTiles">@L["Show more pages"]</button>
+            }
+        }
+    </div>
     <button class="btn btn-primary" type="submit">@(creating ? L["Upload"] : L["Save"])</button>
     <a class="btn btn-link" asp-action="Index">@L["Cancel"]</a>
 </form>

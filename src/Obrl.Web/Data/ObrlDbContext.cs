@@ -7,6 +7,7 @@ namespace Obrl.Web.Data;
 public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<CategoryTranslation> CategoryTranslations => Set<CategoryTranslation>();
     public DbSet<Book> Books => Set<Book>();
     public DbSet<BookTranslation> BookTranslations => Set<BookTranslation>();
     public DbSet<BookCategory> BookCategories => Set<BookCategory>();
@@ -42,6 +43,15 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
             e.HasIndex(x => x.Path);
             e.HasIndex(x => new { x.ParentId, x.Name }).IsUnique();
             e.HasOne(x => x.Parent).WithMany(x => x.Children).HasForeignKey(x => x.ParentId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        b.Entity<CategoryTranslation>(e =>
+        {
+            e.HasKey(x => new { x.CategoryId, x.Language });
+            e.Property(x => x.Language).HasMaxLength(10);
+            e.Property(x => x.Name).HasMaxLength(120);
+            e.Property(x => x.Description).HasMaxLength(1000);
+            e.HasOne(x => x.Category).WithMany(x => x.Translations).HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
         });
 
         b.Entity<Book>(e =>

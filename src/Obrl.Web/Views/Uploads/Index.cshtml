@@ -38,7 +38,13 @@ else
                             <td>
                                 @switch (b.Status)
                                 {
-                                    case BookStatus.Ready: <span class="badge text-bg-success">@L["Ready"]</span> break;
+                                    case BookStatus.Ready:
+                                        <span class="badge text-bg-success">@L["Ready"]</span>
+                                        if (b.Mode == ReaderMode.Page && b.CoverSource == CoverSource.Default)
+                                        {
+                                            <div class="small"><a asp-action="Edit" asp-route-id="@b.Id" asp-fragment="cover"><i class="bi bi-image me-1"></i>@L["Pick a cover page"]</a></div>
+                                        }
+                                        break;
                                     case BookStatus.Failed: <span class="badge text-bg-danger">@L["Failed"]</span><div class="small text-danger">@b.StatusMessage</div> break;
                                     default: <span class="badge text-bg-secondary">@L[b.Status.ToString()]</span> break;
                                 }

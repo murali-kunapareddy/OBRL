@@ -10,20 +10,32 @@ public sealed class CategoryTree
     public List<CategoryNode> Roots { get; } = [];
     public Dictionary<int, CategoryNode> ById { get; } = [];
 
-    public static async Task<CategoryTree> LoadAsync(ObrlDbContext db, CancellationToken ct = default)
+    /// <summary>
+    /// Loads every category with its name and description in the member's interface language
+    /// (English where no translation was entered). Pass <paramref name="englishOnly"/> to skip translations.
+    /// </summary>
+    public static async Task<CategoryTree> LoadAsync(ObrlDbContext db, CancellationToken ct = default, bool englishOnly = false)
     {
         var rows = await db.Categories.AsNoTracking()
-            .OrderBy(c => c.SortOrder).ThenBy(c => c.Name)
-            .Select(c => new { c.Id, c.Name, c.ParentId, c.Path, c.Description })
+            .Select(c => new { c.Id, c.Name, c.ParentId, c.Path, c.Description, c.SortOrder })
             .ToListAsync(ct);
 
+        var lang = englishOnly ? null : BookText.CurrentLanguage;
+        var translations = lang is null ? []
+            : await db.CategoryTranslations.AsNoTracking().Where(t => t.Language == lang).ToDictionaryAsync(t => t.CategoryId, ct);
+
         var tree = new CategoryTree();
-        foreach (var r in rows)
-        {
-            var depth = r.Path.Count(ch => ch == '/') - 2;
-            tree.ById[r.Id] = new CategoryNode(r.Id, r.Name, r.ParentId, r.Path, depth, r.Description);
-        }
-        foreach (var node in rows.Select(r => tree.ById[r.Id]))
+        var nodes = rows.Select(r =>
+            {
+                var (name, description) = CategoryText.Pick(r.Name, r.Description, translations.GetValueOrDefault(r.Id));
+                return (r.SortOrder, Node: new CategoryNode(r.Id, name, r.ParentId, r.Path, r.Path.Count(ch => ch == '/') - 2, description));
+            })
+            // Siblings sort by the moderator's order, then alphabetically in the language the member reads.
+            .OrderBy(x => x.SortOrder).ThenBy(x => x.Node.Name, StringComparer.Create(System.Globalization.CultureInfo.CurrentCulture, true))
+            .Select(x => x.Node)
+            .ToList();
+        foreach (var n in nodes) tree.ById[n.Id] = n;
+        foreach (var node in nodes)
         {
             if (node.ParentId is int p && tree.ById.TryGetValue(p, out var parent)) parent.Children.Add(node);
             else tree.Roots.Add(node);

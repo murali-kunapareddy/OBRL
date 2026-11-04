@@ -58,6 +58,34 @@
         sel.addEventListener("change", function () { sel.form.submit(); });
     });
 
+    // ----- Book cover choice on the upload form -----
+    var coverPage = document.getElementById("CoverPage");
+    var coverImage = document.getElementById("CoverImage");
+    function pick(id) { var r = document.getElementById(id); if (r) r.checked = true; }
+    function markTile(page) {
+        document.querySelectorAll("[data-cover-page]").forEach(function (t) {
+            t.classList.toggle("selected", t.getAttribute("data-cover-page") === String(page));
+        });
+    }
+    if (coverImage) coverImage.addEventListener("change", function () { if (coverImage.files.length) pick("cover-custom"); });
+    if (coverPage) coverPage.addEventListener("input", function () { pick("cover-page"); markTile(coverPage.value); });
+    document.querySelectorAll("[data-cover-page]").forEach(function (tile) {
+        tile.addEventListener("click", function () {
+            var page = tile.getAttribute("data-cover-page");
+            if (coverPage) coverPage.value = page;
+            pick("cover-page");
+            markTile(page);
+        });
+    });
+    document.querySelectorAll("[data-cover-more]").forEach(function (button) {
+        button.addEventListener("click", function () {
+            var step = +button.getAttribute("data-cover-more");
+            var hidden = document.querySelectorAll("[data-cover-page][hidden]");
+            for (var i = 0; i < hidden.length && i < step; i++) hidden[i].hidden = false;
+            if (hidden.length <= step) button.remove();
+        });
+    });
+
     // ----- Confirm before destructive actions -----
     document.addEventListener("submit", function (e) {
         var msg = e.target.getAttribute && e.target.getAttribute("data-confirm");

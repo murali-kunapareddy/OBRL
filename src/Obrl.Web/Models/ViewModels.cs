@@ -150,6 +150,24 @@ public sealed class UploadVm
     [Display(Name = "Book file")]
     public IFormFile? File { get; set; }
 
+    /// <summary>Where the cover comes from: the first page, a page the uploader picks, or an uploaded image.</summary>
+    [Display(Name = "Cover")]
+    public CoverSource CoverSource { get; set; }
+
+    /// <summary>1-based page to use when <see cref="CoverSource"/> is Page.</summary>
+    [Range(1, 100000), Display(Name = "Cover page")]
+    public int? CoverPage { get; set; }
+
+    [Display(Name = "Cover image")]
+    public IFormFile? CoverImage { get; set; }
+
+    // Shown on the edit page only.
+    public BookStatus Status { get; set; }
+    public ReaderMode? Mode { get; set; }
+    public int PageCount { get; set; }
+    public bool HasCover { get; set; }
+    public bool HasCustomCover { get; set; }
+
     /// <summary>Title, author and description in the other interface languages, one entry per language.</summary>
     public List<BookTranslationInput> Translations { get; set; } = [];
 
@@ -203,7 +221,38 @@ public sealed class CategoryEditVm
     [Display(Name = "Sort order")]
     public int SortOrder { get; set; }
 
+    /// <summary>Name and description in the other interface languages, one entry per language.</summary>
+    public List<CategoryTranslationInput> Translations { get; set; } = [];
+
     public List<CategoryNode> AllCategories { get; set; } = [];
+
+    /// <summary>One entry for every non-English language, filled from the category's saved translations or the posted form.</summary>
+    public void FillTranslations(IEnumerable<CategoryTranslation> saved)
+    {
+        var posted = Translations;
+        Translations = Obrl.Web.Localization.Languages.All
+            .Where(l => l.Code != Obrl.Web.Localization.Languages.Default)
+            .Select(l => posted.FirstOrDefault(p => p.Language == l.Code)
+                ?? saved.Where(t => t.Language == l.Code)
+                    .Select(t => new CategoryTranslationInput { Language = l.Code, Name = t.Name, Description = t.Description })
+                    .FirstOrDefault()
+                ?? new CategoryTranslationInput { Language = l.Code })
+            .ToList();
+    }
+}
+
+/// <summary>A category's name and description in one non-English language. Both are optional.</summary>
+public sealed class CategoryTranslationInput
+{
+    public string? Language { get; set; }
+
+    [StringLength(120), Display(Name = "Name")]
+    public string? Name { get; set; }
+
+    [StringLength(1000), Display(Name = "Description")]
+    public string? Description { get; set; }
+
+    public bool IsEmpty => string.IsNullOrWhiteSpace(Name) && string.IsNullOrWhiteSpace(Description);
 }
 
 public sealed class ReaderVm

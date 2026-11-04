@@ -17,12 +17,19 @@ public class CategoriesController(ObrlDbContext db, IStringLocalizer<SharedResou
     {
         ViewBag.BookCounts = await db.BookCategories.GroupBy(bc => bc.CategoryId)
             .Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Key, x => x.Count, ct);
-        return View((await CategoryTree.LoadAsync(db, ct)).Roots);
+        // Moderators manage the English names; the names entered in other languages are listed beside them.
+        ViewBag.Translations = (await db.CategoryTranslations.AsNoTracking().Where(t => t.Name != null).ToListAsync(ct))
+            .GroupBy(t => t.CategoryId).ToDictionary(g => g.Key, g => g.ToList());
+        return View((await CategoryTree.LoadAsync(db, ct, englishOnly: true)).Roots);
     }
 
     [HttpGet]
-    public async Task<IActionResult> Create(int? parentId, CancellationToken ct) =>
-        View("Edit", new CategoryEditVm { ParentId = parentId, AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten() });
+    public async Task<IActionResult> Create(int? parentId, CancellationToken ct)
+    {
+        var vm = new CategoryEditVm { ParentId = parentId, AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten() };
+        vm.FillTranslations([]);
+        return View("Edit", vm);
+    }
 
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CategoryEditVm vm, CancellationToken ct)
@@ -33,6 +40,7 @@ public class CategoriesController(ObrlDbContext db, IStringLocalizer<SharedResou
         if (!ModelState.IsValid)
         {
             vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten();
+            vm.FillTranslations([]);
             return View("Edit", vm);
         }
 
@@ -45,6 +53,7 @@ public class CategoriesController(ObrlDbContext db, IStringLocalizer<SharedResou
             SortOrder = vm.SortOrder,
             Path = "/pending/",
         };
+        CategoryText.Apply(category, vm.Translations);
         db.Categories.Add(category);
         await db.SaveChangesAsync(ct);
         category.Path = CategoryTree.PathFor(parent?.Path, category.Id);
@@ -57,10 +66,10 @@ public class CategoriesController(ObrlDbContext db, IStringLocalizer<SharedResou
     [HttpGet]
     public async Task<IActionResult> Edit(int id, CancellationToken ct)
     {
-        var c = await db.Categories.FindAsync([id], ct);
+        var c = await db.Categories.Include(x => x.Translations).FirstOrDefaultAsync(x => x.Id == id, ct);
         if (c is null) return NotFound();
         var tree = await CategoryTree.LoadAsync(db, ct);
-        return View(new CategoryEditVm
+        var vm = new CategoryEditVm
         {
             Id = c.Id,
             Name = c.Name,
@@ -68,13 +77,15 @@ public class CategoriesController(ObrlDbContext db, IStringLocalizer<SharedResou
             ParentId = c.ParentId,
             SortOrder = c.SortOrder,
             AllCategories = tree.Flatten().Where(n => !n.Path.StartsWith(c.Path, StringComparison.Ordinal)).ToList(),
-        });
+        };
+        vm.FillTranslations(c.Translations);
+        return View(vm);
     }
 
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, CategoryEditVm vm, CancellationToken ct)
     {
-        var c = await db.Categories.FindAsync([id], ct);
+        var c = await db.Categories.Include(x => x.Translations).FirstOrDefaultAsync(x => x.Id == id, ct);
         if (c is null) return NotFound();
         vm.Id = id;
         var parent = vm.ParentId is int pid ? await db.Categories.FindAsync([pid], ct) : null;
@@ -85,6 +96,7 @@ public class CategoriesController(ObrlDbContext db, IStringLocalizer<SharedResou
         if (!ModelState.IsValid)
         {
             vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten().Where(n => !n.Path.StartsWith(c.Path, StringComparison.Ordinal)).ToList();
+            vm.FillTranslations(c.Translations);
             return View(vm);
         }
 
@@ -92,6 +104,7 @@ public class CategoriesController(ObrlDbContext db, IStringLocalizer<SharedResou
         c.Name = vm.Name.Trim();
         c.Description = string.IsNullOrWhiteSpace(vm.Description) ? null : vm.Description.Trim();
         c.SortOrder = vm.SortOrder;
+        CategoryText.Apply(c, vm.Translations);
         if (c.ParentId != parent?.Id)
         {
             // Moving: rewrite this category's path and every descendant's.

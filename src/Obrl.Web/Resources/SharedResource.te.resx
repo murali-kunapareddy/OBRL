@@ -1436,4 +1436,82 @@
   <data name="Details entered in: {0}" xml:space="preserve">
     <value>వివరాలు నమోదు చేసిన భాషలు: {0}</value>
   </data>
+  <data name="The first page is used as the cover. Once the book is ready, you can pick another page with the edit button." xml:space="preserve">
+    <value>మొదటి పేజీని ముఖచిత్రంగా ఉపయోగిస్తారు. పుస్తకం సిద్ధమైన తర్వాత, సవరించు బటన్‌తో వేరే పేజీని ఎంచుకోవచ్చు.</value>
+  </data>
+  <data name="Pick a page between 1 and {0}." xml:space="preserve">
+    <value>1 నుండి {0} మధ్య ఒక పేజీని ఎంచుకోండి.</value>
+  </data>
+  <data name="The cover image must be {0} MB or smaller." xml:space="preserve">
+    <value>ముఖచిత్రం {0} MB లేదా అంతకంటే తక్కువ ఉండాలి.</value>
+  </data>
+  <data name="The cover image could not be read. Use a JPEG, PNG or WebP picture." xml:space="preserve">
+    <value>ముఖచిత్రాన్ని చదవలేకపోయాము. JPEG, PNG లేదా WebP చిత్రాన్ని ఉపయోగించండి.</value>
+  </data>
+  <data name="Choose a cover image, or pick another cover option." xml:space="preserve">
+    <value>ముఖచిత్రాన్ని ఎంచుకోండి, లేదా మరొక ముఖచిత్ర ఎంపికను ఎంచుకోండి.</value>
+  </data>
+  <data name="Cover" xml:space="preserve">
+    <value>ముఖచిత్రం</value>
+  </data>
+  <data name="Cover page" xml:space="preserve">
+    <value>ముఖచిత్ర పేజీ</value>
+  </data>
+  <data name="Cover image" xml:space="preserve">
+    <value>ముఖచిత్ర చిత్రం</value>
+  </data>
+  <data name="Pick a cover page" xml:space="preserve">
+    <value>ముఖచిత్ర పేజీని ఎంచుకోండి</value>
+  </data>
+  <data name="Use your own image if you have one. Otherwise pick a page from the book. If you do neither, the first page is used." xml:space="preserve">
+    <value>మీ దగ్గర సొంత చిత్రం ఉంటే దాన్ని ఉపయోగించండి. లేకపోతే పుస్తకంలోని ఒక పేజీని ఎంచుకోండి. రెండూ చేయకపోతే, మొదటి పేజీని ఉపయోగిస్తారు.</value>
+  </data>
+  <data name="Current cover" xml:space="preserve">
+    <value>ప్రస్తుత ముఖచిత్రం</value>
+  </data>
+  <data name="My own cover image" xml:space="preserve">
+    <value>నా సొంత ముఖచిత్రం</value>
+  </data>
+  <data name="JPEG, PNG or WebP, up to {0} MB. It is cropped to a 2:3 book shape." xml:space="preserve">
+    <value>JPEG, PNG లేదా WebP, {0} MB వరకు. దీన్ని 2:3 పుస్తక ఆకారానికి కత్తిరిస్తారు.</value>
+  </data>
+  <data name="Your earlier image is kept; choose a file only to replace it." xml:space="preserve">
+    <value>మీ మునుపటి చిత్రం అలాగే ఉంటుంది; దాన్ని మార్చాలనుకుంటేనే ఫైల్‌ను ఎంచుకోండి.</value>
+  </data>
+  <data name="A page from the book" xml:space="preserve">
+    <value>పుస్తకంలోని ఒక పేజీ</value>
+  </data>
+  <data name="of {0}" xml:space="preserve">
+    <value>{0} లో</value>
+  </data>
+  <data name="PDF and Word files only. You can also pick the page from pictures once the book is ready." xml:space="preserve">
+    <value>PDF మరియు Word ఫైళ్లకు మాత్రమే. పుస్తకం సిద్ధమైన తర్వాత చిత్రాల నుండి కూడా పేజీని ఎంచుకోవచ్చు.</value>
+  </data>
+  <data name="Pictures of the pages appear here once the book is ready." xml:space="preserve">
+    <value>పుస్తకం సిద్ధమైన తర్వాత పేజీల చిత్రాలు ఇక్కడ కనిపిస్తాయి.</value>
+  </data>
+  <data name="The e-book’s own cover, or one made from the title" xml:space="preserve">
+    <value>ఈ-పుస్తకం సొంత ముఖచిత్రం, లేదా శీర్షికతో తయారు చేసినది</value>
+  </data>
+  <data name="The first page" xml:space="preserve">
+    <value>మొదటి పేజీ</value>
+  </data>
+  <data name="The first page (EPUB and text files use the e-book’s own cover)" xml:space="preserve">
+    <value>మొదటి పేజీ (EPUB మరియు టెక్స్ట్ ఫైళ్లు ఈ-పుస్తకం సొంత ముఖచిత్రాన్ని ఉపయోగిస్తాయి)</value>
+  </data>
+  <data name="Use page {0} as the cover" xml:space="preserve">
+    <value>పేజీ {0} ను ముఖచిత్రంగా ఉపయోగించండి</value>
+  </data>
+  <data name="Show more pages" xml:space="preserve">
+    <value>మరిన్ని పేజీలు చూపించు</value>
+  </data>
+  <data name="Names in other languages" xml:space="preserve">
+    <value>ఇతర భాషలలో పేర్లు</value>
+  </data>
+  <data name="Name and description" xml:space="preserve">
+    <value>పేరు మరియు వివరణ</value>
+  </data>
+  <data name="Empty shows the English name" xml:space="preserve">
+    <value>ఖాళీగా ఉంటే ఆంగ్ల పేరు కనిపిస్తుంది</value>
+  </data>
 </root>

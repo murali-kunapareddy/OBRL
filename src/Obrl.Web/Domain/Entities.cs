@@ -36,6 +36,38 @@ public class Category
 
     public int SortOrder { get; set; }
     public List<BookCategory> Books { get; set; } = [];
+
+    /// <summary>Name and description in other interface languages. The fields above are the English text.</summary>
+    public List<CategoryTranslation> Translations { get; set; } = [];
+}
+
+/// <summary>
+/// A category's name and description in one non-English interface language. Each field is optional: an empty one shows the English text.
+/// </summary>
+public class CategoryTranslation
+{
+    public int CategoryId { get; set; }
+    public Category? Category { get; set; }
+
+    /// <summary>Language code from <see cref="Obrl.Web.Localization.Languages"/>, e.g. "te".</summary>
+    public string Language { get; set; } = "";
+
+    public string? Name { get; set; }
+    public string? Description { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
+/// <summary>Where a book's cover comes from.</summary>
+public enum CoverSource
+{
+    /// <summary>The first page (PDF, Word), or the e-book's own cover or one made from the title (EPUB, text).</summary>
+    Default = 0,
+
+    /// <summary>A page the uploader picked (<see cref="Book.CoverPage"/>). Page-mode books only.</summary>
+    Page = 1,
+
+    /// <summary>An image the uploader supplied.</summary>
+    Custom = 2,
 }
 
 public enum BookStatus
@@ -78,6 +110,12 @@ public class Book
     public string? TocJson { get; set; }
 
     public bool HasCover { get; set; }
+
+    /// <summary>Where the cover comes from. If the choice can't be used (no image, page out of range) the default is used.</summary>
+    public CoverSource CoverSource { get; set; }
+
+    /// <summary>1-based page used as the cover when <see cref="CoverSource"/> is <see cref="CoverSource.Page"/>.</summary>
+    public int? CoverPage { get; set; }
 
     /// <summary>
     /// Books from Contributors wait for a Moderator before readers can see them.
