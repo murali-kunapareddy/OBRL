@@ -27,7 +27,13 @@ else
                     @foreach (var b in Model)
                     {
                         <tr>
-                            <td><a href="/books/@b.Id">@b.Title</a><div class="small text-muted">@b.Author</div></td>
+                            <td>
+                                <a href="/books/@b.Id">@b.Title</a><div class="small text-muted">@b.Author</div>
+                                @if (b.Translations.Count > 0)
+                                {
+                                    <div class="small text-muted"><i class="bi bi-translate me-1" title="@L["Details entered in other languages"]"></i>@string.Join(", ", Obrl.Web.Localization.Languages.All.Where(l => b.Translations.Any(t => t.Language == l.Code)).Select(l => l.NativeName))</div>
+                                }
+                            </td>
                             <td>@b.OriginalFormat.ToUpperInvariant() <span class="small text-muted">· @(b.Mode == ReaderMode.Page ? L["pages"] : L["text"])</span></td>
                             <td>
                                 @switch (b.Status)

@@ -114,6 +114,12 @@ public sealed class LibraryVm
 public sealed class BookDetailsVm
 {
     public required Book Book { get; init; }
+
+    /// <summary>Title, author and description in the member's language.</summary>
+    public required Obrl.Web.Services.LocalizedBook Text { get; init; }
+
+    /// <summary>For editors: the non-English languages the details were entered in.</summary>
+    public List<string> TranslatedLanguages { get; init; } = [];
     public required List<List<CategoryNode>> CategoryTrails { get; init; }
     public bool CanRead { get; init; }
     public bool SubscribedToBook { get; init; }
@@ -144,7 +150,41 @@ public sealed class UploadVm
     [Display(Name = "Book file")]
     public IFormFile? File { get; set; }
 
+    /// <summary>Title, author and description in the other interface languages, one entry per language.</summary>
+    public List<BookTranslationInput> Translations { get; set; } = [];
+
     public List<CategoryNode> AllCategories { get; set; } = [];
+
+    /// <summary>One entry for every non-English language, filled from the book's saved translations or the posted form.</summary>
+    public void FillTranslations(IEnumerable<BookTranslation> saved)
+    {
+        var posted = Translations;
+        Translations = Obrl.Web.Localization.Languages.All
+            .Where(l => l.Code != Obrl.Web.Localization.Languages.Default)
+            .Select(l => posted.FirstOrDefault(p => p.Language == l.Code)
+                ?? saved.Where(t => t.Language == l.Code)
+                    .Select(t => new BookTranslationInput { Language = l.Code, Title = t.Title, Author = t.Author, Description = t.Description })
+                    .FirstOrDefault()
+                ?? new BookTranslationInput { Language = l.Code })
+            .ToList();
+    }
+}
+
+/// <summary>A book's details in one non-English language, as typed on the upload form. Every field is optional.</summary>
+public sealed class BookTranslationInput
+{
+    public string? Language { get; set; }
+
+    [StringLength(300), Display(Name = "Title")]
+    public string? Title { get; set; }
+
+    [StringLength(300), Display(Name = "Author")]
+    public string? Author { get; set; }
+
+    [StringLength(4000), Display(Name = "Description")]
+    public string? Description { get; set; }
+
+    public bool IsEmpty => string.IsNullOrWhiteSpace(Title) && string.IsNullOrWhiteSpace(Author) && string.IsNullOrWhiteSpace(Description);
 }
 
 public sealed class CategoryEditVm
@@ -169,6 +209,9 @@ public sealed class CategoryEditVm
 public sealed class ReaderVm
 {
     public required Book Book { get; init; }
+
+    /// <summary>Title, author and description in the member's language.</summary>
+    public required Obrl.Web.Services.LocalizedBook Text { get; init; }
     public int Position { get; init; }
     public double Offset { get; init; }
     public List<Bookmark> Bookmarks { get; init; } = [];

@@ -32,6 +32,7 @@ builder.Services.AddSingleton<ExternalTools>();
 builder.Services.AddSingleton<PageRenderer>();
 builder.Services.AddScoped<BookProcessor>();
 builder.Services.AddScoped<AccessService>();
+builder.Services.AddScoped<BookText>();
 builder.Services.AddScoped<ActivityLog>();
 builder.Services.AddHostedService<ConversionWorker>();
 builder.Services.AddHttpContextAccessor();

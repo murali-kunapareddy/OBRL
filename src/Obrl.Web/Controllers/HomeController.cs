@@ -9,7 +9,7 @@ using Obrl.Web.Services;
 
 namespace Obrl.Web.Controllers;
 
-public class HomeController(ObrlDbContext db, AccessService access) : Controller
+public class HomeController(ObrlDbContext db, AccessService access, BookText bookText) : Controller
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -65,13 +65,18 @@ public class HomeController(ObrlDbContext db, AccessService access) : Controller
                 b.RatingAverage, b.RatingCount == 1 ? "1 rating" : b.RatingCount + " ratings"))
             .ToListAsync(ct);
 
+        // One lookup for every shelf: titles and authors in the member's language.
+        var shelves = new[] { continueReading, bookmarked, newBooks, mostRead, topRated };
+        var translations = await bookText.ForBooksAsync(shelves.SelectMany(s => s).Select(c => c.Id), ct);
+        List<BookCard> Localized(List<BookCard> shelf) => BookText.Localize(shelf, translations);
+
         return View(new DashboardVm
         {
-            ContinueReading = continueReading,
-            Bookmarked = bookmarked,
-            NewBooks = newBooks,
-            MostRead = mostRead,
-            TopRated = topRated,
+            ContinueReading = Localized(continueReading),
+            Bookmarked = Localized(bookmarked),
+            NewBooks = Localized(newBooks),
+            MostRead = Localized(mostRead),
+            TopRated = Localized(topRated),
             Board = await BoardController.TopicRows(db, AccessService.ReadsEverything(User)).Take(5).ToListAsync(ct),
             SubscribedCategories = await db.Subscriptions.CountAsync(s => s.UserId == userId && s.CategoryId != null, ct),
         });

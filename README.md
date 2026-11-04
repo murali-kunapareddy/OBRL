@@ -105,6 +105,12 @@ The interface is available in English, Telugu (తెలుగు) and Kannada (
 switcher in the top bar (or under the sign-in form). The choice is saved on their account and follows them to every
 device they sign in on; before signing in, the browser's language is used. Book content is never translated.
 
+**Book details in other languages.** When uploading or editing a book, the title, author and description can be
+entered in every interface language (one tab per language; English is required, the others are optional). Readers see
+the details in the language they picked, and any field left empty shows the English text instead. Shelves, the library
+(sorted by the title the reader sees), book pages and the reader all use it, and search matches the details in every
+language. They are stored in the `BookTranslations` table, one row per book and language.
+
 Text lives in `src/Obrl.Web/Resources/SharedResource.{code}.resx`. Each entry's name is the English text, so English
 needs no file and anything not yet translated falls back to English. Views use `L["..."]` for plain text and `H["..."]`
 for text that contains HTML.
@@ -137,6 +143,20 @@ Set these in `appsettings.json`, or as environment variables in `/etc/obrl/obrl.
 | `Obrl:PasskeyServerDomain` | empty | Domain passkeys are bound to, e.g. `library.example.org`. Empty uses the site's host name. Set it before members add passkeys: changing it later makes their passkeys stop working |
 | `Obrl:LibreOfficePath` / `CalibreConvertPath` | `soffice` / `ebook-convert` | Conversion tools |
 | `Obrl:Seed:AdminEmail` / `AdminPassword` | | Creates the first admin when none exists |
+| `Obrl:CopyrightHolder` | `OBRL` | Name after "©" in the footer |
+
+## Footer and version
+
+Every page ends with a footer showing the copyright, a link to **Terms & Conditions** (`/terms`, open to everyone,
+also before signing in) and the version. Terms & Conditions shows the current disclaimer, the text members accept
+before reading, so Admins keep editing it in one place: Admin > Disclaimer.
+
+The version reads `major.minor.build`, for example `v1.0.126D67E87988`:
+
+- `major.minor` is `<ObrlVersion>` in `src/Obrl.Web/Obrl.Web.csproj`. Change it by hand for a release.
+- `build` is the build time in UTC written as `yyyyMMddHHmmss` and converted to hexadecimal
+  (`20261104023944` → `126D67E87988`). Hover over it to see the time; to decode it yourself, convert the hex back to
+  decimal. To pin a build number, pass `-p:ObrlBuildTimestamp=20261104023944` to `dotnet build` or `dotnet publish`.
 
 ## Project layout
 

@@ -1397,4 +1397,43 @@
   <data name="{0} and {1} do not match." xml:space="preserve">
     <value>{0}, {1} సరిపోలలేదు.</value>
   </data>
+  <data name="Details entered in other languages" xml:space="preserve">
+    <value>ఇతర భాషల్లో నమోదు చేసిన వివరాలు</value>
+  </data>
+  <data name="Book details" xml:space="preserve">
+    <value>పుస్తక వివరాలు</value>
+  </data>
+  <data name="English is required. Other languages are optional: readers who picked that language see them, and any field left empty shows the English text." xml:space="preserve">
+    <value>ఇంగ్లీష్ తప్పనిసరి. ఇతర భాషలు ఐచ్ఛికం: ఆ భాషను ఎంచుకున్న పాఠకులు వాటిని చూస్తారు, ఖాళీగా ఉంచిన ఏ ఫీల్డ్ అయినా ఇంగ్లీష్ పాఠ్యాన్ని చూపిస్తుంది.</value>
+  </data>
+  <data name="Filled in" xml:space="preserve">
+    <value>నింపబడింది</value>
+  </data>
+  <data name="Empty shows the English title" xml:space="preserve">
+    <value>ఖాళీగా ఉంటే ఇంగ్లీష్ శీర్షిక చూపబడుతుంది</value>
+  </data>
+  <data name="Empty shows the English author" xml:space="preserve">
+    <value>ఖాళీగా ఉంటే ఇంగ్లీష్ రచయిత పేరు చూపబడుతుంది</value>
+  </data>
+  <data name="Empty shows the English description" xml:space="preserve">
+    <value>ఖాళీగా ఉంటే ఇంగ్లీష్ వివరణ చూపబడుతుంది</value>
+  </data>
+  <data name="Terms &amp; Conditions" xml:space="preserve">
+    <value>నిబంధనలు &amp; షరతులు</value>
+  </data>
+  <data name="No terms have been published yet." xml:space="preserve">
+    <value>ఇంకా ఏ నిబంధనలూ ప్రచురించబడలేదు.</value>
+  </data>
+  <data name="Last updated {0}" xml:space="preserve">
+    <value>చివరిగా నవీకరించబడింది {0}</value>
+  </data>
+  <data name="Built {0} UTC" xml:space="preserve">
+    <value>బిల్డ్ సమయం {0} UTC</value>
+  </data>
+  <data name="All rights reserved." xml:space="preserve">
+    <value>అన్ని హక్కులు ప్రత్యేకించబడ్డాయి.</value>
+  </data>
+  <data name="Details entered in: {0}" xml:space="preserve">
+    <value>వివరాలు నమోదు చేసిన భాషలు: {0}</value>
+  </data>
 </root>

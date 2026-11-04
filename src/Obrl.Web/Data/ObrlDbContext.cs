@@ -8,6 +8,7 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
 {
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Book> Books => Set<Book>();
+    public DbSet<BookTranslation> BookTranslations => Set<BookTranslation>();
     public DbSet<BookCategory> BookCategories => Set<BookCategory>();
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<ReadingProgress> ReadingProgress => Set<ReadingProgress>();
@@ -71,6 +72,16 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
                 e.Ignore(x => x.SearchVector);
             }
             e.HasOne(x => x.UploadedBy).WithMany().HasForeignKey(x => x.UploadedById).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        b.Entity<BookTranslation>(e =>
+        {
+            e.HasKey(x => new { x.BookId, x.Language });
+            e.Property(x => x.Language).HasMaxLength(10);
+            e.Property(x => x.Title).HasMaxLength(300);
+            e.Property(x => x.Author).HasMaxLength(300);
+            e.Property(x => x.Description).HasMaxLength(4000);
+            e.HasOne(x => x.Book).WithMany(x => x.Translations).HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade);
         });
 
         b.Entity<BookCategory>(e =>

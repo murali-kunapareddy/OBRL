@@ -28,6 +28,7 @@ public partial class ReaderController(
     PageRenderer renderer,
     UrlSigner signer,
     ActivityLog log,
+    BookText bookText,
     IStringLocalizer<SharedResource> L,
     IOptions<ObrlOptions> options) : Controller
 {
@@ -53,6 +54,7 @@ public partial class ReaderController(
         return View(new ReaderVm
         {
             Book = book,
+            Text = await bookText.ForBookAsync(book, ct),
             Position = position,
             Offset = at is null ? progress?.Offset ?? 0 : 0,
             Bookmarks = await db.Bookmarks.AsNoTracking().Where(m => m.UserId == userId && m.BookId == id)

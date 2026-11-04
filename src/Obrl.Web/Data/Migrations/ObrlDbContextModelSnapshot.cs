@@ -479,6 +479,35 @@ namespace Obrl.Web.Data.Migrations
                     b.ToTable("BookCategories");
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.BookTranslation", b =>
+                {
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Language")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Author")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("BookId", "Language");
+
+                    b.ToTable("BookTranslations");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Bookmark", b =>
                 {
                     b.Property<long>("Id")
@@ -967,6 +996,17 @@ namespace Obrl.Web.Data.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.BookTranslation", b =>
+                {
+                    b.HasOne("Obrl.Web.Domain.Book", "Book")
+                        .WithMany("Translations")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Bookmark", b =>
                 {
                     b.HasOne("Obrl.Web.Domain.Book", "Book")
@@ -1111,6 +1151,8 @@ namespace Obrl.Web.Data.Migrations
             modelBuilder.Entity("Obrl.Web.Domain.Book", b =>
                 {
                     b.Navigation("Categories");
+
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("Obrl.Web.Domain.Category", b =>

@@ -18,7 +18,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var userId = AccessService.UserId(User);
-        var query = db.Books.AsNoTracking().Include(b => b.UploadedBy).AsQueryable();
+        var query = db.Books.AsNoTracking().Include(b => b.UploadedBy).Include(b => b.Translations).AsQueryable();
         if (!AccessService.ReadsEverything(User)) query = query.Where(b => b.UploadedById == userId);
         ViewBag.SeesAll = AccessService.ReadsEverything(User);
         return View(await query.OrderByDescending(b => b.CreatedAt).Take(500).ToListAsync(ct));
@@ -29,7 +29,9 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
     {
         ViewBag.Accept = BookFormats.Accept;
         ViewBag.MaxMb = options.Value.MaxUploadMegabytes;
-        return View("Edit", new UploadVm { AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten() });
+        var vm = new UploadVm { AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten() };
+        vm.FillTranslations([]);
+        return View("Edit", vm);
     }
 
     [HttpPost, ValidateAntiForgeryToken]
@@ -46,6 +48,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
             ViewBag.Accept = BookFormats.Accept;
             ViewBag.MaxMb = options.Value.MaxUploadMegabytes;
             vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten();
+            vm.FillTranslations([]);
             return View("Edit", vm);
         }
 
@@ -66,6 +69,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
             UploadedById = userId,
             Categories = vm.CategoryIds.Distinct().Select(c => new BookCategory { CategoryId = c }).ToList(),
         };
+        BookText.Apply(book, vm.Translations);
 
         // The upload is encrypted before it touches the disk.
         using (var ms = new MemoryStream())
@@ -86,10 +90,10 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
     [HttpGet]
     public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
     {
-        var book = await db.Books.Include(b => b.Categories).FirstOrDefaultAsync(b => b.Id == id, ct);
+        var book = await db.Books.Include(b => b.Categories).Include(b => b.Translations).FirstOrDefaultAsync(b => b.Id == id, ct);
         if (book is null) return NotFound();
         if (!CanManage(book)) return Forbid();
-        return View(new UploadVm
+        var vm = new UploadVm
         {
             Id = book.Id,
             Title = book.Title,
@@ -97,13 +101,15 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
             Description = book.Description,
             CategoryIds = book.Categories.Select(c => c.CategoryId).ToList(),
             AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten(),
-        });
+        };
+        vm.FillTranslations(book.Translations);
+        return View(vm);
     }
 
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, UploadVm vm, CancellationToken ct)
     {
-        var book = await db.Books.Include(b => b.Categories).FirstOrDefaultAsync(b => b.Id == id, ct);
+        var book = await db.Books.Include(b => b.Categories).Include(b => b.Translations).FirstOrDefaultAsync(b => b.Id == id, ct);
         if (book is null) return NotFound();
         if (!CanManage(book)) return Forbid();
         ModelState.Remove(nameof(vm.File));
@@ -112,12 +118,14 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, ActivityLo
         {
             vm.Id = id;
             vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten();
+            vm.FillTranslations(book.Translations);
             return View(vm);
         }
 
         book.Title = vm.Title.Trim();
         book.Author = Blank(vm.Author);
         book.Description = Blank(vm.Description);
+        BookText.Apply(book, vm.Translations);
         var wanted = vm.CategoryIds.Distinct().ToHashSet();
         book.Categories.RemoveAll(c => !wanted.Contains(c.CategoryId));
         foreach (var c in wanted.Where(c => book.Categories.All(x => x.CategoryId != c)))

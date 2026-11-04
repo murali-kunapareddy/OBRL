@@ -228,13 +228,31 @@ h1, h2, h3, .serif { font-family: "Literata", Georgia, serif; letter-spacing: -.
 .page-title { font-size: 1.75rem; font-weight: 700; margin-bottom: .25rem; }
 .page-sub { color: var(--obrl-muted); margin-bottom: 1.5rem; }
 
+.site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem 1.25rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    padding: 1rem 2rem 1.25rem;
+    border-top: 1px solid var(--obrl-border);
+    color: var(--obrl-muted);
+    font-size: .8rem;
+}
+.site-footer a { color: inherit; }
+.site-footer a:hover { color: var(--obrl-accent); }
+.site-footer .build-info { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.auth-card .site-footer { border-top: 0; padding: .75rem 0 0; }
+
 .mobile-nav { display: none; }
 
 @media (max-width: 900px) {
     .app-shell { grid-template-columns: 1fr; }
     .sidebar { display: none; }
     .topbar { padding: .6rem 1rem; }
-    .content { padding: 1.25rem 1rem 6rem; }
+    .content { padding: 1.25rem 1rem 2rem; }
+    .site-footer { padding: 1rem 1rem 5.5rem; }
     .mobile-nav {
         display: flex;
         position: fixed;

@@ -9,7 +9,7 @@ using Obrl.Web.Services;
 
 namespace Obrl.Web.Controllers;
 
-public class BooksController(ObrlDbContext db, AccessService access, BookStorage storage, ActivityLog log, IStringLocalizer<SharedResource> L) : Controller
+public class BooksController(ObrlDbContext db, AccessService access, BookText bookText, BookStorage storage, ActivityLog log, IStringLocalizer<SharedResource> L) : Controller
 {
     [HttpGet("/books/{id:guid}")]
     public async Task<IActionResult> Details(Guid id, CancellationToken ct)
@@ -32,6 +32,10 @@ public class BooksController(ObrlDbContext db, AccessService access, BookStorage
         return View(new BookDetailsVm
         {
             Book = book,
+            Text = await bookText.ForBookAsync(book, ct),
+            TranslatedLanguages = canEdit
+                ? await db.BookTranslations.Where(t => t.BookId == id).Select(t => t.Language).ToListAsync(ct)
+                : [],
             CategoryTrails = book.Categories.Select(c => tree.Trail(c.CategoryId)).Where(t => t.Count > 0).ToList(),
             CanRead = book.Status == BookStatus.Ready && await access.CanReadAsync(User, id, ct),
             SubscribedToBook = await db.Subscriptions.AnyAsync(s => s.UserId == userId && s.BookId == id, ct),

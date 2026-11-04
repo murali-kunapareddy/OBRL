@@ -1,21 +1,22 @@
 @model BookDetailsVm
 @{
     var b = Model.Book;
-    ViewData["Title"] = b.Title;
+    var text = Model.Text;
+    ViewData["Title"] = text.Title;
     string FormatLabel() => b.Mode == ReaderMode.Page ? L["{0} pages", b.UnitCount] : L["Reflowable text"];
 }
 <div class="book-hero">
     <div class="cover">
         @if (b.HasCover)
         {
-            <img src="/books/@b.Id/cover" alt="@L["Cover of {0}", b.Title]" />
+            <img src="/books/@b.Id/cover" alt="@L["Cover of {0}", text.Title]" />
         }
     </div>
     <div>
-        <h1 class="page-title">@b.Title</h1>
-        @if (!string.IsNullOrEmpty(b.Author))
+        <h1 class="page-title">@text.Title</h1>
+        @if (!string.IsNullOrEmpty(text.Author))
         {
-            <p class="fs-5 text-muted mb-2">@b.Author</p>
+            <p class="fs-5 text-muted mb-2">@text.Author</p>
         }
         <div class="d-flex flex-wrap gap-2 mb-3">
             <span class="badge badge-soft">@b.OriginalFormat.ToUpperInvariant()</span>
@@ -88,7 +89,7 @@
             }
             else if (Model.CanModerate)
             {
-                <form method="post" action="/moderation/books/@b.Id/reject" data-confirm="@L["Take “{0}” out of the library? The uploader can edit it and resubmit.", b.Title]">
+                <form method="post" action="/moderation/books/@b.Id/reject" data-confirm="@L["Take “{0}” out of the library? The uploader can edit it and resubmit.", text.Title]">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="note" value="@L["Taken down by a Moderator."]" />
                     <button class="btn btn-outline-danger btn-lg"><i class="bi bi-slash-circle"></i> @L["Take down"]</button>
@@ -100,10 +101,18 @@
             <div class="alert alert-warning"><strong>@L["Moderator note:"]</strong> @b.ReviewNote</div>
         }
 
-        @if (!string.IsNullOrEmpty(b.Description))
+        @if (Model.CanEdit)
+        {
+            var entered = Obrl.Web.Localization.Languages.All
+                .Where(l => l.Code == Obrl.Web.Localization.Languages.Default || Model.TranslatedLanguages.Contains(l.Code))
+                .Select(l => l.NativeName);
+            <p class="small text-muted"><i class="bi bi-translate me-1"></i>@L["Details entered in: {0}", string.Join(", ", entered)]</p>
+        }
+
+        @if (!string.IsNullOrEmpty(text.Description))
         {
             <h2 class="h5">@L["About this book"]</h2>
-            <p style="white-space:pre-line">@b.Description</p>
+            <p style="white-space:pre-line">@text.Description</p>
         }
 
         @if (Model.Bookmarks.Count > 0 && Model.CanRead)
