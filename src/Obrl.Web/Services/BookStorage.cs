@@ -12,6 +12,8 @@ namespace Obrl.Web.Services;
 /// books/{id}/sections/00000.enc  text mode: cleaned HTML, one file per section
 /// books/{id}/res/0.enc           text mode: images used by the sections
 /// books/{id}/res/types.json      text mode: content type of each image
+/// books/{id}/custom-cover.webp    cover image the uploader supplied (already cropped to 2:3)
+/// books/{id}/default-cover.webp   text mode: the e-book's own cover, or one made from the title
 /// cache/{id}/{page}_{width}.enc  rendered pages (without watermark), safe to delete
 /// covers/{id}.webp               cover thumbnails, shown to signed-in users
 /// tmp/                           scratch space for conversions
@@ -34,6 +36,8 @@ public sealed class BookStorage(IOptions<ObrlOptions> options, FileEncryptor enc
     public string ResourceTypesPath(Guid id) => Path.Combine(BookDir(id), "res", "types.json");
     public string CachePath(Guid id, int page, int width) => Path.Combine(_root, "cache", id.ToString("N"), $"{page}_{width}.enc");
     public string CoverPath(Guid id) => Path.Combine(_root, "covers", $"{id:N}.webp");
+    public string CustomCoverPath(Guid id) => Path.Combine(BookDir(id), "custom-cover.webp");
+    public string DefaultCoverPath(Guid id) => Path.Combine(BookDir(id), "default-cover.webp");
 
     public string CreateTempDir()
     {

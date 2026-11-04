@@ -30,6 +30,7 @@ builder.Services.AddSingleton<BookStorage>();
 builder.Services.AddSingleton<UrlSigner>();
 builder.Services.AddSingleton<ExternalTools>();
 builder.Services.AddSingleton<PageRenderer>();
+builder.Services.AddSingleton<CoverService>();
 builder.Services.AddScoped<BookProcessor>();
 builder.Services.AddScoped<AccessService>();
 builder.Services.AddScoped<BookText>();

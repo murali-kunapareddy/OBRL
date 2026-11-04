@@ -1436,4 +1436,82 @@
   <data name="Details entered in: {0}" xml:space="preserve">
     <value>ವಿವರಗಳನ್ನು ನಮೂದಿಸಿದ ಭಾಷೆಗಳು: {0}</value>
   </data>
+  <data name="The first page is used as the cover. Once the book is ready, you can pick another page with the edit button." xml:space="preserve">
+    <value>ಮೊದಲ ಪುಟವನ್ನು ಮುಖಪುಟವಾಗಿ ಬಳಸಲಾಗುತ್ತದೆ. ಪುಸ್ತಕ ಸಿದ್ಧವಾದ ನಂತರ, ಸಂಪಾದಿಸು ಬಟನ್‌ನಿಂದ ಬೇರೆ ಪುಟವನ್ನು ಆಯ್ಕೆ ಮಾಡಬಹುದು.</value>
+  </data>
+  <data name="Pick a page between 1 and {0}." xml:space="preserve">
+    <value>1 ರಿಂದ {0} ರ ನಡುವಿನ ಒಂದು ಪುಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ.</value>
+  </data>
+  <data name="The cover image must be {0} MB or smaller." xml:space="preserve">
+    <value>ಮುಖಪುಟ ಚಿತ್ರ {0} MB ಅಥವಾ ಅದಕ್ಕಿಂತ ಕಡಿಮೆ ಇರಬೇಕು.</value>
+  </data>
+  <data name="The cover image could not be read. Use a JPEG, PNG or WebP picture." xml:space="preserve">
+    <value>ಮುಖಪುಟ ಚಿತ್ರವನ್ನು ಓದಲಾಗಲಿಲ್ಲ. JPEG, PNG ಅಥವಾ WebP ಚಿತ್ರವನ್ನು ಬಳಸಿ.</value>
+  </data>
+  <data name="Choose a cover image, or pick another cover option." xml:space="preserve">
+    <value>ಮುಖಪುಟ ಚಿತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ, ಅಥವಾ ಬೇರೆ ಮುಖಪುಟ ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ.</value>
+  </data>
+  <data name="Cover" xml:space="preserve">
+    <value>ಮುಖಪುಟ</value>
+  </data>
+  <data name="Cover page" xml:space="preserve">
+    <value>ಮುಖಪುಟದ ಪುಟ</value>
+  </data>
+  <data name="Cover image" xml:space="preserve">
+    <value>ಮುಖಪುಟ ಚಿತ್ರ</value>
+  </data>
+  <data name="Pick a cover page" xml:space="preserve">
+    <value>ಮುಖಪುಟದ ಪುಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ</value>
+  </data>
+  <data name="Use your own image if you have one. Otherwise pick a page from the book. If you do neither, the first page is used." xml:space="preserve">
+    <value>ನಿಮ್ಮ ಬಳಿ ಸ್ವಂತ ಚಿತ್ರವಿದ್ದರೆ ಅದನ್ನು ಬಳಸಿ. ಇಲ್ಲದಿದ್ದರೆ ಪುಸ್ತಕದಿಂದ ಒಂದು ಪುಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ. ಎರಡನ್ನೂ ಮಾಡದಿದ್ದರೆ, ಮೊದಲ ಪುಟವನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</value>
+  </data>
+  <data name="Current cover" xml:space="preserve">
+    <value>ಈಗಿನ ಮುಖಪುಟ</value>
+  </data>
+  <data name="My own cover image" xml:space="preserve">
+    <value>ನನ್ನ ಸ್ವಂತ ಮುಖಪುಟ ಚಿತ್ರ</value>
+  </data>
+  <data name="JPEG, PNG or WebP, up to {0} MB. It is cropped to a 2:3 book shape." xml:space="preserve">
+    <value>JPEG, PNG ಅಥವಾ WebP, {0} MB ವರೆಗೆ. ಇದನ್ನು 2:3 ಪುಸ್ತಕದ ಆಕಾರಕ್ಕೆ ಕತ್ತರಿಸಲಾಗುತ್ತದೆ.</value>
+  </data>
+  <data name="Your earlier image is kept; choose a file only to replace it." xml:space="preserve">
+    <value>ನಿಮ್ಮ ಹಿಂದಿನ ಚಿತ್ರ ಹಾಗೆಯೇ ಇರುತ್ತದೆ; ಅದನ್ನು ಬದಲಿಸಲು ಮಾತ್ರ ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ.</value>
+  </data>
+  <data name="A page from the book" xml:space="preserve">
+    <value>ಪುಸ್ತಕದ ಒಂದು ಪುಟ</value>
+  </data>
+  <data name="of {0}" xml:space="preserve">
+    <value>{0} ರಲ್ಲಿ</value>
+  </data>
+  <data name="PDF and Word files only. You can also pick the page from pictures once the book is ready." xml:space="preserve">
+    <value>PDF ಮತ್ತು Word ಫೈಲ್‌ಗಳಿಗೆ ಮಾತ್ರ. ಪುಸ್ತಕ ಸಿದ್ಧವಾದ ನಂತರ ಚಿತ್ರಗಳಿಂದಲೂ ಪುಟವನ್ನು ಆಯ್ಕೆ ಮಾಡಬಹುದು.</value>
+  </data>
+  <data name="Pictures of the pages appear here once the book is ready." xml:space="preserve">
+    <value>ಪುಸ್ತಕ ಸಿದ್ಧವಾದ ನಂತರ ಪುಟಗಳ ಚಿತ್ರಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.</value>
+  </data>
+  <data name="The e-book’s own cover, or one made from the title" xml:space="preserve">
+    <value>ಇ-ಪುಸ್ತಕದ ಸ್ವಂತ ಮುಖಪುಟ, ಅಥವಾ ಶೀರ್ಷಿಕೆಯಿಂದ ಮಾಡಿದ ಮುಖಪುಟ</value>
+  </data>
+  <data name="The first page" xml:space="preserve">
+    <value>ಮೊದಲ ಪುಟ</value>
+  </data>
+  <data name="The first page (EPUB and text files use the e-book’s own cover)" xml:space="preserve">
+    <value>ಮೊದಲ ಪುಟ (EPUB ಮತ್ತು ಪಠ್ಯ ಫೈಲ್‌ಗಳು ಇ-ಪುಸ್ತಕದ ಸ್ವಂತ ಮುಖಪುಟವನ್ನು ಬಳಸುತ್ತವೆ)</value>
+  </data>
+  <data name="Use page {0} as the cover" xml:space="preserve">
+    <value>ಪುಟ {0} ಅನ್ನು ಮುಖಪುಟವಾಗಿ ಬಳಸಿ</value>
+  </data>
+  <data name="Show more pages" xml:space="preserve">
+    <value>ಇನ್ನಷ್ಟು ಪುಟಗಳನ್ನು ತೋರಿಸಿ</value>
+  </data>
+  <data name="Names in other languages" xml:space="preserve">
+    <value>ಇತರ ಭಾಷೆಗಳಲ್ಲಿನ ಹೆಸರುಗಳು</value>
+  </data>
+  <data name="Name and description" xml:space="preserve">
+    <value>ಹೆಸರು ಮತ್ತು ವಿವರಣೆ</value>
+  </data>
+  <data name="Empty shows the English name" xml:space="preserve">
+    <value>ಖಾಲಿಯಿದ್ದರೆ ಇಂಗ್ಲಿಷ್ ಹೆಸರು ಕಾಣಿಸುತ್ತದೆ</value>
+  </data>
 </root>

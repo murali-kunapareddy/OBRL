@@ -6,10 +6,64 @@
 <h1 class="page-title">@ViewData["Title"]</h1>
 <form method="post" class="panel mt-3" style="max-width:600px" asp-action="@(creating ? "Create" : "Edit")" asp-route-id="@Model.Id">
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label fw-semibold"></label>
-        <input asp-for="Name" class="form-control" autofocus />
-        <span asp-validation-for="Name" class="text-danger small"></span>
+    @{
+        // The tab to open first: English, or the first language with an error after a failed save.
+        var tabWithError = Enumerable.Range(0, Model.Translations.Count)
+            .FirstOrDefault(i => ViewData.ModelState.Any(e => e.Key.StartsWith($"Translations[{i}]") && e.Value!.Errors.Count > 0), -1);
+        var englishHasError = new[] { "Name", "Description" }.Any(k => ViewData.ModelState[k]?.Errors.Count > 0);
+        var activeTab = englishHasError || tabWithError < 0 ? -1 : tabWithError;
+    }
+    <div class="mb-1 d-flex flex-wrap align-items-baseline gap-2">
+        <span class="form-label fw-semibold mb-0">@L["Name and description"]</span>
+        <span class="small text-muted">@L["English is required. Other languages are optional: readers who picked that language see them, and any field left empty shows the English text."]</span>
+    </div>
+    <ul class="nav nav-tabs mt-2" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(activeTab == -1 ? "active" : "")" id="tab-en" data-bs-toggle="tab" data-bs-target="#pane-en" type="button" role="tab" aria-controls="pane-en" aria-selected="@(activeTab == -1 ? "true" : "false")">
+                English <span class="text-danger">*</span>
+            </button>
+        </li>
+        @for (var i = 0; i < Model.Translations.Count; i++)
+        {
+            var code = Model.Translations[i].Language;
+            var lang = Obrl.Web.Localization.Languages.All.First(l => l.Code == code);
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeTab == i ? "active" : "")" id="tab-@code" data-bs-toggle="tab" data-bs-target="#pane-@code" type="button" role="tab" aria-controls="pane-@code" aria-selected="@(activeTab == i ? "true" : "false")" lang="@code">
+                    @lang.NativeName
+                    @if (!Model.Translations[i].IsEmpty) { <i class="bi bi-check2 text-success" title="@L["Filled in"]"></i> }
+                </button>
+            </li>
+        }
+    </ul>
+    <div class="tab-content border border-top-0 rounded-bottom p-3 mb-3">
+        <div class="tab-pane @(activeTab == -1 ? "active" : "")" id="pane-en" role="tabpanel" aria-labelledby="tab-en" lang="en">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-semibold"></label>
+                <input asp-for="Name" class="form-control" autofocus />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div>
+                <label asp-for="Description" class="form-label fw-semibold"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+        @for (var i = 0; i < Model.Translations.Count; i++)
+        {
+            var code = Model.Translations[i].Language;
+            <div class="tab-pane @(activeTab == i ? "active" : "")" id="pane-@code" role="tabpanel" aria-labelledby="tab-@code">
+                <input type="hidden" asp-for="Translations[i].Language" />
+                <div class="mb-3">
+                    <label asp-for="Translations[i].Name" class="form-label fw-semibold"></label>
+                    <input asp-for="Translations[i].Name" class="form-control" lang="@code" placeholder="@L["Empty shows the English name"]" />
+                    <span asp-validation-for="Translations[i].Name" class="text-danger small"></span>
+                </div>
+                <div>
+                    <label asp-for="Translations[i].Description" class="form-label fw-semibold"></label>
+                    <textarea asp-for="Translations[i].Description" class="form-control" rows="3" lang="@code" placeholder="@L["Empty shows the English description"]"></textarea>
+                    <span asp-validation-for="Translations[i].Description" class="text-danger small"></span>
+                </div>
+            </div>
+        }
     </div>
     <div class="mb-3">
         <label asp-for="ParentId" class="form-label fw-semibold"></label>
@@ -21,10 +75,6 @@
             }
         </select>
         <span asp-validation-for="ParentId" class="text-danger small"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label fw-semibold"></label>
-        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
     </div>
     <div class="mb-4" style="max-width:160px">
         <label asp-for="SortOrder" class="form-label fw-semibold"></label>

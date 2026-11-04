@@ -3,23 +3,28 @@ using SkiaSharp;
 
 namespace Obrl.Web.Services.Rendering;
 
-/// <summary>Makes 2:3 cover thumbnails (WebP) from a PDF's first page, an EPUB cover image, or the title.</summary>
+/// <summary>Makes 2:3 cover thumbnails (WebP) from a PDF page, an image, or the title.</summary>
 public static class CoverMaker
 {
     public const int Width = 360;
     public const int Height = 540;
 
-    public static byte[] FromPdf(byte[] pdf)
+    /// <param name="pageIndex">0-based page to use.</param>
+    public static byte[] FromPdf(byte[] pdf, int pageIndex = 0)
     {
         using var bitmap = PdfiumLock.Run(() =>
-            Conversion.ToImage(pdf, 0, options: new RenderOptions(Width: Width, WithAspectRatio: true, BackgroundColor: SKColors.White)));
+            Conversion.ToImage(pdf, pageIndex, options: new RenderOptions(Width: Width, WithAspectRatio: true, BackgroundColor: SKColors.White)));
         return Fit(bitmap);
     }
 
+    /// <summary>Crops and scales any image SkiaSharp can read (JPEG, PNG, WebP, GIF, BMP). Null when it isn't an image.</summary>
     public static byte[]? FromImage(byte[] imageBytes)
     {
-        using var bitmap = SKBitmap.Decode(imageBytes);
-        return bitmap is null ? null : Fit(bitmap);
+        using var data = SKData.CreateCopy(imageBytes);
+        using var codec = SKCodec.Create(data);
+        if (codec is null) return null;
+        using var bitmap = SKBitmap.Decode(codec);
+        return bitmap is null || bitmap.Width < 1 || bitmap.Height < 1 ? null : Fit(bitmap);
     }
 
     /// <summary>A plain typographic cover: title and author on a colour picked from the title.</summary>

@@ -14,6 +14,7 @@ Phases 1 and 2 (this version) include:
   - **Admin:** also manages users, roles, the disclaimer and the activity log.
 - **Categories:** nested to any depth. Subscribing to a category includes all its sub categories. Users can also subscribe to single books. Subscriptions are free.
 - **Uploads:** PDF, DOC, DOCX, ODT, RTF, EPUB, TXT, MD, plus MOBI, AZW3 and FB2 when Calibre is installed.
+- **Covers:** the uploader can add their own cover image (JPEG, PNG or WebP, cropped to a 2:3 book shape). Without one, they can pick a page of the book as the cover (PDF and Word books; the edit page shows pictures of the pages to pick from once the book is converted). If they do neither, the first page is used, and EPUB and text books use the e-book's own cover or one made from the title. The cover can be changed at any time from the edit page.
 - **Reader:**
   - **Page mode** (PDF and Word): watermarked page images with zoom, fit to width, fit to page and full screen.
   - **Text mode** (EPUB and TXT): reflowing text with font size, font choice, line spacing and width, plus a table of contents.
@@ -110,6 +111,12 @@ entered in every interface language (one tab per language; English is required, 
 the details in the language they picked, and any field left empty shows the English text instead. Shelves, the library
 (sorted by the title the reader sees), book pages and the reader all use it, and search matches the details in every
 language. They are stored in the `BookTranslations` table, one row per book and language.
+
+**Categories in other languages.** Moderators enter a category's name and description the same way: English is
+required and the other languages are optional, with empty fields showing the English text. The library tree, the
+upload form, breadcrumbs and book pages show each category in the reader's language, sorted by the name they see.
+The Categories page lists the English names with the other languages beside them. They are stored in the
+`CategoryTranslations` table.
 
 Text lives in `src/Obrl.Web/Resources/SharedResource.{code}.resx`. Each entry's name is the English text, so English
 needs no file and anything not yet translated falls back to English. Views use `L["..."]` for plain text and `H["..."]`
