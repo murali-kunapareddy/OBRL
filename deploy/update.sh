@@ -12,10 +12,13 @@ STAMP="$(date +%Y%m%d-%H%M%S)"
 
 check_running() {
     echo "==> Checking that OBRL answers"
-    local host code
+    local host code addr
     host="$(grep -E '^AllowedHosts=' /etc/obrl/obrl.env 2>/dev/null | tail -n1 | cut -d= -f2- | cut -d';' -f1)"
+    # The address the service listens on, including a port changed with a drop-in (see docs/DEPLOY.md).
+    addr="$(systemctl show obrl -p ExecStart --value | grep -oE '127\.0\.0\.1:[0-9]+' | tail -n1)"
+    addr="${addr:-127.0.0.1:5000}"
     for _ in $(seq 1 30); do
-        code="$(curl -s -o /dev/null -w '%{http_code}' -H "Host: ${host:-localhost}" http://127.0.0.1:5000/terms || true)"
+        code="$(curl -s -o /dev/null -w '%{http_code}' -H "Host: ${host:-localhost}" "http://${addr}/terms" || true)"
         if [ "$code" = "200" ]; then echo "   OBRL is up."; return 0; fi
         sleep 2
     done
