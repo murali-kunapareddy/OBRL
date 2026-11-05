@@ -36,12 +36,23 @@ Collect these first. Nothing in the guide can work them out for you.
 
 ### Where each command runs
 
-- Blocks marked **On your PC (PowerShell)** run in Windows PowerShell or Windows Terminal on your own computer.
-  Windows 10 and 11 include `ssh`. On macOS or Linux, use Terminal; the commands are the same.
-- Blocks marked **On the VM** run on the server after you have connected to it with `ssh`.
-- Blocks marked **On the storage server** run there (only in Option A of step 9).
+This guide uses **[MobaXterm](https://mobaxterm.mobatek.net/)** (free Home Edition) on Windows to connect to the
+servers.
+
+- Steps marked **On your PC (MobaXterm)** are clicks in MobaXterm, or commands in its local terminal
+  (**Start local terminal** on the home tab).
+- Blocks marked **On the VM** run in a MobaXterm SSH session to the VM (step 2 sets it up).
+- Blocks marked **On the storage server** run in an SSH session to the storage server (only in Option A of step 9).
+
+**Copy and paste in MobaXterm.** Selecting text with the mouse copies it. **Right-click** pastes it (if right-click
+opens a menu instead, choose **Paste**, or press **Shift+Insert**). When pasting several lines, MobaXterm may ask
+whether to paste them all: choose **Yes**.
 
 When a command asks for a password, typing shows nothing. That is normal: type it and press Enter.
+
+**Keep the connection alive.** Some steps run for 20 minutes. In MobaXterm, open **Settings > Configuration > SSH**
+and tick **SSH keepalive**, then click OK. Step 5 also runs inside `tmux`, so the work goes on even if the connection
+drops.
 
 ## Step 1. Point the web address at the VM
 
@@ -49,13 +60,13 @@ Do this first, because DNS changes can take from a few minutes to a few hours to
 
 1. Sign in where the domain's DNS is managed. To find out where that is:
 
-   **On your PC (PowerShell)**
+   **On your PC (MobaXterm local terminal)**
 
-   ```powershell
-   Resolve-DnsName -Type NS example.com
+   ```bash
+   nslookup -type=ns example.com
    ```
 
-   The `NameHost` lines name the DNS company (for example `*.cloudflare.com`, `*.domaincontrol.com` for GoDaddy,
+   The `nameserver =` lines name the DNS company (for example `*.cloudflare.com`, `*.domaincontrol.com` for GoDaddy,
    `*.registrar-servers.com` for Namecheap, or your hosting provider).
 2. Add (or edit) a record:
    - **Type:** `A`
@@ -67,24 +78,26 @@ Do this first, because DNS changes can take from a few minutes to a few hours to
 3. If there is an `AAAA` record or a `CNAME` for `books`, delete it, unless the AAAA value is the VM's own IPv6 address.
 4. Check it (repeat until it shows the VM's address):
 
-   **On your PC (PowerShell)**
+   **On your PC (MobaXterm local terminal)**
 
-   ```powershell
-   Resolve-DnsName books.example.com
+   ```bash
+   nslookup books.example.com
    ```
 
-   You want to see `IPAddress : 203.0.113.10`.
+   You want to see `Address: 203.0.113.10` in the answer part (the last lines).
 
 ## Step 2. Connect to the VM for the first time
 
-**On your PC (PowerShell)**
+**On your PC (MobaXterm)**
 
-```powershell
-ssh root@203.0.113.10
-```
+1. Click **Session** (top left), then **SSH**.
+2. **Remote host:** `203.0.113.10`. Tick **Specify username** and type `root` (or the user your provider gave you,
+   such as `ubuntu`). **Port:** `22`.
+3. Click **OK**. The first time, MobaXterm may ask you to accept the server's key: click **Accept**.
+4. Type the password from the provider and press Enter. If MobaXterm offers to save the password, choose **No**
+   (step 3 replaces it with a key).
 
-If your provider gave you a user such as `ubuntu` instead of root, use `ssh ubuntu@203.0.113.10`.
-The first time, it asks `Are you sure you want to continue connecting (yes/no)?`: type `yes`. Then enter the password.
+The session is now listed under **User sessions** on the left, so next time you only double-click it.
 
 You are in when the prompt changes to something like `root@vm:~#`. Check the system:
 
@@ -125,20 +138,17 @@ sudo usermod -aG sudo libadmin
 
 ### 3.3 Sign in with a key instead of a password
 
-**On your PC (PowerShell)**: create a key once (skip if you already have `id_ed25519` in your `.ssh` folder).
+**On your PC (MobaXterm)**: create a key once.
 
-```powershell
-ssh-keygen -t ed25519 -C "obrl-vm"
-```
-
-Press Enter to accept the file location, then choose a passphrase (this protects the key if your PC is stolen).
-Show the public half of the key:
-
-```powershell
-Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
-```
-
-Select the whole line (it starts with `ssh-ed25519`) and copy it.
+1. Open **Tools > MobaKeyGen (SSH key generator)**.
+2. Under **Parameters** at the bottom, choose **EdDSA** with **Ed25519**.
+3. Click **Generate** and move the mouse over the empty area until it finishes.
+4. **Key comment:** `obrl-vm`. **Key passphrase** and **Confirm passphrase:** a passphrase of your choice (it
+   protects the key if your PC is stolen).
+5. Click **Save private key** and save it as `Documents\SSH\obrl-vm.ppk` (make the folder if needed). Keep this
+   file private and back it up; without it you cannot log in once step 3.4 turns passwords off.
+6. Click inside the box **Public key for pasting into OpenSSH authorized_keys file** at the top, press **Ctrl+A**
+   and **Ctrl+C**. It is one line that starts with `ssh-ed25519`. Leave MobaKeyGen open for now.
 
 **On the VM** (still connected from step 2):
 
@@ -147,18 +157,19 @@ sudo install -d -m 700 -o libadmin -g libadmin /home/libadmin/.ssh
 sudo nano /home/libadmin/.ssh/authorized_keys
 ```
 
-Paste the line (right-click pastes in most terminals), then save with **Ctrl+O**, **Enter**, and leave with **Ctrl+X**.
+Right-click to paste the line, then save with **Ctrl+O**, **Enter**, and leave with **Ctrl+X**.
 
 ```bash
 sudo chown libadmin:libadmin /home/libadmin/.ssh/authorized_keys
 sudo chmod 600 /home/libadmin/.ssh/authorized_keys
 ```
 
-**Test it in a new PowerShell window, keeping the old one open:**
+**Test it with a new session, keeping the first one open.** On your PC (MobaXterm):
 
-```powershell
-ssh libadmin@203.0.113.10
-```
+1. **Session > SSH**. **Remote host:** `203.0.113.10`, tick **Specify username:** `libadmin`, **Port:** `22`.
+2. Open the **Advanced SSH settings** tab, tick **Use private key**, and pick `Documents\SSH\obrl-vm.ppk`.
+3. Optional: on the **Bookmark settings** tab, set **Session name** to `OBRL VM`.
+4. Click **OK**.
 
 It should ask only for the key's passphrase, not the Linux password. Then check that `sudo` works:
 
@@ -179,8 +190,9 @@ EOF
 sudo sshd -t && sudo systemctl restart ssh
 ```
 
-`sshd -t` prints nothing when the settings are fine. Open one more PowerShell window and check that
-`ssh libadmin@203.0.113.10` still works before you close the others. From now on, always connect as libadmin.
+`sshd -t` prints nothing when the settings are fine. Before closing anything, double-click the `OBRL VM` (libadmin)
+session on the left to open one more and check that it still logs in. From now on, always use that session; the
+first `root` session no longer works, and you can delete it (right-click it, **Delete session**).
 
 ### 3.5 Turn on the firewall
 
@@ -214,7 +226,7 @@ free -h                    # Swap now shows 4.0Gi
 sudo reboot
 ```
 
-Wait a minute, then connect again: `ssh libadmin@203.0.113.10`.
+Wait a minute, then double-click the `OBRL VM` session to connect again (or press **R** in the old tab to reconnect).
 
 ## Step 4. Get OBRL onto the VM
 
@@ -241,6 +253,13 @@ or the certificate part fails (you can repeat it later).
 **On the VM**
 
 ```bash
+tmux new -s obrl
+```
+
+The screen clears and a green bar appears at the bottom: you are inside `tmux`, which keeps the commands running
+even if MobaXterm disconnects. (If it does, reconnect and type `tmux attach -t obrl` to get back.) Now run:
+
+```bash
 cd ~/OBRL
 sudo DOMAIN=books.example.com ADMIN_EMAIL=you@example.com bash deploy/install.sh
 ```
@@ -251,8 +270,8 @@ It takes 10 to 20 minutes. Near the end it prints:
    First admin: you@example.com / AbCdEf...-Obrl
 ```
 
-**Copy that password into your password manager now.** It is shown only once.
-(If you missed it: `sudo grep Seed__AdminPassword /etc/obrl/obrl.env`.)
+**Copy that password into your password manager now** (select it with the mouse to copy). It is shown only once.
+(If you missed it: `sudo grep Seed__AdminPassword /etc/obrl/obrl.env`.) Type `exit` to leave `tmux` when it is done.
 
 ### What the script did
 
@@ -427,7 +446,8 @@ In the commands below, replace `998` with your `uid` and `gid` numbers.
 
 NFS itself is not encrypted, so it runs inside a private WireGuard tunnel between the two servers.
 
-**On the storage server** (connect with `ssh root@198.51.100.20`, or your user with `sudo`):
+**On the storage server**: in MobaXterm, open a new **Session > SSH** to `198.51.100.20` with the user name the
+provider gave you (as in step 2), then run:
 
 ```bash
 sudo apt update && sudo apt install -y wireguard nfs-kernel-server
