@@ -70,24 +70,30 @@
                 if (direct)
                 {
                     <form method="post" asp-action="Unsubscribe" asp-route-id="@Model.Current.Id" asp-route-returnUrl="@returnUrl">
-                        <button class="btn btn-outline-primary"><i class="bi bi-check2"></i> @L["Subscribed"]</button>
+                        <button class="btn btn-outline-primary"><i class="bi bi-check2"></i> @L["Following"]</button>
                     </form>
                 }
                 else if (covered)
                 {
-                    <span class="badge badge-soft p-2">@L["Included in a parent subscription"]</span>
+                    <span class="badge badge-soft p-2">@L["Included in a category you follow"]</span>
                 }
                 else
                 {
                     <form method="post" asp-action="Subscribe" asp-route-id="@Model.Current.Id" asp-route-returnUrl="@returnUrl">
-                        <button class="btn btn-primary"><i class="bi bi-plus-lg"></i> @L["Subscribe"]</button>
+                        <button class="btn btn-primary"><i class="bi bi-plus-lg"></i> @L["Follow"]</button>
                     </form>
                 }
             }
         </div>
         @if (Model.Current is not null)
         {
-            <p class="small text-muted">@L["Subscribing includes every sub category below this one. It is free."]</p>
+            <p class="small text-muted">@L["Following shows new books from this category and every sub category below it on your dashboard. To read a book, open it and subscribe to it."]</p>
+        }
+        @if (Model.MySubscriptionsOnly && Model.Limited)
+        {
+            <p class="small text-muted" id="book-slots">
+                <i class="bi bi-collection me-1"></i>@L["You are using {0} of your {1} books. To free one, open the book and press Subscribed to unsubscribe.", Model.SlotsInUse, Model.MaxBooks]
+            </p>
         }
 
         @if (Model.Books.Count == 0)

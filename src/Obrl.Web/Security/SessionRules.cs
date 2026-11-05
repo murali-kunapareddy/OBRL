@@ -40,6 +40,7 @@ public static class SessionRules
         "/Home/Error",
         "/Language",
         "/terms",
+        "/versions",
     ];
 
     /// <summary>Called by the cookie handler whenever a session cookie is issued (sign-in or refresh).</summary>

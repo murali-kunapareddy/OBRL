@@ -173,7 +173,11 @@ public class BookCategory
     public Category? Category { get; set; }
 }
 
-/// <summary>A user subscribes to exactly one of: a book, or a category (which includes all its sub categories).</summary>
+/// <summary>
+/// A user subscribes to exactly one of: a book, or a category (which includes all its sub categories).
+/// A book subscription lets the member read the book; a category subscription means following it: its new books
+/// show on the member's dashboard, but each book still needs its own subscription to read.
+/// </summary>
 public class Subscription
 {
     public long Id { get; set; }
@@ -183,6 +187,13 @@ public class Subscription
     public int? CategoryId { get; set; }
     public Category? Category { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    /// <summary>
+    /// Book subscriptions of Users and Contributors end at this time (the loan period an Admin picks), after which
+    /// the book needs a new subscription. Null means no end: category subscriptions, and books of Moderators and Admins
+    /// or subscribed while the loan period was off.
+    /// </summary>
+    public DateTimeOffset? ExpiresAt { get; set; }
 }
 
 public class ReadingProgress
@@ -337,6 +348,7 @@ public static class ActivityTypes
     public const string BookDeleted = "book_deleted";
     public const string Subscribed = "subscribed";
     public const string Unsubscribed = "unsubscribed";
+    public const string SubscriptionLimitReached = "subscription_limit_reached";
     public const string BookmarkAdded = "bookmark_added";
     public const string DisclaimerAccepted = "disclaimer_accepted";
     public const string AccessDenied = "access_denied";

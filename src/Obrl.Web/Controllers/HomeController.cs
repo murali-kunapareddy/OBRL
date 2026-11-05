@@ -29,8 +29,9 @@ public class HomeController(ObrlDbContext db, AccessService access, BookText boo
             .Select(b => new BookCard(b.Id, b.Title, b.Author, b.HasCover, b.Mode, true, null))
             .ToListAsync(ct);
 
-        var newBooks = await readable.OrderByDescending(b => b.ReadyAt).Take(12)
-            .Select(b => new BookCard(b.Id, b.Title, b.Author, b.HasCover, b.Mode, true, null))
+        // Newest books in the categories the member follows; locked ones show too, so they can subscribe.
+        var newBooks = await access.FollowedBooks(User).OrderByDescending(b => b.ReadyAt).Take(12)
+            .Select(b => new BookCard(b.Id, b.Title, b.Author, b.HasCover, b.Mode, readable.Any(r => r.Id == b.Id), null))
             .ToListAsync(ct);
 
         // Shelves the whole library shares. Locked books show too, so readers find what to subscribe to.

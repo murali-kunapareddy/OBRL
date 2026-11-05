@@ -14,11 +14,13 @@ namespace Obrl.Web.Services;
 /// books/{id}/res/types.json      text mode: content type of each image
 /// books/{id}/custom-cover.webp    cover image the uploader supplied (already cropped to 2:3)
 /// books/{id}/default-cover.webp   text mode: the e-book's own cover, or one made from the title
+/// books/{id}/page-cover.webp      page mode: the cover page as the uploader cropped and adjusted it
 /// cache/{id}/{page}_{width}.enc  rendered pages (without watermark), safe to delete
 /// covers/{id}.webp               cover thumbnails, shown to signed-in users
 /// tmp/                           scratch space for conversions
 /// </code>
-/// Everything except covers is encrypted with <see cref="FileEncryptor"/>.
+/// Everything except covers is encrypted with <see cref="FileEncryptor"/>. cache/ and tmp/ live under
+/// <see cref="ObrlOptions.CacheRoot"/> instead when it is set.
 /// </summary>
 public sealed class BookStorage(IOptions<ObrlOptions> options, FileEncryptor encryptor) : IDisposable
 {
@@ -27,6 +29,9 @@ public sealed class BookStorage(IOptions<ObrlOptions> options, FileEncryptor enc
 
     private readonly string _root = Path.GetFullPath(options.Value.StorageRoot);
 
+    /// <summary>Page cache and conversion scratch space: <c>Obrl:CacheRoot</c> when set, otherwise the storage root.</summary>
+    private readonly string _work = Path.GetFullPath(string.IsNullOrWhiteSpace(options.Value.CacheRoot) ? options.Value.StorageRoot : options.Value.CacheRoot);
+
     public string Root => _root;
     public string BookDir(Guid id) => Path.Combine(_root, "books", id.ToString("N"));
     public string OriginalPath(Guid id) => Path.Combine(BookDir(id), "original.enc");
@@ -34,14 +39,15 @@ public sealed class BookStorage(IOptions<ObrlOptions> options, FileEncryptor enc
     public string SectionPath(Guid id, int n) => Path.Combine(BookDir(id), "sections", $"{n:D5}.enc");
     public string ResourcePath(Guid id, int n) => Path.Combine(BookDir(id), "res", $"{n}.enc");
     public string ResourceTypesPath(Guid id) => Path.Combine(BookDir(id), "res", "types.json");
-    public string CachePath(Guid id, int page, int width) => Path.Combine(_root, "cache", id.ToString("N"), $"{page}_{width}.enc");
+    public string CachePath(Guid id, int page, int width) => Path.Combine(_work, "cache", id.ToString("N"), $"{page}_{width}.enc");
     public string CoverPath(Guid id) => Path.Combine(_root, "covers", $"{id:N}.webp");
     public string CustomCoverPath(Guid id) => Path.Combine(BookDir(id), "custom-cover.webp");
     public string DefaultCoverPath(Guid id) => Path.Combine(BookDir(id), "default-cover.webp");
+    public string PageCoverPath(Guid id) => Path.Combine(BookDir(id), "page-cover.webp");
 
     public string CreateTempDir()
     {
-        var dir = Path.Combine(_root, "tmp", Guid.NewGuid().ToString("N"));
+        var dir = Path.Combine(_work, "tmp", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(dir);
         return dir;
     }
@@ -111,7 +117,7 @@ public sealed class BookStorage(IOptions<ObrlOptions> options, FileEncryptor enc
     {
         memoryCache.Remove("pdf:" + id);
         memoryCache.Remove("res:" + id);
-        var cacheDir = Path.Combine(_root, "cache", id.ToString("N"));
+        var cacheDir = Path.Combine(_work, "cache", id.ToString("N"));
         if (Directory.Exists(cacheDir)) Directory.Delete(cacheDir, recursive: true);
     }
 

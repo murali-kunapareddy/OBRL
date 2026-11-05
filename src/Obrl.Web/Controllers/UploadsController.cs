@@ -127,6 +127,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
             && vm.CoverImage is not { Length: > 0 } && (vm.CoverPage is not int p || p < 1 || p > book.UnitCount))
             ModelState.AddModelError(nameof(vm.CoverPage), L["Pick a page between 1 and {0}.", book.UnitCount]);
         var customCover = await ReadCoverChoiceAsync(vm, covers.HasCustom(id), ct);
+        var pageCrop = await ReadPageCropAsync(vm, book, ct);
         if (!ModelState.IsValid)
         {
             vm.Id = id;
@@ -140,7 +141,12 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         covers.KeepDefault(book);
         SetCoverChoice(book, vm);
         if (customCover is not null) await covers.SaveCustomAsync(id, customCover, ct);
-        if (customCover is not null || oldSource != book.CoverSource || oldPage != book.CoverPage)
+        // A cropped page belongs to one page: a new crop replaces it, and picking another page (or another kind of cover) drops it.
+        var pageChanged = oldSource != book.CoverSource || oldPage != book.CoverPage;
+        if (pageCrop is not null) await covers.SavePageCropAsync(id, pageCrop, ct);
+        var cropDropped = pageCrop is null && (pageChanged || vm.ClearPageCrop) && covers.HasPageCrop(id);
+        if (cropDropped) covers.DeletePageCrop(id);
+        if (customCover is not null || pageCrop is not null || pageChanged || cropDropped)
             await covers.RefreshAsync(book, ct);
 
         book.Title = vm.Title.Trim();
@@ -207,6 +213,39 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
     }
 
     /// <summary>
+    /// A whole page of a converted PDF or Word book, for cropping it into the cover on the edit form.
+    /// Only the uploader and Moderators can see it. It has no watermark, like the cover itself.
+    /// </summary>
+    [HttpGet]
+    [ResponseCache(Duration = 600, Location = ResponseCacheLocation.Client)]
+    public async Task<IActionResult> CoverPageImage(Guid id, int page, CancellationToken ct)
+    {
+        var book = await db.Books.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id, ct);
+        if (book is null || book.Mode != ReaderMode.Page || book.Status != BookStatus.Ready) return NotFound();
+        if (!CanManage(book)) return Forbid();
+        if (page < 1 || page > book.UnitCount) return NotFound();
+        return File(await covers.WholePageAsync(book, page, ct), "image/webp");
+    }
+
+    /// <summary>
+    /// The cropped and adjusted page the browser made from <see cref="CoverPageImage"/>, when the uploader used
+    /// "Crop and adjust" on a page cover. Null when there is none, or it does not apply to this book.
+    /// </summary>
+    private async Task<byte[]?> ReadPageCropAsync(UploadVm vm, Book book, CancellationToken ct)
+    {
+        if (vm.PageCoverImage is not { Length: > 0 } image || vm.CoverSource != CoverSource.Page
+            || book.Mode != ReaderMode.Page || vm.CoverImage is { Length: > 0 }) return null;
+        if (image.Length > CoverService.MaxImageMegabytes * 1024L * 1024L)
+        {
+            ModelState.AddModelError(nameof(vm.CoverPage), L["The cover image must be {0} MB or smaller.", CoverService.MaxImageMegabytes]);
+            return null;
+        }
+        var webp = await CoverService.PrepareCustomAsync(image, ct);
+        if (webp is null) ModelState.AddModelError(nameof(vm.CoverPage), L["The cover image could not be read. Use a JPEG, PNG or WebP picture."]);
+        return webp;
+    }
+
+    /// <summary>
     /// Checks the cover part of the form. An uploaded image always wins; returns it ready to save (or null when none
     /// was uploaded). Adds model errors for an unreadable image, or for "use my image" with no image.
     /// </summary>
@@ -246,6 +285,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         vm.PageCount = book.Mode == ReaderMode.Page ? book.UnitCount : 0;
         vm.HasCover = book.HasCover;
         vm.HasCustomCover = covers.HasCustom(book.Id);
+        vm.HasPageCrop = book.CoverSource == CoverSource.Page && covers.HasPageCrop(book.Id);
     }
 
     private bool CanManage(Book book) =>

@@ -7,5 +7,5 @@
 <footer class="site-footer">
     <span>© @DateTime.UtcNow.Year @holder. @L["All rights reserved."]</span>
     <a href="/terms">@L["Terms & Conditions"]</a>
-    <span class="build-info" title="@built">v@(BuildInfo.Version)</span>
+    <a class="build-info" href="/versions" title="@(built is null ? L["Version history"].Value : built + " · " + L["Version history"].Value)">v@(BuildInfo.Version)</a>
 </footer>

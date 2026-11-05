@@ -90,6 +90,7 @@ public partial class LocalizationTests
         keys.UnionWith(ExtraText.Names);
         keys.UnionWith(ExtraText.Identity);
         keys.UnionWith(ExtraText.Validation);
+        keys.UnionWith(Obrl.Web.Services.ReleaseNotes.Text);
         return keys;
     }
 

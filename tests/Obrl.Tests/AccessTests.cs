@@ -5,7 +5,7 @@ using Obrl.Web.Services;
 
 namespace Obrl.Tests;
 
-/// <summary>Who can read what: subscriptions to books, to categories, and to parents of categories.</summary>
+/// <summary>Who can read what: book subscriptions (with end dates), own uploads, and which books followed categories show.</summary>
 public class AccessTests : IDisposable
 {
     private readonly ObrlDbContext _db;
@@ -44,28 +44,44 @@ public class AccessTests : IDisposable
         Categories = [new BookCategory { CategoryId = category }],
     };
 
+    private static readonly DateTimeOffset Now = new(2026, 11, 5, 12, 0, 0, TimeSpan.Zero);
+
     private List<string> Readable(string userId, bool everything = false) =>
-        AccessService.ReadableBooks(_db, userId, everything).Where(b => b.Status == BookStatus.Ready)
+        AccessService.ReadableBooks(_db, userId, everything, Now).Where(b => b.Status == BookStatus.Ready)
             .Select(b => b.Title).OrderBy(t => t).ToList();
+
+    private List<string> Followed(string userId) =>
+        AccessService.FollowedBooks(_db, userId).Select(b => b.Title).OrderBy(t => t).ToList();
 
     [Fact]
     public void No_subscriptions_means_nothing_to_read() => Assert.Empty(Readable("reader"));
 
     [Fact]
-    public void Top_category_subscription_covers_every_level_below()
+    public void Following_a_category_shows_every_level_below_but_does_not_open_books()
     {
         _db.Subscriptions.Add(new Subscription { UserId = "reader", CategoryId = 1 });
         _db.SaveChanges();
-        Assert.Equal(["Classic mystery"], Readable("reader"));
+        Assert.Equal(["Classic mystery"], Followed("reader"));
+        Assert.Empty(Readable("reader"));
     }
 
     [Fact]
-    public void Sub_category_subscription_does_not_cover_siblings_or_lookalike_ids()
+    public void Following_does_not_match_siblings_or_lookalike_ids()
     {
         _db.Subscriptions.Add(new Subscription { UserId = "reader", CategoryId = 1 });
         _db.SaveChanges();
         // "/14/" must not match the "/1/" subscription.
-        Assert.DoesNotContain("Trap", Readable("reader"));
+        Assert.DoesNotContain("Trap", Followed("reader"));
+    }
+
+    [Fact]
+    public void Ended_book_subscription_no_longer_opens_the_book()
+    {
+        _db.Subscriptions.AddRange(
+            new Subscription { UserId = "reader", BookId = _science.Id, ExpiresAt = Now.AddMinutes(-1) },
+            new Subscription { UserId = "reader", BookId = _classic.Id, ExpiresAt = Now.AddDays(3) });
+        _db.SaveChanges();
+        Assert.Equal(["Classic mystery"], Readable("reader"));
     }
 
     [Fact]
@@ -79,7 +95,7 @@ public class AccessTests : IDisposable
     [Fact]
     public void Subscriptions_are_per_user()
     {
-        _db.Subscriptions.Add(new Subscription { UserId = "someone-else", CategoryId = 4 });
+        _db.Subscriptions.Add(new Subscription { UserId = "someone-else", BookId = _science.Id });
         _db.SaveChanges();
         Assert.Empty(Readable("reader"));
     }
@@ -96,7 +112,7 @@ public class AccessTests : IDisposable
     public void Unapproved_books_stay_locked_even_for_subscribers()
     {
         _db.Subscriptions.AddRange(
-            new Subscription { UserId = "reader", CategoryId = 4 },
+            new Subscription { UserId = "reader", BookId = _science.Id },
             new Subscription { UserId = "reader", BookId = _pending.Id });
         _db.SaveChanges();
         Assert.Equal(["Physics"], Readable("reader"));

@@ -20,6 +20,7 @@ public class AdminController(
     ActivityLog log,
     IMemoryCache cache,
     IdleTimeout idle,
+    Lending lending,
     IStringLocalizer<SharedResource> L) : Controller
 {
     public async Task<IActionResult> Users(string? q, CancellationToken ct)
@@ -136,7 +137,22 @@ public class AdminController(
     }
 
     [HttpGet]
-    public IActionResult Settings() => View(idle.Minutes);
+    public IActionResult Settings() => View(new SettingsVm(idle.Minutes, lending.LoanDays, lending.MaxBooks));
+
+    /// <summary>How long a new book subscription of a User or Contributor lasts (0 = no end date).</summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> Loans(int loanDays)
+    {
+        if (!Lending.IsAllowedLoan(loanDays)) return BadRequest();
+        var before = lending.LoanDays;
+        var adminId = AccessService.UserId(User);
+        await lending.SaveAsync(db, loanDays, adminId);
+        await log.WriteAsync(ActivityTypes.SettingChanged, adminId, data: new { setting = Lending.LoanDaysSettingKey, before, after = loanDays });
+        TempData["Message"] = (loanDays == 0
+            ? L["New book subscriptions now have no end date."]
+            : L["New book subscriptions now last {0} days.", loanDays]).Value;
+        return RedirectToAction(nameof(Settings));
+    }
 
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Settings(int idleMinutes)

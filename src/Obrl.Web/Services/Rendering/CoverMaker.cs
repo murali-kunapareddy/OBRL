@@ -17,6 +17,17 @@ public static class CoverMaker
         return Fit(bitmap);
     }
 
+    /// <summary>A whole page as WebP, without cropping, for the cover crop tool in the browser.</summary>
+    /// <param name="pageIndex">0-based page.</param>
+    public static byte[] WholePage(byte[] pdf, int pageIndex, int width = 1000)
+    {
+        using var bitmap = PdfiumLock.Run(() =>
+            Conversion.ToImage(pdf, pageIndex, options: new RenderOptions(Width: width, WithAspectRatio: true, BackgroundColor: SKColors.White)));
+        using var img = SKImage.FromBitmap(bitmap);
+        using var data = img.Encode(SKEncodedImageFormat.Webp, 90);
+        return data.ToArray();
+    }
+
     /// <summary>Crops and scales any image SkiaSharp can read (JPEG, PNG, WebP, GIF, BMP). Null when it isn't an image.</summary>
     public static byte[]? FromImage(byte[] imageBytes)
     {
