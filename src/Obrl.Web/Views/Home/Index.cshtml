@@ -7,7 +7,7 @@
 <p class="page-sub">
     @if (Model.SubscribedCategories == 0)
     {
-        @H["You have not subscribed to any categories yet. <a href=\"/Library\">Browse the library</a> to choose what you want to read."]
+        @H["You do not follow any categories yet. <a href=\"/Library\">Browse the library</a> and follow the ones you like to see their new books here."]
     }
     else
     {
@@ -37,6 +37,6 @@
 
 <partial name="_Shelf" model="@((L["Continue reading"].Value, Model.ContinueReading, L["Books you start will appear here, ready to pick up where you left off."].Value, (string?)null))" />
 <partial name="_Shelf" model="@((L["Bookmarked"].Value, Model.Bookmarked, L["Add a bookmark in the reader and the book shows up here."].Value, (string?)null))" />
-<partial name="_Shelf" model="@((L["New in your subscriptions"].Value, Model.NewBooks, L["No books in your subscriptions yet."].Value, (string?)"/Library?mine=true"))" />
+<partial name="_Shelf" model="@((L["New in categories you follow"].Value, Model.NewBooks, L["No books in the categories you follow yet."].Value, (string?)null))" />
 <partial name="_Shelf" model="@((L["Most read this month"].Value, Model.MostRead, L["Nobody has opened a book in the last 30 days."].Value, (string?)null))" />
 <partial name="_Shelf" model="@((L["Top rated"].Value, Model.TopRated, L["Books need {0} ratings to show here.", Obrl.Web.Services.Community.TopRatedMinimumVotes].Value, (string?)null))" />

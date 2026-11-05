@@ -3,18 +3,19 @@
 A private, login-only online library. Members read books in a built-in reader and can't download them.
 It's built with ASP.NET Core MVC on .NET 10 and PostgreSQL, and runs on one Ubuntu server.
 
-Phases 1 and 2 (this version) include:
+Version 1.1 includes:
 
 - **Sign-in:** login only, accounts are created by admins, and everyone must set up a strong sign-in before using the library: a **passkey** (fingerprint, face or device PIN, phishing-resistant) or an **authenticator app** (password + code). Members can have both, and up to 10 passkeys. A member with only passkeys cannot sign in with the password alone. One active session per account, sign-out after inactivity (Admins choose 5 to 60 minutes; scrolling, typing and page turns count as activity, and a notice comes one minute before), lockout after 5 failed attempts, and passwords that appear in leak lists are refused.
 - **Disclaimer:** users must accept it before reading. Admins edit it, and every change creates a new version that users must accept again.
 - **Roles:**
-  - **User:** reads, subscribes and bookmarks.
-  - **Contributor:** also uploads books.
+  - **User:** reads, subscribes (up to 5 books at a time) and bookmarks.
+  - **Contributor:** also uploads books, and reads their own books with no subscription and no end date.
   - **Moderator:** also manages categories and all books, approves uploads, and moderates comments and the message board.
   - **Admin:** also manages users, roles, the disclaimer and the activity log.
-- **Categories:** nested to any depth. Subscribing to a category includes all its sub categories. Users can also subscribe to single books. Subscriptions are free.
+- **Categories:** nested to any depth. Members follow categories (a category subscription): the newest books of a followed category and all its sub categories show on their dashboard.
+- **Book subscriptions:** to read a book, a member subscribes to it. Subscriptions are free. Users and Contributors can hold up to 5 at a time (`Obrl:MaxSubscribedBooks`), and each lasts 30 days, which Admins change under Admin > Settings (7, 14, 30, 60 or 90 days, or no end date). When a subscription ends or the member unsubscribes, the slot is free again, and an ended book can be subscribed to again. Contributors read the books they uploaded without a subscription; those never end and never use a slot. Moderators and Admins read every book.
 - **Uploads:** PDF, DOC, DOCX, ODT, RTF, EPUB, TXT, MD, plus MOBI, AZW3 and FB2 when Calibre is installed.
-- **Covers:** the uploader can add their own cover image (JPEG, PNG or WebP, cropped to a 2:3 book shape). Without one, they can pick a page of the book as the cover (PDF and Word books; the edit page shows pictures of the pages to pick from once the book is converted). If they do neither, the first page is used, and EPUB and text books use the e-book's own cover or one made from the title. The cover can be changed at any time from the edit page.
+- **Covers:** the uploader can add their own cover image (JPEG, PNG or WebP). After choosing it, a crop tool opens: move and zoom the picture inside a 2:3 frame, turn, straighten, mirror, and adjust brightness, contrast and colour. The same tool crops a page of the book (the "Crop and adjust" button next to the page number). Without one, they can pick a page of the book as the cover (PDF and Word books; the edit page shows pictures of the pages to pick from once the book is converted). If they do neither, the first page is used, and EPUB and text books use the e-book's own cover or one made from the title. The cover can be changed at any time from the edit page.
 - **Reader:**
   - **Page mode** (PDF and Word): watermarked page images with zoom, fit to width, fit to page and full screen.
   - **Text mode** (EPUB and TXT): reflowing text with font size, font choice, line spacing and width, plus a table of contents.
@@ -100,6 +101,59 @@ journalctl -u obrl -f
 sudo systemctl start obrl-backup     # run a backup now
 ```
 
+## Keep the library on another server
+
+Like Immich, OBRL keeps its library as plain folders, so the library can sit on a storage server with plenty of
+space while the app and database stay on the VPS. Everything in it except the cover thumbnails is AES-256-GCM
+encrypted with the master key, which stays on the VPS, so the storage server only ever holds unreadable files.
+
+**Recommended: an NFS share** (or SMB/CIFS if the storage server is a Windows or Synology box), mounted on the VPS
+and set as `Obrl:StorageRoot`, with the page cache kept on the VPS's own disk. It needs no code or app changes, and
+a low-latency link (same data centre, or a private network such as WireGuard or Tailscale) keeps reading fast.
+Books are read once per page and then served from the local page cache.
+
+1. On the storage server, export a folder to the VPS only, for example in `/etc/exports`:
+   `/srv/obrl-library  10.0.0.5(rw,sync,no_subtree_check,root_squash)`, then `exportfs -ra`.
+   Make the folder owned by the same numeric user and group id as `obrl` on the VPS (`id obrl` shows them).
+2. On the VPS:
+
+   ```bash
+   sudo apt install nfs-common            # cifs-utils for SMB
+   sudo mkdir -p /mnt/obrl-library
+   # /etc/fstab
+   storage.example.lan:/srv/obrl-library  /mnt/obrl-library  nfs4  rw,hard,noatime,_netdev  0 0
+   # SMB instead:
+   # //storage.example.lan/obrl  /mnt/obrl-library  cifs  credentials=/etc/obrl/smb.cred,uid=obrl,gid=obrl,file_mode=0640,dir_mode=0750,_netdev  0 0
+   sudo mount /mnt/obrl-library
+   ```
+
+3. Stop OBRL, copy the current library across (skip the cache, which rebuilds itself) and point OBRL at it:
+
+   ```bash
+   sudo systemctl stop obrl
+   sudo rsync -a --info=progress2 --exclude cache --exclude tmp /var/lib/obrl/ /mnt/obrl-library/
+   # /etc/obrl/obrl.env
+   Obrl__StorageRoot=/mnt/obrl-library
+   Obrl__CacheRoot=/var/lib/obrl
+   ```
+
+4. Let the service write there, and only start once the share is mounted (so OBRL never writes into the empty
+   mount-point folder if the storage server is down):
+
+   ```bash
+   sudo install -D -m 644 deploy/obrl-remote-storage.conf /etc/systemd/system/obrl.service.d/remote-storage.conf
+   sudo systemctl daemon-reload && sudo systemctl start obrl
+   ```
+
+5. Backups: `deploy/backup.sh` now reads the storage path from `/etc/obrl/obrl.env`. If the storage server keeps
+   its own snapshots, add `BACKUP_BOOKS=no` to `/etc/obrl/backup.env` to back up only the database and keys from the
+   VPS. Either way, keep a copy of `/etc/obrl/master.key` off both servers.
+
+**Object storage (S3, MinIO, Backblaze B2, Wasabi)** would also work, but OBRL reads and writes files directly, so it
+would need a storage layer in the code. A quick alternative is mounting a bucket with `rclone mount` and treating it
+like the share above, but rclone's file cache makes writes less reliable than NFS. Choose NFS or SMB unless your
+storage is only available as a bucket.
+
 ## Languages
 
 The interface is available in English, Telugu (తెలుగు) and Kannada (ಕನ್ನಡ). Members pick a language from the
@@ -140,7 +194,9 @@ Set these in `appsettings.json`, or as environment variables in `/etc/obrl/obrl.
 | Setting | Default | Meaning |
 | --- | --- | --- |
 | `ConnectionStrings:Default` | | PostgreSQL connection string |
-| `Obrl:StorageRoot` | `/var/lib/obrl` | Encrypted books, covers, page cache, data protection keys |
+| `Obrl:StorageRoot` | `/var/lib/obrl` | Encrypted books, covers, page cache, data protection keys. Can be a mounted share on another server (see below) |
+| `Obrl:CacheRoot` | empty | Page cache and conversion scratch space. Empty uses `StorageRoot`. Set it to a local folder when `StorageRoot` is on another server |
+| `Obrl:MaxSubscribedBooks` | `5` | Most books a User or Contributor can be subscribed to at once |
 | `Obrl:KeyFile` | `/etc/obrl/master.key` | 32-byte master key (base64). Created on first start if missing. |
 | `Obrl:MaxUploadMegabytes` | `200` | Largest upload |
 | `Obrl:PageWidths` | `800, 1200, 1600` | Widths pages are rendered at |
@@ -158,9 +214,11 @@ Every page ends with a footer showing the copyright, a link to **Terms & Conditi
 also before signing in) and the version. Terms & Conditions shows the current disclaimer, the text members accept
 before reading, so Admins keep editing it in one place: Admin > Disclaimer.
 
-The version reads `major.minor.build`, for example `v1.0.126D67E87988`:
+The version reads `major.minor.build`, for example `v1.1.126D67F3B0D9`. Click it to open the **version history**
+(`/versions`, also open before signing in), a summary of every release. The entries are in
+`src/Obrl.Web/Services/ReleaseNotes.cs`; add one at the top for each release, and its text to the language files.
 
-- `major.minor` is `<ObrlVersion>` in `src/Obrl.Web/Obrl.Web.csproj`. Change it by hand for a release.
+- `major.minor` is `<ObrlVersion>` in `src/Obrl.Web/Obrl.Web.csproj` (now `1.1`). Change it by hand for a release.
 - `build` is the build time in UTC written as `yyyyMMddHHmmss` and converted to hexadecimal
   (`20261104023944` → `126D67E87988`). Hover over it to see the time; to decode it yourself, convert the hex back to
   decimal. To pin a build number, pass `-p:ObrlBuildTimestamp=20261104023944` to `dotnet build` or `dotnet publish`.
@@ -198,6 +256,7 @@ To add a theme, copy a block, change the colours, and add a button with `data-th
 | VersOne.Epub | Unlicense | EPUB reading |
 | HtmlSanitizer, AngleSharp | MIT | Cleaning EPUB HTML |
 | Bootstrap, Bootstrap Icons | MIT | UI |
+| Cropper.js 1.6.2 | MIT | Cover crop and adjust tool (`wwwroot/lib/cropperjs`) |
 | qrcode-generator | MIT | Authenticator QR code |
 | Inter, Literata | SIL OFL 1.1 | Fonts |
 | SecLists NCSC password list | MIT | Leaked-password check |

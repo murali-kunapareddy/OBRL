@@ -9,7 +9,7 @@ using Obrl.Web.Services;
 
 namespace Obrl.Web.Controllers;
 
-public class BooksController(ObrlDbContext db, AccessService access, BookText bookText, BookStorage storage, ActivityLog log, IStringLocalizer<SharedResource> L) : Controller
+public class BooksController(ObrlDbContext db, AccessService access, Lending lending, BookText bookText, BookStorage storage, ActivityLog log, IStringLocalizer<SharedResource> L) : Controller
 {
     [HttpGet("/books/{id:guid}")]
     public async Task<IActionResult> Details(Guid id, CancellationToken ct)
@@ -38,7 +38,12 @@ public class BooksController(ObrlDbContext db, AccessService access, BookText bo
                 : [],
             CategoryTrails = book.Categories.Select(c => tree.Trail(c.CategoryId)).Where(t => t.Count > 0).ToList(),
             CanRead = book.Status == BookStatus.Ready && await access.CanReadAsync(User, id, ct),
-            SubscribedToBook = await db.Subscriptions.AnyAsync(s => s.UserId == userId && s.BookId == id, ct),
+            MySubscription = await db.Subscriptions.AsNoTracking().FirstOrDefaultAsync(s => s.UserId == userId && s.BookId == id, ct),
+            OwnBook = book.UploadedById == userId,
+            Limited = Lending.IsLimited(User),
+            SlotsInUse = await lending.SlotsInUseAsync(db, userId, ct),
+            MaxBooks = lending.MaxBooks,
+            LoanDays = lending.LoanDays,
             CanEdit = canEdit,
             Progress = await db.ReadingProgress.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == userId && p.BookId == id, ct),
             Bookmarks = await db.Bookmarks.AsNoTracking().Where(m => m.UserId == userId && m.BookId == id)
@@ -102,11 +107,15 @@ public class BooksController(ObrlDbContext db, AccessService access, BookText bo
     {
         var userId = AccessService.UserId(User);
         if (!await db.Books.AnyAsync(b => b.Id == id && b.Status == BookStatus.Ready && b.IsApproved, ct)) return NotFound();
-        if (!await db.Subscriptions.AnyAsync(s => s.UserId == userId && s.BookId == id, ct))
+        switch (await lending.SubscribeAsync(db, User, id, ct))
         {
-            db.Subscriptions.Add(new Subscription { UserId = userId, BookId = id });
-            log.Add(ActivityTypes.Subscribed, userId, id);
-            await db.SaveChangesAsync(ct);
+            case SubscribeResult.Subscribed:
+                await log.WriteAsync(ActivityTypes.Subscribed, userId, id, ct: ct);
+                break;
+            case SubscribeResult.LimitReached:
+                await log.WriteAsync(ActivityTypes.SubscriptionLimitReached, userId, id, new { max = lending.MaxBooks }, ct);
+                TempData["Message"] = L["You can have up to {0} books at a time. Unsubscribe from one of your books to read this one.", lending.MaxBooks].Value;
+                break;
         }
         return RedirectToAction(nameof(Details), new { id });
     }

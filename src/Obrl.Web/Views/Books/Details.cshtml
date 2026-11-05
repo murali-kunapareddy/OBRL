@@ -61,12 +61,16 @@
             }
             @if (b.Status == BookStatus.Ready)
             {
-                if (Model.SubscribedToBook)
+                if (Model.SubscribedToBook && !(Model.OwnBook && Model.Limited))
                 {
                     <form method="post" action="/books/@b.Id/unsubscribe">
                         @Html.AntiForgeryToken()
                         <button class="btn btn-outline-primary btn-lg"><i class="bi bi-check2"></i> @L["Subscribed"]</button>
                     </form>
+                }
+                else if (!Model.CanRead && Model.Limited && Model.SlotsInUse >= Model.MaxBooks)
+                {
+                    <button class="btn btn-primary btn-lg" disabled><i class="bi bi-plus-lg"></i> @L["Subscribe to read"]</button>
                 }
                 else if (!Model.CanRead)
                 {
@@ -96,6 +100,47 @@
                 </form>
             }
         </div>
+        @if (b.Status == BookStatus.Ready && Model.Limited)
+        {
+            <p class="small text-muted mt-n2 mb-4" id="subscription-note">
+                @if (Model.OwnBook)
+                {
+                    <i class="bi bi-person-check me-1"></i>@L["You uploaded this book, so you can read it any time. It does not count towards your books."]
+                }
+                else if (Model.SubscribedToBook)
+                {
+                    if (Model.MySubscription!.ExpiresAt is { } until)
+                    {
+                        <i class="bi bi-hourglass-split me-1"></i>@L["Your subscription ends on {0}. After that, subscribe again to keep reading.", until.ToLocalTime().ToString("D", System.Globalization.CultureInfo.CurrentCulture)]
+                    }
+                    else
+                    {
+                        <i class="bi bi-infinity me-1"></i>@L["Your subscription has no end date."]
+                    }
+                    <span>@L["You are using {0} of your {1} books.", Model.SlotsInUse, Model.MaxBooks]</span>
+                }
+                else if (!Model.CanRead)
+                {
+                    if (Model.SubscriptionEnded)
+                    {
+                        <i class="bi bi-hourglass-bottom me-1"></i>@L["Your subscription ended on {0}.", Model.MySubscription!.ExpiresAt!.Value.ToLocalTime().ToString("D", System.Globalization.CultureInfo.CurrentCulture)]
+                    }
+                    if (Model.SlotsInUse >= Model.MaxBooks)
+                    {
+                        <span>@H["You already have {0} books, the most you can have at a time. <a href=\"/Library?mine=true\">Unsubscribe from one</a> to read this book.", Model.MaxBooks]</span>
+                    }
+                    else
+                    {
+                        <span>@L["You can have up to {0} books at a time; you are using {1}.", Model.MaxBooks, Model.SlotsInUse]</span>
+                        if (Model.LoanDays > 0)
+                        {
+                            <span>@L["Each subscription lasts {0} days.", Model.LoanDays]</span>
+                        }
+                    }
+                }
+            </p>
+        }
+
         @if (!b.IsApproved && b.ReviewNote is not null && Model.CanEdit)
         {
             <div class="alert alert-warning"><strong>@L["Moderator note:"]</strong> @b.ReviewNote</div>

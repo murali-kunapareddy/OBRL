@@ -33,6 +33,7 @@ builder.Services.AddSingleton<PageRenderer>();
 builder.Services.AddSingleton<CoverService>();
 builder.Services.AddScoped<BookProcessor>();
 builder.Services.AddScoped<AccessService>();
+builder.Services.AddSingleton<Lending>();
 builder.Services.AddScoped<BookText>();
 builder.Services.AddScoped<ActivityLog>();
 builder.Services.AddHostedService<ConversionWorker>();
@@ -197,7 +198,11 @@ var app = builder.Build();
 
 await Seeder.RunAsync(app.Services);
 using (var scope = app.Services.CreateScope())
-    await app.Services.GetRequiredService<IdleTimeout>().LoadAsync(scope.ServiceProvider.GetRequiredService<ObrlDbContext>(), obrl.IdleTimeoutMinutes);
+{
+    var startupDb = scope.ServiceProvider.GetRequiredService<ObrlDbContext>();
+    await app.Services.GetRequiredService<IdleTimeout>().LoadAsync(startupDb, obrl.IdleTimeoutMinutes);
+    await app.Services.GetRequiredService<Lending>().LoadAsync(startupDb);
+}
 
 // ---------- Pipeline ----------
 app.UseForwardedHeaders();
@@ -237,7 +242,9 @@ app.Use(async (http, next) =>
     await next();
 });
 
-app.UseHttpsRedirection();
+// In production nginx serves HTTPS and redirects plain HTTP itself. Locally the app runs on plain HTTP only,
+// where the redirect has no HTTPS port to go to and only logs a warning.
+if (!app.Environment.IsDevelopment()) app.UseHttpsRedirection();
 app.UseRouting();
 app.UseRequestLocalization();
 app.UseAuthentication();

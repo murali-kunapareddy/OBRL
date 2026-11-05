@@ -107,6 +107,9 @@ public sealed class LibraryVm
     public bool MySubscriptionsOnly { get; init; }
     public int Page { get; init; } = 1;
     public bool HasMore { get; init; }
+    public bool Limited { get; init; }
+    public int SlotsInUse { get; init; }
+    public int MaxBooks { get; init; }
 
     public bool IsCovered(CategoryNode c) => SubscribedPaths.Any(p => c.Path.StartsWith(p, StringComparison.Ordinal));
 }
@@ -122,7 +125,20 @@ public sealed class BookDetailsVm
     public List<string> TranslatedLanguages { get; init; } = [];
     public required List<List<CategoryNode>> CategoryTrails { get; init; }
     public bool CanRead { get; init; }
-    public bool SubscribedToBook { get; init; }
+
+    /// <summary>The member's subscription to this book, active or ended; null when they never subscribed.</summary>
+    public Subscription? MySubscription { get; init; }
+    public bool SubscribedToBook => MySubscription is { } s && (s.ExpiresAt is null || s.ExpiresAt > DateTimeOffset.UtcNow);
+    public bool SubscriptionEnded => MySubscription is { ExpiresAt: { } e } && e <= DateTimeOffset.UtcNow;
+
+    /// <summary>The member uploaded this book (Contributors read their own books with no subscription and no end date).</summary>
+    public bool OwnBook { get; init; }
+
+    /// <summary>User or Contributor: the book limit and loan period apply.</summary>
+    public bool Limited { get; init; }
+    public int SlotsInUse { get; init; }
+    public int MaxBooks { get; init; }
+    public int LoanDays { get; init; }
     public bool CanEdit { get; init; }
     public ReadingProgress? Progress { get; init; }
     public List<Bookmark> Bookmarks { get; init; } = [];
@@ -167,6 +183,15 @@ public sealed class UploadVm
     public int PageCount { get; set; }
     public bool HasCover { get; set; }
     public bool HasCustomCover { get; set; }
+
+    /// <summary>The chosen cover page has a saved crop.</summary>
+    public bool HasPageCrop { get; set; }
+
+    /// <summary>The cover page as cropped and adjusted in the browser (sent by "Crop and adjust").</summary>
+    public IFormFile? PageCoverImage { get; set; }
+
+    /// <summary>Go back to the whole chosen page, dropping its saved crop.</summary>
+    public bool ClearPageCrop { get; set; }
 
     /// <summary>Title, author and description in the other interface languages, one entry per language.</summary>
     public List<BookTranslationInput> Translations { get; set; } = [];
@@ -300,3 +325,6 @@ public sealed class DisclaimerVm
     public required Disclaimer Disclaimer { get; init; }
     public string? ReturnUrl { get; init; }
 }
+
+/// <summary>Admin &gt; Settings.</summary>
+public sealed record SettingsVm(int IdleMinutes, int LoanDays, int MaxBooks);

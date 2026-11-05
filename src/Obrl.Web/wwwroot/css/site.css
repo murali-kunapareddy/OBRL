@@ -243,6 +243,9 @@ h1, h2, h3, .serif { font-family: "Literata", Georgia, serif; letter-spacing: -.
 .site-footer a { color: inherit; }
 .site-footer a:hover { color: var(--obrl-accent); }
 .site-footer .build-info { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.release-list { list-style: none; padding: 0; display: grid; gap: .75rem; }
+.release-list .release { padding: 1rem 1.25rem; }
+.release-list ul { padding-left: 1.1rem; }
 .auth-card .site-footer { border-top: 0; padding: .75rem 0 0; }
 
 .mobile-nav { display: none; }
@@ -310,6 +313,13 @@ h1, h2, h3, .serif { font-family: "Literata", Georgia, serif; letter-spacing: -.
 
 /* Cover choice on the upload form */
 .cover-current { width: 120px; flex: none; }
+.crop-preview { width: 56px; flex: none; }
+.crop-preview img { width: 100%; height: 100%; object-fit: cover; }
+.crop-stage { height: min(60vh, 520px); background: var(--obrl-surface-2); border-radius: .35rem; overflow: hidden; }
+.crop-stage img { display: block; max-width: 100%; }
+.crop-adjust { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .25rem 1rem; font-size: .875rem; }
+.crop-adjust label { display: block; }
+.crop-adjust output { float: right; color: var(--obrl-muted, inherit); font-variant-numeric: tabular-nums; }
 .cover-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: .6rem; max-height: 420px; overflow: auto; padding: .25rem; }
 .cover-tile { position: relative; padding: 0; border: 2px solid transparent; border-radius: .35rem; background: var(--obrl-surface-2); aspect-ratio: 2 / 3; overflow: hidden; cursor: pointer; }
 .cover-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }

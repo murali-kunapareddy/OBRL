@@ -43,7 +43,7 @@ public partial class ReaderController(
         if (!await access.CanReadAsync(User, id, ct))
         {
             await log.WriteAsync(ActivityTypes.AccessDenied, userId, id, ct: ct);
-            TempData["Message"] = L["Subscribe to this book or one of its categories to read it."].Value;
+            TempData["Message"] = L["Subscribe to this book to read it."].Value;
             return RedirectToAction("Details", "Books", new { id });
         }
 

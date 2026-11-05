@@ -7,6 +7,13 @@ public class ObrlOptions
     /// <summary>Root folder for encrypted originals, derived content, covers and the page cache. Must be outside wwwroot.</summary>
     public string StorageRoot { get; set; } = "/var/lib/obrl";
 
+    /// <summary>
+    /// Optional folder for the rendered-page cache and conversion scratch files. Empty uses <see cref="StorageRoot"/>.
+    /// Set it to a local disk when <see cref="StorageRoot"/> is on another server (an NFS or SMB mount), so page
+    /// rendering and conversions do not go over the network. Nothing in it needs a backup.
+    /// </summary>
+    public string? CacheRoot { get; set; }
+
     /// <summary>File holding the 32-byte master key (base64). Created on first start if missing.</summary>
     public string KeyFile { get; set; } = "/etc/obrl/master.key";
 
@@ -29,6 +36,9 @@ public class ObrlOptions
 
     /// <summary>Minutes of inactivity before a user is signed out.</summary>
     public int IdleTimeoutMinutes { get; set; } = 30;
+
+    /// <summary>Most books a User or Contributor can be subscribed to at once. Moderators and Admins have no limit.</summary>
+    public int MaxSubscribedBooks { get; set; } = 5;
 
     /// <summary>
     /// The domain passkeys are bound to, e.g. "library.example.org". Leave empty to use the host the site is

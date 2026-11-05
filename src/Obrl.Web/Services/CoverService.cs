@@ -5,7 +5,7 @@ namespace Obrl.Web.Services;
 
 /// <summary>
 /// Decides and writes a book's cover. In order of preference: an image the uploader supplied, a page the uploader
-/// picked (PDF and Word books), then the default: the first page, or for e-books their own cover or one made from the title.
+/// picked (PDF and Word books; as they cropped and adjusted it, if they did), then the default: the first page, or for e-books their own cover or one made from the title.
 /// </summary>
 public sealed class CoverService(BookStorage storage)
 {
@@ -29,6 +29,15 @@ public sealed class CoverService(BookStorage storage)
 
     public Task SaveCustomAsync(Guid id, byte[] webp, CancellationToken ct) => WriteAsync(storage.CustomCoverPath(id), webp, ct);
 
+    public bool HasPageCrop(Guid id) => File.Exists(storage.PageCoverPath(id));
+
+    public Task SavePageCropAsync(Guid id, byte[] webp, CancellationToken ct) => WriteAsync(storage.PageCoverPath(id), webp, ct);
+
+    public void DeletePageCrop(Guid id)
+    {
+        if (File.Exists(storage.PageCoverPath(id))) File.Delete(storage.PageCoverPath(id));
+    }
+
     public void DeleteCustom(Guid id)
     {
         if (File.Exists(storage.CustomCoverPath(id))) File.Delete(storage.CustomCoverPath(id));
@@ -37,8 +46,8 @@ public sealed class CoverService(BookStorage storage)
     /// <summary>During conversion of a page-mode book.</summary>
     public async Task WriteForPageBookAsync(Book book, byte[] pdf, int pageCount, CancellationToken ct)
     {
-        var custom = await CustomFor(book, ct);
-        await WriteAsync(storage.CoverPath(book.Id), custom ?? CoverMaker.FromPdf(pdf, PageIndex(book, pageCount)), ct);
+        var chosen = await CustomFor(book, ct) ?? await PageCropFor(book, pageCount, ct);
+        await WriteAsync(storage.CoverPath(book.Id), chosen ?? CoverMaker.FromPdf(pdf, PageIndex(book, pageCount)), ct);
         book.HasCover = true;
     }
 
@@ -85,6 +94,15 @@ public sealed class CoverService(BookStorage storage)
     /// <summary>A small preview of how a page would look as the cover. Page-mode books only; <paramref name="page"/> is 1-based.</summary>
     public async Task<byte[]> PagePreviewAsync(Book book, int page, CancellationToken ct) =>
         CoverMaker.FromPdf(await storage.GetContentPdfAsync(book.Id, ct), page - 1);
+
+    /// <summary>A whole page, for the crop tool on the edit form. Page-mode books only; <paramref name="page"/> is 1-based.</summary>
+    public async Task<byte[]> WholePageAsync(Book book, int page, CancellationToken ct) =>
+        CoverMaker.WholePage(await storage.GetContentPdfAsync(book.Id, ct), page - 1);
+
+    /// <summary>The page as the uploader cropped it, while that page is still the chosen cover.</summary>
+    private async Task<byte[]?> PageCropFor(Book book, int pageCount, CancellationToken ct) =>
+        book.CoverSource == CoverSource.Page && book.CoverPage is int p && p >= 1 && p <= pageCount && HasPageCrop(book.Id)
+            ? await File.ReadAllBytesAsync(storage.PageCoverPath(book.Id), ct) : null;
 
     private async Task<byte[]?> CustomFor(Book book, CancellationToken ct) =>
         book.CoverSource == CoverSource.Custom && HasCustom(book.Id) ? await File.ReadAllBytesAsync(storage.CustomCoverPath(book.Id), ct) : null;

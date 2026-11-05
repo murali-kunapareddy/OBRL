@@ -1,4 +1,4 @@
-@model int
+@model SettingsVm
 @{
     ViewData["Title"] = L["Settings"].Value;
 }
@@ -13,8 +13,24 @@
     <div class="d-flex flex-wrap gap-2 mb-3" role="radiogroup" aria-label="@L["Minutes"]">
         @foreach (var m in Obrl.Web.Security.IdleTimeout.Choices)
         {
-            <input type="radio" class="btn-check" name="idleMinutes" id="idle-@m" value="@m" checked="@(m == Model)" />
+            <input type="radio" class="btn-check" name="idleMinutes" id="idle-@m" value="@m" checked="@(m == Model.IdleMinutes)" />
             <label class="btn btn-outline-primary" for="idle-@m">@L["{0} minutes", m]</label>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">@L["Save"]</button>
+</form>
+
+<form method="post" asp-action="Loans" class="panel p-4 mt-4" style="max-width:640px" id="loans">
+    <h2 class="h5">@L["Book subscriptions"]</h2>
+    <p class="text-muted small">
+        @L["Users and Contributors can be subscribed to up to {0} books at a time, and each subscription lasts the time below. When it ends, the book goes back to locked and the member can subscribe again. Contributors read the books they uploaded with no subscription and no end date. Moderators and Admins read everything.", Model.MaxBooks]
+        @L["A new period applies to new subscriptions only."]
+    </p>
+    <div class="d-flex flex-wrap gap-2 mb-3" role="radiogroup" aria-label="@L["Subscription length"]">
+        @foreach (var d in Obrl.Web.Services.Lending.LoanDayChoices)
+        {
+            <input type="radio" class="btn-check" name="loanDays" id="loan-@d" value="@d" checked="@(d == Model.LoanDays)" />
+            <label class="btn btn-outline-primary" for="loan-@d">@(d == 0 ? L["No end date"] : L["{0} days", d])</label>
         }
     </div>
     <button type="submit" class="btn btn-primary">@L["Save"]</button>

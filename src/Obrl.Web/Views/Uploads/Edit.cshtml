@@ -135,8 +135,12 @@
                     <input class="form-check-input" type="radio" asp-for="CoverSource" value="@CoverSource.Custom" id="cover-custom" />
                     <label class="form-check-label" for="cover-custom">@L["My own cover image"]</label>
                     <input asp-for="CoverImage" type="file" class="form-control form-control-sm mt-1" accept="@Obrl.Web.Services.CoverService.Accept" />
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <div class="cover crop-preview" data-crop-preview="custom" hidden></div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-crop-edit="custom" hidden><i class="bi bi-crop me-1"></i>@L["Crop and adjust"]</button>
+                    </div>
                     <div class="small text-muted">
-                        @L["JPEG, PNG or WebP, up to {0} MB. It is cropped to a 2:3 book shape.", Obrl.Web.Services.CoverService.MaxImageMegabytes]
+                        @L["JPEG, PNG or WebP, up to {0} MB. After you choose it, crop it to the 2:3 book shape and adjust brightness and contrast.", Obrl.Web.Services.CoverService.MaxImageMegabytes]
                         @if (Model.HasCustomCover) { @L["Your earlier image is kept; choose a file only to replace it."] }
                     </div>
                     <span asp-validation-for="CoverImage" class="text-danger small"></span>
@@ -150,7 +154,24 @@
                             <label for="CoverPage" class="small text-muted">@L["Page"]</label>
                             <input asp-for="CoverPage" type="number" min="1" max="@(Model.PageCount > 0 ? Model.PageCount : null)" class="form-control form-control-sm" style="max-width:110px" />
                             @if (Model.PageCount > 0) { <span class="small text-muted">@L["of {0}", Model.PageCount]</span> }
+                            @if (canPreview)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-crop-edit="page" data-page-url="/Uploads/CoverPageImage/@Model.Id"><i class="bi bi-crop me-1"></i>@L["Crop and adjust"]</button>
+                            }
                         </div>
+                        @if (canPreview)
+                        {
+                            <input asp-for="PageCoverImage" type="file" accept="image/*" hidden />
+                            <input type="hidden" asp-for="ClearPageCrop" value="false" />
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <div class="cover crop-preview" data-crop-preview="page" hidden></div>
+                                <button type="button" class="btn btn-sm btn-link p-0" data-crop-undo="page" hidden="@(!Model.HasPageCrop)">@L["Use the page without cropping"]</button>
+                            </div>
+                            @if (Model.HasPageCrop)
+                            {
+                                <div class="small text-muted">@L["The current cover is a cropped part of page {0}.", Model.CoverPage ?? 1]</div>
+                            }
+                        }
                         <div class="small text-muted">
                             @if (creating)
                             {
@@ -194,3 +215,48 @@
     <button class="btn btn-primary" type="submit">@(creating ? L["Upload"] : L["Save"])</button>
     <a class="btn btn-link" asp-action="Index">@L["Cancel"]</a>
 </form>
+
+<div class="modal fade" id="cover-crop-modal" tabindex="-1" aria-labelledby="cover-crop-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="cover-crop-title">@L["Crop and adjust the cover"]</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Cancel"]"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-muted mb-2">@L["Drag the picture to move it, and drag the frame's corners to change what is kept. The frame keeps the 2:3 book shape."]</p>
+                <div class="crop-stage"><img data-crop-image alt="" /></div>
+                <div class="d-flex flex-wrap gap-1 mt-2" role="toolbar" aria-label="@L["Crop tools"]">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crop-action="zoom-in" title="@L["Zoom in"]" aria-label="@L["Zoom in"]"><i class="bi bi-zoom-in"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crop-action="zoom-out" title="@L["Zoom out"]" aria-label="@L["Zoom out"]"><i class="bi bi-zoom-out"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crop-action="rotate-left" title="@L["Turn left"]" aria-label="@L["Turn left"]"><i class="bi bi-arrow-counterclockwise"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crop-action="rotate-right" title="@L["Turn right"]" aria-label="@L["Turn right"]"><i class="bi bi-arrow-clockwise"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crop-action="flip" title="@L["Mirror"]" aria-label="@L["Mirror"]"><i class="bi bi-symmetry-vertical"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crop-action="reset"><i class="bi bi-arrow-repeat me-1"></i>@L["Start again"]</button>
+                </div>
+                <div class="crop-adjust mt-3">
+                    <label>@L["Straighten"] <output data-adjust-value="straighten">0°</output>
+                        <input type="range" class="form-range" min="-45" max="45" step="1" value="0" data-adjust="straighten" /></label>
+                    <label>@L["Brightness"] <output data-adjust-value="brightness">100%</output>
+                        <input type="range" class="form-range" min="50" max="150" step="1" value="100" data-adjust="brightness" /></label>
+                    <label>@L["Contrast"] <output data-adjust-value="contrast">100%</output>
+                        <input type="range" class="form-range" min="50" max="150" step="1" value="100" data-adjust="contrast" /></label>
+                    <label>@L["Colour"] <output data-adjust-value="saturation">100%</output>
+                        <input type="range" class="form-range" min="0" max="200" step="1" value="100" data-adjust="saturation" /></label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="button" class="btn btn-primary" data-crop-apply><i class="bi bi-check2 me-1"></i>@L["Use this cover"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Head {
+    <link rel="stylesheet" href="~/lib/cropperjs/cropper.min.css" />
+}
+@section Scripts {
+    <script src="~/lib/cropperjs/cropper.min.js"></script>
+    <script src="~/js/cover-crop.js" asp-append-version="true"></script>
+}

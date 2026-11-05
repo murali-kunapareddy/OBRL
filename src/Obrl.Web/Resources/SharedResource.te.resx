@@ -1514,4 +1514,235 @@
   <data name="Empty shows the English name" xml:space="preserve">
     <value>ఖాళీగా ఉంటే ఆంగ్ల పేరు కనిపిస్తుంది</value>
   </data>
+  <data name="Until {0}" xml:space="preserve">
+    <value>{0} వరకు</value>
+  </data>
+  <data name="Uploaded by you" xml:space="preserve">
+    <value>మీరు అప్‌లోడ్ చేసినది</value>
+  </data>
+  <data name="You can have up to {0} books at a time. Unsubscribe from one of your books to read this one." xml:space="preserve">
+    <value>ఒకేసారి మీరు గరిష్ఠంగా {0} పుస్తకాలు కలిగి ఉండవచ్చు. దీన్ని చదవడానికి మీ పుస్తకాలలో ఒకదాని సబ్‌స్క్రిప్షన్ రద్దు చేయండి.</value>
+  </data>
+  <data name="New book subscriptions now have no end date." xml:space="preserve">
+    <value>కొత్త పుస్తక సబ్‌స్క్రిప్షన్‌లకు ఇకపై ముగింపు తేదీ ఉండదు.</value>
+  </data>
+  <data name="New book subscriptions now last {0} days." xml:space="preserve">
+    <value>కొత్త పుస్తక సబ్‌స్క్రిప్షన్‌లు ఇకపై {0} రోజులు ఉంటాయి.</value>
+  </data>
+  <data name="Subscribe to this book to read it." xml:space="preserve">
+    <value>చదవడానికి ఈ పుస్తకానికి సబ్‌స్క్రైబ్ చేయండి.</value>
+  </data>
+  <data name="Crop and adjust" xml:space="preserve">
+    <value>కత్తిరించి సర్దుబాటు చేయండి</value>
+  </data>
+  <data name="JPEG, PNG or WebP, up to {0} MB. After you choose it, crop it to the 2:3 book shape and adjust brightness and contrast." xml:space="preserve">
+    <value>JPEG, PNG లేదా WebP, గరిష్ఠంగా {0} MB. ఎంచుకున్న తర్వాత దాన్ని 2:3 పుస్తక ఆకారానికి కత్తిరించి, ప్రకాశం మరియు కాంట్రాస్ట్ సర్దుబాటు చేయండి.</value>
+  </data>
+  <data name="Use the page without cropping" xml:space="preserve">
+    <value>పేజీని కత్తిరించకుండా వాడండి</value>
+  </data>
+  <data name="The current cover is a cropped part of page {0}." xml:space="preserve">
+    <value>ప్రస్తుత ముఖచిత్రం పేజీ {0} లో కత్తిరించిన భాగం.</value>
+  </data>
+  <data name="Crop and adjust the cover" xml:space="preserve">
+    <value>ముఖచిత్రాన్ని కత్తిరించి సర్దుబాటు చేయండి</value>
+  </data>
+  <data name="Drag the picture to move it, and drag the frame's corners to change what is kept. The frame keeps the 2:3 book shape." xml:space="preserve">
+    <value>చిత్రాన్ని జరపడానికి లాగండి, ఏ భాగం ఉంచాలో మార్చడానికి ఫ్రేమ్ మూలలను లాగండి. ఫ్రేమ్ 2:3 పుస్తక ఆకారంలోనే ఉంటుంది.</value>
+  </data>
+  <data name="Crop tools" xml:space="preserve">
+    <value>కత్తిరింపు సాధనాలు</value>
+  </data>
+  <data name="Zoom in" xml:space="preserve">
+    <value>పెద్దది చేయండి</value>
+  </data>
+  <data name="Zoom out" xml:space="preserve">
+    <value>చిన్నది చేయండి</value>
+  </data>
+  <data name="Turn left" xml:space="preserve">
+    <value>ఎడమకు తిప్పండి</value>
+  </data>
+  <data name="Turn right" xml:space="preserve">
+    <value>కుడికి తిప్పండి</value>
+  </data>
+  <data name="Mirror" xml:space="preserve">
+    <value>అద్దం ప్రతిబింబం</value>
+  </data>
+  <data name="Start again" xml:space="preserve">
+    <value>మళ్ళీ మొదలుపెట్టండి</value>
+  </data>
+  <data name="Straighten" xml:space="preserve">
+    <value>నిటారుగా చేయండి</value>
+  </data>
+  <data name="Brightness" xml:space="preserve">
+    <value>ప్రకాశం</value>
+  </data>
+  <data name="Contrast" xml:space="preserve">
+    <value>కాంట్రాస్ట్</value>
+  </data>
+  <data name="Colour" xml:space="preserve">
+    <value>రంగు</value>
+  </data>
+  <data name="Use this cover" xml:space="preserve">
+    <value>ఈ ముఖచిత్రాన్ని వాడండి</value>
+  </data>
+  <data name="Book subscriptions" xml:space="preserve">
+    <value>పుస్తక సబ్‌స్క్రిప్షన్‌లు</value>
+  </data>
+  <data name="Users and Contributors can be subscribed to up to {0} books at a time, and each subscription lasts the time below. When it ends, the book goes back to locked and the member can subscribe again. Contributors read the books they uploaded with no subscription and no end date. Moderators and Admins read everything." xml:space="preserve">
+    <value>యూజర్లు మరియు కంట్రిబ్యూటర్లు ఒకేసారి గరిష్ఠంగా {0} పుస్తకాలకు సబ్‌స్క్రైబ్ చేయవచ్చు, ప్రతి సబ్‌స్క్రిప్షన్ కింద ఎంచుకున్న కాలం ఉంటుంది. అది ముగిసినప్పుడు పుస్తకం మళ్ళీ లాక్ అవుతుంది, సభ్యులు మళ్ళీ సబ్‌స్క్రైబ్ చేయవచ్చు. కంట్రిబ్యూటర్లు తాము అప్‌లోడ్ చేసిన పుస్తకాలను సబ్‌స్క్రిప్షన్ లేకుండా, ముగింపు తేదీ లేకుండా చదవవచ్చు. మోడరేటర్లు మరియు అడ్మిన్‌లు అన్నీ చదవవచ్చు.</value>
+  </data>
+  <data name="A new period applies to new subscriptions only." xml:space="preserve">
+    <value>కొత్త కాలం కొత్త సబ్‌స్క్రిప్షన్‌లకు మాత్రమే వర్తిస్తుంది.</value>
+  </data>
+  <data name="Subscription length" xml:space="preserve">
+    <value>సబ్‌స్క్రిప్షన్ కాలం</value>
+  </data>
+  <data name="No end date" xml:space="preserve">
+    <value>ముగింపు తేదీ లేదు</value>
+  </data>
+  <data name="{0} days" xml:space="preserve">
+    <value>{0} రోజులు</value>
+  </data>
+  <data name="Version history" xml:space="preserve">
+    <value>వెర్షన్ చరిత్ర</value>
+  </data>
+  <data name="You are using version {0}." xml:space="preserve">
+    <value>మీరు వెర్షన్ {0} వాడుతున్నారు.</value>
+  </data>
+  <data name="The version reads major.minor.build. The build number is the time the app was built (UTC, year to second) written in hexadecimal." xml:space="preserve">
+    <value>వెర్షన్ major.minor.build రూపంలో ఉంటుంది. బిల్డ్ సంఖ్య అనేది యాప్ బిల్డ్ అయిన సమయం (UTC, సంవత్సరం నుండి సెకను వరకు) హెక్సాడెసిమల్‌లో రాసినది.</value>
+  </data>
+  <data name="Following" xml:space="preserve">
+    <value>అనుసరిస్తున్నారు</value>
+  </data>
+  <data name="Included in a category you follow" xml:space="preserve">
+    <value>మీరు అనుసరించే వర్గంలో భాగం</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>అనుసరించండి</value>
+  </data>
+  <data name="Following shows new books from this category and every sub category below it on your dashboard. To read a book, open it and subscribe to it." xml:space="preserve">
+    <value>అనుసరిస్తే ఈ వర్గం మరియు దాని కింది ప్రతి ఉప వర్గంలోని కొత్త పుస్తకాలు మీ డాష్‌బోర్డ్‌లో కనిపిస్తాయి. పుస్తకం చదవడానికి దాన్ని తెరిచి సబ్‌స్క్రైబ్ చేయండి.</value>
+  </data>
+  <data name="You are using {0} of your {1} books. To free one, open the book and press Subscribed to unsubscribe." xml:space="preserve">
+    <value>మీ {1} పుస్తకాలలో {0} వాడుతున్నారు. ఒకటి ఖాళీ చేయడానికి ఆ పుస్తకాన్ని తెరిచి, సబ్‌స్క్రిప్షన్ రద్దు చేయడానికి సబ్‌స్క్రైబ్ అయ్యారు బటన్ నొక్కండి.</value>
+  </data>
+  <data name="You do not follow any categories yet. &lt;a href=&quot;/Library&quot;&gt;Browse the library&lt;/a&gt; and follow the ones you like to see their new books here." xml:space="preserve">
+    <value>మీరు ఇంకా ఏ వర్గాన్నీ అనుసరించడం లేదు. &lt;a href="/Library"&gt;లైబ్రరీని చూడండి&lt;/a&gt;, మీకు నచ్చిన వాటిని అనుసరిస్తే వాటి కొత్త పుస్తకాలు ఇక్కడ కనిపిస్తాయి.</value>
+  </data>
+  <data name="New in categories you follow" xml:space="preserve">
+    <value>మీరు అనుసరించే వర్గాలలో కొత్తవి</value>
+  </data>
+  <data name="No books in the categories you follow yet." xml:space="preserve">
+    <value>మీరు అనుసరించే వర్గాలలో ఇంకా పుస్తకాలు లేవు.</value>
+  </data>
+  <data name="You uploaded this book, so you can read it any time. It does not count towards your books." xml:space="preserve">
+    <value>ఈ పుస్తకాన్ని మీరే అప్‌లోడ్ చేశారు, కాబట్టి ఎప్పుడైనా చదవవచ్చు. ఇది మీ పుస్తకాల లెక్కలోకి రాదు.</value>
+  </data>
+  <data name="Your subscription ends on {0}. After that, subscribe again to keep reading." xml:space="preserve">
+    <value>మీ సబ్‌స్క్రిప్షన్ {0} న ముగుస్తుంది. ఆ తర్వాత చదవడం కొనసాగించడానికి మళ్ళీ సబ్‌స్క్రైబ్ చేయండి.</value>
+  </data>
+  <data name="Your subscription has no end date." xml:space="preserve">
+    <value>మీ సబ్‌స్క్రిప్షన్‌కు ముగింపు తేదీ లేదు.</value>
+  </data>
+  <data name="You are using {0} of your {1} books." xml:space="preserve">
+    <value>మీ {1} పుస్తకాలలో {0} వాడుతున్నారు.</value>
+  </data>
+  <data name="Your subscription ended on {0}." xml:space="preserve">
+    <value>మీ సబ్‌స్క్రిప్షన్ {0} న ముగిసింది.</value>
+  </data>
+  <data name="You already have {0} books, the most you can have at a time. &lt;a href=&quot;/Library?mine=true&quot;&gt;Unsubscribe from one&lt;/a&gt; to read this book." xml:space="preserve">
+    <value>మీ దగ్గర ఇప్పటికే {0} పుస్తకాలు ఉన్నాయి, ఒకేసారి ఉండగలిగే గరిష్ఠం ఇదే. ఈ పుస్తకం చదవడానికి &lt;a href="/Library?mine=true"&gt;ఒకదాని సబ్‌స్క్రిప్షన్ రద్దు చేయండి&lt;/a&gt;.</value>
+  </data>
+  <data name="You can have up to {0} books at a time; you are using {1}." xml:space="preserve">
+    <value>ఒకేసారి గరిష్ఠంగా {0} పుస్తకాలు కలిగి ఉండవచ్చు; మీరు {1} వాడుతున్నారు.</value>
+  </data>
+  <data name="Each subscription lasts {0} days." xml:space="preserve">
+    <value>ప్రతి సబ్‌స్క్రిప్షన్ {0} రోజులు ఉంటుంది.</value>
+  </data>
+  <data name="Categories can be nested to any depth. Following a category includes everything below it." xml:space="preserve">
+    <value>వర్గాలను ఎంత లోతుకైనా ఒకదానిలో ఒకటి ఉంచవచ్చు. ఒక వర్గాన్ని అనుసరిస్తే దాని కింద ఉన్నవన్నీ అందులో చేరతాయి.</value>
+  </data>
+  <data name="Book limits and cover cropping" xml:space="preserve">
+    <value>పుస్తకాల పరిమితి మరియు ముఖచిత్రం కత్తిరింపు</value>
+  </data>
+  <data name="Users and Contributors can be subscribed to up to 5 books at a time. Moderators and Admins have no limit." xml:space="preserve">
+    <value>యూజర్లు మరియు కంట్రిబ్యూటర్లు ఒకేసారి గరిష్ఠంగా 5 పుస్తకాలకు సబ్‌స్క్రైబ్ చేయవచ్చు. మోడరేటర్లు మరియు అడ్మిన్‌లకు పరిమితి లేదు.</value>
+  </data>
+  <data name="Book subscriptions last 30 days, and Admins can change the length under Admin &gt; Settings. Contributors read the books they uploaded with no subscription and no end date." xml:space="preserve">
+    <value>పుస్తక సబ్‌స్క్రిప్షన్‌లు 30 రోజులు ఉంటాయి, అడ్మిన్‌లు ఈ కాలాన్ని Admin &gt; Settings లో మార్చవచ్చు. కంట్రిబ్యూటర్లు తాము అప్‌లోడ్ చేసిన పుస్తకాలను సబ్‌స్క్రిప్షన్ లేకుండా, ముగింపు తేదీ లేకుండా చదవవచ్చు.</value>
+  </data>
+  <data name="Category subscriptions now mean following: the category's new books show on the dashboard, and each book is subscribed to on its own." xml:space="preserve">
+    <value>వర్గ సబ్‌స్క్రిప్షన్ అంటే ఇప్పుడు అనుసరించడం: ఆ వర్గంలోని కొత్త పుస్తకాలు డాష్‌బోర్డ్‌లో కనిపిస్తాయి, ప్రతి పుస్తకానికీ విడిగా సబ్‌స్క్రైబ్ చేయాలి.</value>
+  </data>
+  <data name="Crop and adjust a cover before saving it: zoom, turn, straighten, mirror, brightness, contrast and colour. Works for your own image and for a page of the book." xml:space="preserve">
+    <value>ముఖచిత్రాన్ని సేవ్ చేసే ముందు కత్తిరించి సర్దుబాటు చేయండి: జూమ్, తిప్పడం, నిటారుగా చేయడం, అద్దం ప్రతిబింబం, ప్రకాశం, కాంట్రాస్ట్ మరియు రంగు. మీ సొంత చిత్రానికి, పుస్తకంలోని పేజీకి రెండింటికీ పనిచేస్తుంది.</value>
+  </data>
+  <data name="This version history, opened from the version number in the footer." xml:space="preserve">
+    <value>ఈ వెర్షన్ చరిత్ర, ఫుటర్‌లోని వెర్షన్ సంఖ్య నుండి తెరుచుకుంటుంది.</value>
+  </data>
+  <data name="The library folder can live on another server (an NFS or SMB share), with the page cache kept on the local disk." xml:space="preserve">
+    <value>లైబ్రరీ ఫోల్డర్ మరో సర్వర్‌లో (NFS లేదా SMB షేర్) ఉండవచ్చు, పేజీ క్యాష్ స్థానిక డిస్క్‌లోనే ఉంటుంది.</value>
+  </data>
+  <data name="Covers and categories in other languages" xml:space="preserve">
+    <value>ముఖచిత్రాలు మరియు ఇతర భాషల్లో వర్గాలు</value>
+  </data>
+  <data name="Uploaders can add their own cover image, or pick a page of the book as the cover." xml:space="preserve">
+    <value>అప్‌లోడ్ చేసేవారు తమ సొంత ముఖచిత్రాన్ని జోడించవచ్చు, లేదా పుస్తకంలోని ఒక పేజీని ముఖచిత్రంగా ఎంచుకోవచ్చు.</value>
+  </data>
+  <data name="Category names and descriptions can be entered in Telugu and Kannada as well as English." xml:space="preserve">
+    <value>వర్గాల పేర్లు మరియు వివరణలను ఆంగ్లంతో పాటు తెలుగు, కన్నడలో కూడా నమోదు చేయవచ్చు.</value>
+  </data>
+  <data name="Book details in other languages and a footer" xml:space="preserve">
+    <value>ఇతర భాషల్లో పుస్తక వివరాలు మరియు ఫుటర్</value>
+  </data>
+  <data name="The title, author and description of a book can be entered in every interface language. Search matches all of them." xml:space="preserve">
+    <value>పుస్తకం పేరు, రచయిత మరియు వివరణను ప్రతి ఇంటర్‌ఫేస్ భాషలో నమోదు చేయవచ్చు. శోధన వాటన్నిటిలోనూ వెతుకుతుంది.</value>
+  </data>
+  <data name="A footer on every page with the copyright, Terms &amp; Conditions and the version." xml:space="preserve">
+    <value>ప్రతి పేజీలో కాపీరైట్, నిబంధనలు &amp; షరతులు మరియు వెర్షన్‌తో ఫుటర్.</value>
+  </data>
+  <data name="English, Telugu and Kannada" xml:space="preserve">
+    <value>ఆంగ్లం, తెలుగు మరియు కన్నడ</value>
+  </data>
+  <data name="The whole interface is available in English, Telugu and Kannada. The choice is saved on the account." xml:space="preserve">
+    <value>మొత్తం ఇంటర్‌ఫేస్ ఆంగ్లం, తెలుగు మరియు కన్నడలో అందుబాటులో ఉంది. ఎంపిక ఖాతాలో సేవ్ అవుతుంది.</value>
+  </data>
+  <data name="Fewer sign-outs and an idle time setting" xml:space="preserve">
+    <value>తక్కువ సైన్-అవుట్‌లు మరియు నిష్క్రియ సమయ సెట్టింగ్</value>
+  </data>
+  <data name="Members are no longer signed out while reading." xml:space="preserve">
+    <value>చదువుతున్నప్పుడు సభ్యులు ఇకపై సైన్ అవుట్ కారు.</value>
+  </data>
+  <data name="Admins choose how long members can be inactive before they are signed out, and a notice comes one minute before." xml:space="preserve">
+    <value>సభ్యులు ఎంతసేపు నిష్క్రియంగా ఉంటే సైన్ అవుట్ అవ్వాలో అడ్మిన్‌లు ఎంచుకుంటారు, ఒక నిమిషం ముందు హెచ్చరిక వస్తుంది.</value>
+  </data>
+  <data name="Sign in with a passkey (fingerprint, face or device PIN) instead of a password and code." xml:space="preserve">
+    <value>పాస్‌వర్డ్ మరియు కోడ్ బదులు పాస్‌కీతో (వేలిముద్ర, ముఖం లేదా పరికర PIN) సైన్ ఇన్ చేయండి.</value>
+  </data>
+  <data name="Message board, ratings, comments and search" xml:space="preserve">
+    <value>సందేశ బోర్డు, రేటింగ్‌లు, వ్యాఖ్యలు మరియు శోధన</value>
+  </data>
+  <data name="Books from Contributors wait for a Moderator's approval." xml:space="preserve">
+    <value>కంట్రిబ్యూటర్ల పుస్తకాలు మోడరేటర్ ఆమోదం కోసం వేచి ఉంటాయి.</value>
+  </data>
+  <data name="Ratings from 1 to 5 stars, comments with replies, and reporting." xml:space="preserve">
+    <value>1 నుండి 5 నక్షత్రాల రేటింగ్‌లు, ప్రత్యుత్తరాలతో వ్యాఖ్యలు, మరియు రిపోర్ట్ చేయడం.</value>
+  </data>
+  <data name="A message board, the Most read and Top rated shelves, and full-text search." xml:space="preserve">
+    <value>సందేశ బోర్డు, ఎక్కువగా చదివినవి మరియు అత్యధిక రేటింగ్ షెల్ఫ్‌లు, పూర్తి-పాఠ్య శోధన.</value>
+  </data>
+  <data name="First release" xml:space="preserve">
+    <value>మొదటి విడుదల</value>
+  </data>
+  <data name="A login-only library with nested categories, subscriptions and uploads in PDF, Word, EPUB, text and more." xml:space="preserve">
+    <value>లాగిన్‌తో మాత్రమే తెరుచుకునే లైబ్రరీ: అంతర్గత వర్గాలు, సబ్‌స్క్రిప్షన్‌లు, PDF, Word, EPUB, టెక్స్ట్ మరియు మరిన్ని ఫార్మాట్లలో అప్‌లోడ్‌లు.</value>
+  </data>
+  <data name="A reader that never sends the book file: watermarked page pictures for PDF and Word, reflowing text for EPUB and text files." xml:space="preserve">
+    <value>పుస్తక ఫైల్‌ను ఎప్పుడూ పంపని రీడర్: PDF మరియు Word కోసం వాటర్‌మార్క్ ఉన్న పేజీ చిత్రాలు, EPUB మరియు టెక్స్ట్ ఫైళ్ల కోసం సర్దుకునే పాఠ్యం.</value>
+  </data>
+  <data name="Required strong sign-in, one session per account, a disclaimer to accept, and an activity history." xml:space="preserve">
+    <value>తప్పనిసరి బలమైన సైన్-ఇన్, ఒక్కో ఖాతాకు ఒకే సెషన్, అంగీకరించాల్సిన నిరాకరణ, మరియు కార్యకలాపాల చరిత్ర.</value>
+  </data>
 </root>

@@ -1,0 +1,32 @@
+@model IReadOnlyList<Obrl.Web.Services.Release>
+@using Obrl.Web.Services
+@{
+    ViewData["Title"] = L["Version history"].Value;
+    var built = BuildInfo.BuiltAt is DateTime at ? L["Built {0} UTC", at.ToString("yyyy-MM-dd HH:mm:ss")].Value : null;
+}
+<h1 class="page-title">@L["Version history"]</h1>
+<p class="page-sub">
+    @L["You are using version {0}.", BuildInfo.Version]
+    @if (built is not null) { <span class="text-muted">@built</span> }
+</p>
+
+<ol class="release-list" style="max-width:820px">
+    @for (var i = 0; i < Model.Count; i++)
+    {
+        var r = Model[i];
+        <li class="@(User.Identity?.IsAuthenticated == true ? "panel " : "")release">
+            <div class="d-flex flex-wrap align-items-baseline gap-2 mb-1">
+                <span class="badge @(i == 0 ? "bg-primary" : "badge-soft")">@r.Version</span>
+                <h2 class="h6 mb-0">@L[r.Title]</h2>
+                <span class="small text-muted ms-auto">@r.Date.ToString("d MMM yyyy", System.Globalization.CultureInfo.CurrentCulture)</span>
+            </div>
+            <ul class="mb-0">
+                @foreach (var change in r.Changes)
+                {
+                    <li>@L[change]</li>
+                }
+            </ul>
+        </li>
+    }
+</ol>
+<p class="small text-muted">@L["The version reads major.minor.build. The build number is the time the app was built (UTC, year to second) written in hexadecimal."]</p>
