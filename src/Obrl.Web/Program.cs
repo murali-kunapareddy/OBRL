@@ -39,10 +39,12 @@ builder.Services.AddScoped<ActivityLog>();
 builder.Services.AddHostedService<ConversionWorker>();
 builder.Services.AddHttpContextAccessor();
 
-// Keys that protect sign-in cookies and 2FA tokens live with the rest of OBRL's data, so they survive restarts.
+// Keys that protect sign-in cookies and 2FA tokens are kept on disk, so they survive restarts. They are not
+// encrypted, so when the library is on another server (CacheRoot set to a local folder) they stay on this one.
 builder.Services.AddDataProtection()
     .SetApplicationName("OBRL")
-    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Path.GetFullPath(obrl.StorageRoot), "keys")));
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(
+        Path.GetFullPath(string.IsNullOrWhiteSpace(obrl.CacheRoot) ? obrl.StorageRoot : obrl.CacheRoot), "keys")));
 builder.Services.AddMemoryCache();
 
 // ---------- Database ----------

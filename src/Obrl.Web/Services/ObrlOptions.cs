@@ -10,7 +10,8 @@ public class ObrlOptions
     /// <summary>
     /// Optional folder for the rendered-page cache and conversion scratch files. Empty uses <see cref="StorageRoot"/>.
     /// Set it to a local disk when <see cref="StorageRoot"/> is on another server (an NFS or SMB mount), so page
-    /// rendering and conversions do not go over the network. Nothing in it needs a backup.
+    /// rendering and conversions do not go over the network. The sign-in protection keys (keys/) are kept here too,
+    /// so they never leave this server. Nothing in it needs a backup: losing keys/ only signs everyone out once.
     /// </summary>
     public string? CacheRoot { get; set; }
 
