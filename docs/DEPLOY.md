@@ -805,6 +805,7 @@ The HTTPS certificate renews itself; `sudo certbot renew --dry-run` checks that 
 
 | What you see | What to check |
 | --- | --- |
+| Log says `Failed to bind to address http://127.0.0.1:5000: address already in use` | Another program (often a Docker container) uses port 5000; `sudo ss -ltnp 'sport = :5000'` names it. Move OBRL to a free port, see "Use another port" below. |
 | **502 Bad Gateway** | The app is not running. `systemctl status obrl` and `sudo journalctl -u obrl -n 100 --no-pager` show why. |
 | **400 Bad Request** or "Invalid hostname" | `AllowedHosts` in `/etc/obrl/obrl.env` must be exactly the address you open. |
 | Browser warns the site is not secure | The certificate is missing: see the end of step 5. |
@@ -815,3 +816,22 @@ The HTTPS certificate renews itself; `sudo certbot renew --dry-run` checks that 
 | Uploads over 200 MB are refused | Raise both `Obrl__MaxUploadMegabytes` and nginx's `client_max_body_size`, then `sudo systemctl reload nginx` and restart OBRL. |
 | `update.sh` says "OBRL did not answer" | Read the log lines it printed; `sudo bash deploy/update.sh --rollback` restores the previous version. |
 | Locked out of SSH | Use the VM provider's web console (in their control panel) to log in and undo the last change. |
+
+### Use another port
+
+OBRL listens on `127.0.0.1:5000`, which only nginx on the same server can reach. If another program already uses that
+port, pick a free one (here 5050; `sudo ss -ltnp 'sport = :5050'` should print only the header line) and run:
+
+```bash
+sudo systemctl edit obrl --drop-in=port --stdin <<'EOF'
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dotnet /opt/obrl/Obrl.Web.dll --urls http://127.0.0.1:5050
+EOF
+sudo sed -i 's|127.0.0.1:5000|127.0.0.1:5050|g' /etc/nginx/sites-available/obrl
+sudo nginx -t && sudo systemctl reload nginx
+sudo systemctl restart obrl
+```
+
+The setting is kept in `/etc/systemd/system/obrl.service.d/port.conf`, so updates keep it, and `deploy/update.sh`
+checks whichever port is set there.
