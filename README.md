@@ -70,6 +70,9 @@ dotnet test        # from the repository root
 
 ## Deploy to an Ubuntu VM
 
+**[docs/DEPLOY.md](docs/DEPLOY.md) is a complete step-by-step guide** (SSH, securing the VM, installing, first sign-in,
+storage on another server over NFS, SMB or SFTP, backups and updates). The short version:
+
 You need a VM with 2 vCPU and 4 GB RAM, with disk of about 3 times the size of your book collection.
 You also need a DNS name pointing at it.
 
@@ -77,15 +80,22 @@ You also need a DNS name pointing at it.
 # On the server, from a copy of this repository:
 sudo DOMAIN=books.example.com ADMIN_EMAIL=you@example.com bash deploy/install.sh
 
-# From your machine (needs the .NET 10 SDK and SSH access):
+# Then build and start it on the server (install.sh installs the .NET SDK for this):
+sudo bash deploy/update.sh
+
+# Or build on your machine instead (needs the .NET 10 SDK and SSH access):
 deploy/publish.sh you@books.example.com
 ```
 
+`deploy/update.sh` is also how you update later: it gets the newest code from git, builds it, dumps the database,
+keeps the running version in `/opt/obrl.previous` and restarts. `sudo bash deploy/update.sh --rollback` goes back.
+
 `install.sh` does the following:
 
-- Installs the ASP.NET Core runtime, PostgreSQL, nginx, certbot, LibreOffice (headless), Calibre, ufw, fail2ban and restic.
+- Installs the .NET 10 SDK (or only the ASP.NET Core runtime with `WITH_SDK=no`), PostgreSQL, nginx, certbot, LibreOffice (headless), Calibre, ufw, fail2ban and restic.
 - Creates the `obrl` system user and the folders `/var/lib/obrl` (data), `/etc/obrl` (settings and keys) and `/opt/obrl` (app).
 - Generates the master key, the database password and the first admin password. It prints the admin password once.
+- Writes `/etc/obrl/obrl.env`, with `Obrl__PasskeyServerDomain` and `AllowedHosts` set to your domain.
 - Installs the systemd service, the nightly backup timer and the nginx site, then gets an HTTPS certificate.
 
 After the first sign-in, remove the `Obrl__Seed__*` lines from `/etc/obrl/obrl.env`.
@@ -121,9 +131,9 @@ Books are read once per page and then served from the local page cache.
    sudo apt install nfs-common            # cifs-utils for SMB
    sudo mkdir -p /mnt/obrl-library
    # /etc/fstab
-   storage.example.lan:/srv/obrl-library  /mnt/obrl-library  nfs4  rw,hard,noatime,_netdev  0 0
+   storage.example.lan:/srv/obrl-library  /mnt/obrl-library  nfs4  rw,hard,noatime,_netdev,nofail  0 0
    # SMB instead:
-   # //storage.example.lan/obrl  /mnt/obrl-library  cifs  credentials=/etc/obrl/smb.cred,uid=obrl,gid=obrl,file_mode=0640,dir_mode=0750,_netdev  0 0
+   # //storage.example.lan/obrl  /mnt/obrl-library  cifs  credentials=/etc/obrl/smb.cred,uid=obrl,gid=obrl,file_mode=0640,dir_mode=0750,_netdev,nofail  0 0
    sudo mount /mnt/obrl-library
    ```
 
@@ -131,7 +141,8 @@ Books are read once per page and then served from the local page cache.
 
    ```bash
    sudo systemctl stop obrl
-   sudo rsync -a --info=progress2 --exclude cache --exclude tmp /var/lib/obrl/ /mnt/obrl-library/
+   # As obrl, not root: NFS's root_squash and sshfs don't let root write there as obrl.
+   sudo -u obrl rsync -rlt --info=progress2 --exclude cache --exclude tmp --exclude keys /var/lib/obrl/ /mnt/obrl-library/
    # /etc/obrl/obrl.env
    Obrl__StorageRoot=/mnt/obrl-library
    Obrl__CacheRoot=/var/lib/obrl
@@ -195,7 +206,7 @@ Set these in `appsettings.json`, or as environment variables in `/etc/obrl/obrl.
 | --- | --- | --- |
 | `ConnectionStrings:Default` | | PostgreSQL connection string |
 | `Obrl:StorageRoot` | `/var/lib/obrl` | Encrypted books, covers, page cache, data protection keys. Can be a mounted share on another server (see below) |
-| `Obrl:CacheRoot` | empty | Page cache and conversion scratch space. Empty uses `StorageRoot`. Set it to a local folder when `StorageRoot` is on another server |
+| `Obrl:CacheRoot` | empty | Page cache, conversion scratch space and the data protection (sign-in) keys. Empty uses `StorageRoot`. Set it to a local folder when `StorageRoot` is on another server, so the keys never leave the VPS |
 | `Obrl:MaxSubscribedBooks` | `5` | Most books a User or Contributor can be subscribed to at once |
 | `Obrl:KeyFile` | `/etc/obrl/master.key` | 32-byte master key (base64). Created on first start if missing. |
 | `Obrl:MaxUploadMegabytes` | `200` | Largest upload |

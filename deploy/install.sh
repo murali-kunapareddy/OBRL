@@ -8,14 +8,26 @@ DOMAIN="${DOMAIN:?Set DOMAIN, e.g. DOMAIN=books.example.com}"
 ADMIN_EMAIL="${ADMIN_EMAIL:?Set ADMIN_EMAIL, the first admin account}"
 WITH_CALIBRE="${WITH_CALIBRE:-yes}"     # needed only for MOBI/AZW3/FB2 uploads
 LE_EMAIL="${LE_EMAIL:-$ADMIN_EMAIL}"    # Let's Encrypt expiry notices
+WITH_SDK="${WITH_SDK:-yes}"             # the .NET SDK lets deploy/update.sh build new versions on this server
 HERE="$(cd "$(dirname "$0")" && pwd)"
+
+DOTNET_PKG=aspnetcore-runtime-10.0
+[ "$WITH_SDK" = "yes" ] && DOTNET_PKG=dotnet-sdk-10.0   # the SDK includes the ASP.NET Core runtime
 
 echo "==> Installing packages"
 apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common
+add-apt-repository -y universe
+apt-get update
+if ! apt-cache show "$DOTNET_PKG" >/dev/null 2>&1; then
+    echo "   $DOTNET_PKG is not in this Ubuntu release's archive: adding Canonical's .NET backports PPA"
+    add-apt-repository -y ppa:dotnet/backports
+    apt-get update
+fi
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    aspnetcore-runtime-10.0 postgresql nginx certbot python3-certbot-nginx \
+    "$DOTNET_PKG" postgresql nginx certbot python3-certbot-nginx \
     libreoffice-writer-nogui fonts-dejavu-core fonts-liberation \
-    ufw fail2ban unattended-upgrades restic openssl
+    ufw fail2ban python3-systemd unattended-upgrades restic openssl rsync curl git
 if [ "$WITH_CALIBRE" = "yes" ]; then
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends calibre
 fi
@@ -52,6 +64,8 @@ if [ ! -f /etc/obrl/obrl.env ]; then
 ConnectionStrings__Default=Host=localhost;Database=obrl;Username=obrl;Password=${DB_PASS}
 Obrl__StorageRoot=/var/lib/obrl
 Obrl__KeyFile=/etc/obrl/master.key
+Obrl__PasskeyServerDomain=${DOMAIN}
+AllowedHosts=${DOMAIN}
 Obrl__Seed__AdminEmail=${ADMIN_EMAIL}
 Obrl__Seed__AdminPassword=${ADMIN_PASS}
 ENV
@@ -79,11 +93,18 @@ echo "==> Firewall"
 ufw allow OpenSSH
 ufw allow 'Nginx Full'
 ufw --force enable
-systemctl enable --now fail2ban
+# Ban IPs that keep failing SSH sign-in. Reading the systemd journal works whether or not /var/log/auth.log exists.
+cat > /etc/fail2ban/jail.d/obrl-sshd.local <<'JAIL'
+[sshd]
+enabled = true
+backend = systemd
+JAIL
+systemctl enable fail2ban && systemctl restart fail2ban
 
 echo "==> HTTPS certificate"
 certbot --nginx --non-interactive --agree-tos --redirect -m "$LE_EMAIL" -d "$DOMAIN" || \
     echo "   certbot failed. Check that ${DOMAIN} points at this server, then run: certbot --nginx -d ${DOMAIN}"
 
 echo
-echo "Done. Next: publish the app to /opt/obrl (see deploy/publish.sh), then: systemctl start obrl"
+echo "Done. Next: build and start the app with: sudo bash deploy/update.sh"
+echo "(or, from a machine with the .NET 10 SDK: deploy/publish.sh user@${DOMAIN})"
