@@ -22,6 +22,8 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
     public DbSet<CommentReport> CommentReports => Set<CommentReport>();
     public DbSet<BoardPost> BoardPosts => Set<BoardPost>();
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
+    public DbSet<BookLanguage> BookLanguages => Set<BookLanguage>();
+    public DbSet<Publisher> Publishers => Set<Publisher>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -82,6 +84,25 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
                 e.Ignore(x => x.SearchVector);
             }
             e.HasOne(x => x.UploadedBy).WithMany().HasForeignKey(x => x.UploadedById).OnDelete(DeleteBehavior.Restrict);
+            // A language or publisher in use cannot be deleted; the admin pages say how many books use it.
+            e.HasOne(x => x.Language).WithMany().HasForeignKey(x => x.LanguageId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Publisher).WithMany().HasForeignKey(x => x.PublisherId).OnDelete(DeleteBehavior.Restrict);
+            e.ToTable(t => t.HasCheckConstraint("CK_Book_PublishedYear", "\"PublishedYear\" IS NULL OR \"PublishedYear\" BETWEEN 1 AND 9999"));
+        });
+
+        b.Entity<BookLanguage>(e =>
+        {
+            e.Property(x => x.Name).HasMaxLength(60).IsRequired();
+            e.Property(x => x.NormalizedName).HasMaxLength(60).IsRequired();
+            e.HasIndex(x => x.NormalizedName).IsUnique();
+            // The first four languages are added by the BookMetadataAndEmail migration.
+        });
+
+        b.Entity<Publisher>(e =>
+        {
+            e.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            e.Property(x => x.NormalizedName).HasMaxLength(200).IsRequired();
+            e.HasIndex(x => x.NormalizedName).IsUnique();
         });
 
         b.Entity<BookTranslation>(e =>

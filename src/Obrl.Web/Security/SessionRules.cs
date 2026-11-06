@@ -15,6 +15,7 @@ namespace Obrl.Web.Security;
 /// <list type="number">
 /// <item>One active session per account: signing in elsewhere ends the older session.</item>
 /// <item>Locked or deleted accounts are signed out at once.</item>
+/// <item>A temporary password from an Admin must be changed before anything else can be used.</item>
 /// <item>A strong sign-in (an authenticator app or a passkey) must be set up before anything else can be used.</item>
 /// <item>The latest disclaimer must be accepted before anything else can be used.</item>
 /// </list>
@@ -26,6 +27,19 @@ public static class SessionRules
     public const string DisclaimerCacheKey = "obrl:disclaimer-version";
 
     private const string EnableAuthenticatorPath = "/Identity/Account/Manage/EnableAuthenticator";
+    public const string ChangePasswordPath = "/Identity/Account/Manage/ChangePassword";
+
+    /// <summary>Paths a member with a temporary password may visit before choosing their own.</summary>
+    private static readonly string[] AllowedWithTemporaryPassword =
+    [
+        "/Identity/Account/Logout",
+        ChangePasswordPath,
+        "/Identity/Account/AccessDenied",
+        "/Home/Error",
+        "/Language",
+        "/terms",
+        "/versions",
+    ];
 
     /// <summary>Paths a user may visit while 2FA setup or disclaimer acceptance is still pending.</summary>
     private static readonly string[] AlwaysAllowed =
@@ -150,7 +164,15 @@ public static class SessionRules
             http.Response.Redirect("/Identity/Account/Login?reason=changed");
             return;
         }
-        var allowed = AlwaysAllowed.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase));
+        if (user.MustChangePassword && !AllowedWithTemporaryPassword.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+        {
+            http.Response.Redirect(ChangePasswordPath + "?required=1");
+            return;
+        }
+
+        // The change password page comes first for a temporary password, so it is open before the strong sign-in setup.
+        var allowed = AlwaysAllowed.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase))
+            || (user.MustChangePassword && path.StartsWith(ChangePasswordPath, StringComparison.OrdinalIgnoreCase));
 
         if (!strongSignIn && !allowed)
         {

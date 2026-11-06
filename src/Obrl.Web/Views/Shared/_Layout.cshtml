@@ -74,6 +74,7 @@ else
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() is "Users" or "CreateUser" ? "active" : "")" asp-controller="Admin" asp-action="Users"><i class="bi bi-people"></i> @L["Users"]</a>
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Disclaimer" ? "active" : "")" asp-controller="Admin" asp-action="Disclaimer"><i class="bi bi-file-earmark-text"></i> @L["Disclaimer"]</a>
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Activity" ? "active" : "")" asp-controller="Admin" asp-action="Activity"><i class="bi bi-activity"></i> @L["Activity"]</a>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "BookLists" ? "active" : "")" asp-controller="Admin" asp-action="BookLists"><i class="bi bi-list-ul"></i> @L["Book lists"]</a>
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")" asp-controller="Admin" asp-action="Settings"><i class="bi bi-gear"></i> @L["Settings"]</a>
             }
 

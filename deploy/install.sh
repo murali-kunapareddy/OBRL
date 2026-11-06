@@ -65,6 +65,7 @@ ConnectionStrings__Default=Host=localhost;Database=obrl;Username=obrl;Password=$
 Obrl__StorageRoot=/var/lib/obrl
 Obrl__KeyFile=/etc/obrl/master.key
 Obrl__PasskeyServerDomain=${DOMAIN}
+Obrl__PublicUrl=https://${DOMAIN}
 AllowedHosts=${DOMAIN}
 Obrl__Seed__AdminEmail=${ADMIN_EMAIL}
 Obrl__Seed__AdminPassword=${ADMIN_PASS}

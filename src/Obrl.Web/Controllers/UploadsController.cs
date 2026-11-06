@@ -7,13 +7,14 @@ using Obrl.Web.Data;
 using Obrl.Web.Domain;
 using Obrl.Web.Models;
 using Obrl.Web.Services;
+using Obrl.Web.Services.Email;
 using Obrl.Web.Services.Ingest;
 
 namespace Obrl.Web.Controllers;
 
 /// <summary>Contributors add and edit their books; Moderators and Admins can manage every book.</summary>
 [Authorize(Policy = Policies.CanContribute)]
-public class UploadsController(ObrlDbContext db, BookStorage storage, CoverService covers, ActivityLog log, IOptions<ObrlOptions> options, IStringLocalizer<SharedResource> L) : Controller
+public class UploadsController(ObrlDbContext db, BookStorage storage, CoverService covers, ActivityLog log, IOptions<ObrlOptions> options, Notifications notify, TimeProvider clock, IStringLocalizer<SharedResource> L) : Controller
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -29,7 +30,8 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
     {
         ViewBag.Accept = BookFormats.Accept;
         ViewBag.MaxMb = options.Value.MaxUploadMegabytes;
-        var vm = new UploadVm { AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten() };
+        var vm = new UploadVm();
+        await FillListsAsync(vm, ct);
         vm.FillTranslations([]);
         return View("Edit", vm);
     }
@@ -42,13 +44,14 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         if (vm.File is null || vm.File.Length == 0) ModelState.AddModelError(nameof(vm.File), L["Choose a file to upload."]);
         else if (format is null) ModelState.AddModelError(nameof(vm.File), L["This file type is not supported."]);
         await ValidateCategoriesAsync(vm, ct);
+        await ValidateDetailsAsync(vm, ct);
         var customCover = await ReadCoverChoiceAsync(vm, hasSavedCustom: false, ct);
 
         if (!ModelState.IsValid)
         {
             ViewBag.Accept = BookFormats.Accept;
             ViewBag.MaxMb = options.Value.MaxUploadMegabytes;
-            vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten();
+            await FillListsAsync(vm, ct);
             vm.FillTranslations([]);
             return View("Edit", vm);
         }
@@ -63,6 +66,9 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
             Title = vm.Title.Trim(),
             Author = Blank(vm.Author),
             Description = Blank(vm.Description),
+            LanguageId = vm.LanguageId,
+            Publisher = await FindOrAddPublisherAsync(vm.PublisherName, ct),
+            PublishedYear = vm.PublishedYear,
             OriginalFileName = Path.GetFileName(vm.File!.FileName),
             OriginalFormat = format!,
             OriginalSize = vm.File.Length,
@@ -84,6 +90,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         db.Books.Add(book);
         log.Add(ActivityTypes.BookUploaded, userId, book.Id, new { format, size = book.OriginalSize });
         await db.SaveChangesAsync(ct);
+        await notify.NewUploadAsync(book, userId, ct);
         var message = approvedOnUpload
             ? L["“{0}” was uploaded and is being prepared. It usually takes under a minute.", book.Title].Value
             : L["“{0}” was uploaded. Readers will see it once a Moderator has approved it.", book.Title].Value;
@@ -96,7 +103,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
     [HttpGet]
     public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
     {
-        var book = await db.Books.Include(b => b.Categories).Include(b => b.Translations).FirstOrDefaultAsync(b => b.Id == id, ct);
+        var book = await db.Books.Include(b => b.Categories).Include(b => b.Translations).Include(b => b.Publisher).FirstOrDefaultAsync(b => b.Id == id, ct);
         if (book is null) return NotFound();
         if (!CanManage(book)) return Forbid();
         var vm = new UploadVm
@@ -106,10 +113,13 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
             Author = book.Author,
             Description = book.Description,
             CategoryIds = book.Categories.Select(c => c.CategoryId).ToList(),
-            AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten(),
+            LanguageId = book.LanguageId,
+            PublisherName = book.Publisher?.Name,
+            PublishedYear = book.PublishedYear,
             CoverSource = book.CoverSource,
             CoverPage = book.CoverPage,
         };
+        await FillListsAsync(vm, ct);
         vm.FillTranslations(book.Translations);
         FillBookInfo(vm, book);
         return View(vm);
@@ -118,11 +128,12 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, UploadVm vm, CancellationToken ct)
     {
-        var book = await db.Books.Include(b => b.Categories).Include(b => b.Translations).FirstOrDefaultAsync(b => b.Id == id, ct);
+        var book = await db.Books.Include(b => b.Categories).Include(b => b.Translations).Include(b => b.Publisher).FirstOrDefaultAsync(b => b.Id == id, ct);
         if (book is null) return NotFound();
         if (!CanManage(book)) return Forbid();
         ModelState.Remove(nameof(vm.File));
         await ValidateCategoriesAsync(vm, ct);
+        await ValidateDetailsAsync(vm, ct);
         if (vm.CoverSource == CoverSource.Page && book.Mode == ReaderMode.Page && book.Status == BookStatus.Ready
             && vm.CoverImage is not { Length: > 0 } && (vm.CoverPage is not int p || p < 1 || p > book.UnitCount))
             ModelState.AddModelError(nameof(vm.CoverPage), L["Pick a page between 1 and {0}.", book.UnitCount]);
@@ -131,7 +142,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         if (!ModelState.IsValid)
         {
             vm.Id = id;
-            vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten();
+            await FillListsAsync(vm, ct);
             vm.FillTranslations(book.Translations);
             FillBookInfo(vm, book);
             return View(vm);
@@ -152,6 +163,9 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         book.Title = vm.Title.Trim();
         book.Author = Blank(vm.Author);
         book.Description = Blank(vm.Description);
+        book.LanguageId = vm.LanguageId;
+        book.Publisher = await FindOrAddPublisherAsync(vm.PublisherName, ct);
+        book.PublishedYear = vm.PublishedYear;
         BookText.Apply(book, vm.Translations);
         var wanted = vm.CategoryIds.Distinct().ToHashSet();
         book.Categories.RemoveAll(c => !wanted.Contains(c.CategoryId));
@@ -301,6 +315,43 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         var ids = vm.CategoryIds.Distinct().ToList();
         if (await db.Categories.CountAsync(c => ids.Contains(c.Id), ct) != ids.Count)
             ModelState.AddModelError(nameof(vm.CategoryIds), L["One of the categories no longer exists."]);
+    }
+
+    /// <summary>The language must still be on the list; the year has four digits and is not in the future.</summary>
+    private async Task ValidateDetailsAsync(UploadVm vm, CancellationToken ct)
+    {
+        if (vm.LanguageId is int languageId && !await db.BookLanguages.AnyAsync(l => l.Id == languageId, ct))
+            ModelState.AddModelError(nameof(vm.LanguageId), L["That language is no longer on the list. Pick another one."]);
+        var thisYear = clock.GetUtcNow().Year;
+        if (vm.PublishedYear is int year && !IsValidYear(year, thisYear))
+            ModelState.AddModelError(nameof(vm.PublishedYear), L["Enter a four-digit year from {0} to {1}.", MinYear, thisYear]);
+    }
+
+    public const int MinYear = 1000;
+
+    public static bool IsValidYear(int year, int thisYear) => year >= MinYear && year <= thisYear;
+
+    /// <summary>
+    /// The publisher with this name (ignoring case and extra spaces), or a new one added to the list.
+    /// Null when the field was left empty.
+    /// </summary>
+    private async Task<Publisher?> FindOrAddPublisherAsync(string? name, CancellationToken ct)
+    {
+        var clean = string.Join(' ', (name ?? "").Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        if (clean.Length == 0) return null;
+        var normalized = Publisher.Normalize(clean);
+        var existing = await db.Publishers.FirstOrDefaultAsync(p => p.NormalizedName == normalized, ct);
+        if (existing is not null) return existing;
+        var added = new Publisher { Name = clean, NormalizedName = normalized };
+        db.Publishers.Add(added);
+        return added;
+    }
+
+    private async Task FillListsAsync(UploadVm vm, CancellationToken ct)
+    {
+        vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten();
+        vm.AllLanguages = await db.BookLanguages.AsNoTracking().OrderBy(l => l.SortOrder).ThenBy(l => l.Name).ToListAsync(ct);
+        vm.AllPublishers = await db.Publishers.AsNoTracking().OrderBy(p => p.Name).Select(p => p.Name).Take(5000).ToListAsync(ct);
     }
 
     private static string? Blank(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();

@@ -9,6 +9,7 @@ using Obrl.Web.Domain;
 using Obrl.Web.Models;
 using Obrl.Web.Security;
 using Obrl.Web.Services;
+using Obrl.Web.Services.Email;
 
 namespace Obrl.Web.Controllers;
 
@@ -21,6 +22,9 @@ public class AdminController(
     IMemoryCache cache,
     IdleTimeout idle,
     Lending lending,
+    EmailSettings emailSettings,
+    Mailer mailer,
+    Notifications notify,
     IStringLocalizer<SharedResource> L) : Controller
 {
     public async Task<IActionResult> Users(string? q, CancellationToken ct)
@@ -46,30 +50,47 @@ public class AdminController(
     }
 
     [HttpGet]
-    public IActionResult CreateUser() => View(new CreateUserVm());
+    public IActionResult CreateUser()
+    {
+        ViewBag.CanEmail = notify.CanWelcomeUsers;
+        return View(new CreateUserVm { SendEmail = notify.CanWelcomeUsers });
+    }
 
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateUser(CreateUserVm vm)
+    public async Task<IActionResult> CreateUser(CreateUserVm vm, CancellationToken ct)
     {
+        var sendEmail = vm.SendEmail && notify.CanWelcomeUsers;
         if (!Roles.All.Contains(vm.Role)) ModelState.AddModelError(nameof(vm.Role), L["Unknown role."]);
-        if (!ModelState.IsValid) return View(vm);
+        if (string.IsNullOrWhiteSpace(vm.Password) && !sendEmail)
+            ModelState.AddModelError(nameof(vm.Password), L["Enter a temporary password, or have it emailed."]);
+        if (!ModelState.IsValid)
+        {
+            ViewBag.CanEmail = notify.CanWelcomeUsers;
+            return View(vm);
+        }
 
+        // An empty password with email on: generate one, so nobody but the new member ever sees it.
+        var generated = string.IsNullOrWhiteSpace(vm.Password);
+        var password = generated ? Notifications.NewTemporaryPassword() : vm.Password!;
         var user = new ApplicationUser
         {
             UserName = vm.Email.Trim(),
             Email = vm.Email.Trim(),
             EmailConfirmed = true,
             DisplayName = vm.DisplayName.Trim(),
+            MustChangePassword = true,
         };
-        var result = await users.CreateAsync(user, vm.Password);
+        var result = await users.CreateAsync(user, password);
         if (!result.Succeeded)
         {
             foreach (var e in result.Errors) ModelState.AddModelError("", L[e.Description]);
+            ViewBag.CanEmail = notify.CanWelcomeUsers;
             return View(vm);
         }
         await users.AddToRoleAsync(user, vm.Role);
-        await log.WriteAsync(ActivityTypes.UserCreated, AccessService.UserId(User), data: new { user.Id, user.Email, vm.Role });
-        TempData["Message"] = L["Created {0}. Give them the temporary password; they will set up two-factor sign-in at first login.", user.Email!].Value;
+        var adminId = AccessService.UserId(User);
+        await log.WriteAsync(ActivityTypes.UserCreated, adminId, data: new { user.Id, user.Email, vm.Role });
+        TempData["Message"] = await SendSignInDetailsAsync(user, password, generated, sendEmail, isReset: false, ct);
         return RedirectToAction(nameof(Users));
     }
 
@@ -99,16 +120,44 @@ public class AdminController(
         return Back(locked ? L["{0} is locked out.", user.Email!] : L["{0} is unlocked.", user.Email!]);
     }
 
+    /// <summary>
+    /// Gives a member a new temporary password, typed by the Admin or (left empty, with email on) generated and emailed.
+    /// The member must choose their own password at their next sign-in.
+    /// </summary>
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> ResetPassword(string id, string password)
+    public async Task<IActionResult> ResetPassword(string id, string? password, bool sendEmail, CancellationToken ct)
     {
         var user = await users.FindByIdAsync(id);
         if (user is null) return NotFound();
+        sendEmail = sendEmail && notify.CanWelcomeUsers;
+        var generated = string.IsNullOrWhiteSpace(password);
+        if (generated && !sendEmail) return Back(L["Enter a temporary password, or have it emailed."]);
+        var newPassword = generated ? Notifications.NewTemporaryPassword() : password!;
         var token = await users.GeneratePasswordResetTokenAsync(user);
-        var result = await users.ResetPasswordAsync(user, token, password ?? "");
-        return Back(result.Succeeded
-            ? L["New temporary password set for {0}.", user.Email!]
-            : string.Join(" ", result.Errors.Select(e => L[e.Description].Value)));
+        var result = await users.ResetPasswordAsync(user, token, newPassword);
+        if (!result.Succeeded) return Back(string.Join(" ", result.Errors.Select(e => L[e.Description].Value)));
+        user.MustChangePassword = true;
+        await users.UpdateAsync(user);
+        return Back(await SendSignInDetailsAsync(user, newPassword, generated, sendEmail, isReset: true, ct));
+    }
+
+    /// <summary>Emails the sign-in details when asked to, and says what happened (and the password, when it was not emailed).</summary>
+    private async Task<string> SendSignInDetailsAsync(ApplicationUser user, string password, bool generated, bool sendEmail, bool isReset, CancellationToken ct)
+    {
+        var adminId = AccessService.UserId(User);
+        string done = isReset ? L["New temporary password set for {0}.", user.Email!] : L["Created {0}.", user.Email!];
+        if (!sendEmail)
+            return done + " " + L["Give them the temporary password privately. They choose their own password and set up two-factor sign-in at first login."].Value;
+        var error = await notify.WelcomeAsync(user, password, isReset, ct);
+        if (error is null)
+        {
+            await log.WriteAsync(ActivityTypes.EmailSent, adminId, data: new { to = user.Email, kind = isReset ? "password_reset" : "welcome" }, ct: ct);
+            return done + " " + L["The sign-in details were emailed to them. They choose their own password and set up two-factor sign-in at first login."].Value;
+        }
+        await log.WriteAsync(ActivityTypes.EmailFailed, adminId, data: new { to = user.Email, kind = isReset ? "password_reset" : "welcome", error }, ct: ct);
+        return done + " " + (generated
+            ? L["The email could not be sent ({0}). Give them this temporary password privately: {1}", error, password].Value
+            : L["The email could not be sent ({0}). Give them the temporary password privately.", error].Value);
     }
 
     [HttpPost, ValidateAntiForgeryToken]
@@ -137,7 +186,137 @@ public class AdminController(
     }
 
     [HttpGet]
-    public IActionResult Settings() => View(new SettingsVm(idle.Minutes, lending.LoanDays, lending.MaxBooks));
+    public IActionResult Settings()
+    {
+        var m = mailer.Settings;
+        return View(new SettingsVm(idle.Minutes, lending.LoanDays, lending.MaxBooks, new EmailStatusVm(
+            mailer.IsConfigured, mailer.IsConfigured ? $"{m.Host}:{m.Port}" : null, m.FromAddress,
+            emailSettings.NotifyUploads, emailSettings.WelcomeUsers)));
+    }
+
+    /// <summary>Which emails go out. The mail server itself is set in the server's configuration.</summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> Email(bool notifyUploads, bool welcomeUsers)
+    {
+        var adminId = AccessService.UserId(User);
+        var before = new { emailSettings.NotifyUploads, emailSettings.WelcomeUsers };
+        await emailSettings.SaveAsync(db, notifyUploads, welcomeUsers, adminId);
+        await log.WriteAsync(ActivityTypes.SettingChanged, adminId, data: new { setting = "Email", before, after = new { notifyUploads, welcomeUsers } });
+        TempData["Message"] = L["Email settings saved."].Value;
+        return RedirectToAction(nameof(Settings), null, "email");
+    }
+
+    /// <summary>Sends a test email to the signed-in Admin.</summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> TestEmail(CancellationToken ct)
+    {
+        var me = await users.GetUserAsync(User);
+        if (me?.Email is null) return NotFound();
+        var error = await notify.TestAsync(me.Email, me.DisplayName, ct);
+        TempData["Message"] = error is null
+            ? L["A test email was sent to {0}. Check the inbox (and the spam folder).", me.Email].Value
+            : L["The test email could not be sent: {0}", error].Value;
+        return RedirectToAction(nameof(Settings), null, "email");
+    }
+
+    // ---------- Book lists: the languages and publishers uploaders pick from ----------
+
+    [HttpGet]
+    public async Task<IActionResult> BookLists(CancellationToken ct)
+    {
+        var languageUse = await db.Books.Where(b => b.LanguageId != null).GroupBy(b => b.LanguageId!.Value)
+            .Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Key, x => x.Count, ct);
+        var publisherUse = await db.Books.Where(b => b.PublisherId != null).GroupBy(b => b.PublisherId!.Value)
+            .Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Key, x => x.Count, ct);
+        return View(new BookListsVm
+        {
+            Languages = (await db.BookLanguages.AsNoTracking().OrderBy(l => l.SortOrder).ThenBy(l => l.Name).ToListAsync(ct))
+                .Select(l => new BookListRow(l.Id, l.Name, l.SortOrder, languageUse.GetValueOrDefault(l.Id))).ToList(),
+            Publishers = (await db.Publishers.AsNoTracking().OrderBy(p => p.Name).ToListAsync(ct))
+                .Select(p => new BookListRow(p.Id, p.Name, 0, publisherUse.GetValueOrDefault(p.Id))).ToList(),
+        });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveLanguage(int? id, string? name, int sortOrder, CancellationToken ct)
+    {
+        var clean = CleanName(name, 60);
+        if (clean is null) return Back(L["Enter a language name of up to {0} characters.", 60], nameof(BookLists));
+        var normalized = clean.ToUpperInvariant();
+        if (await db.BookLanguages.AnyAsync(l => l.NormalizedName == normalized && l.Id != id, ct))
+            return Back(L["“{0}” is already on the list.", clean], nameof(BookLists));
+        BookLanguage? language;
+        if (id is null)
+        {
+            var nextOrder = (await db.BookLanguages.MaxAsync(l => (int?)l.SortOrder, ct) ?? 0) + 1;
+            db.BookLanguages.Add(language = new BookLanguage { SortOrder = sortOrder > 0 ? sortOrder : nextOrder });
+        }
+        else
+        {
+            language = await db.BookLanguages.FirstOrDefaultAsync(l => l.Id == id, ct);
+            if (language is null) return NotFound();
+            language.SortOrder = sortOrder;
+        }
+        language.Name = clean;
+        language.NormalizedName = normalized;
+        await db.SaveChangesAsync(ct);
+        return Back(L["Saved."], nameof(BookLists));
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteLanguage(int id, CancellationToken ct)
+    {
+        var language = await db.BookLanguages.FirstOrDefaultAsync(l => l.Id == id, ct);
+        if (language is null) return NotFound();
+        var used = await db.Books.CountAsync(b => b.LanguageId == id, ct);
+        if (used > 0) return Back(L["“{0}” is used by {1} books. Change their language first.", language.Name, used], nameof(BookLists));
+        db.BookLanguages.Remove(language);
+        await db.SaveChangesAsync(ct);
+        return Back(L["“{0}” was deleted.", language.Name], nameof(BookLists));
+    }
+
+    /// <summary>Renames a publisher. Renaming it to another publisher's name moves that name's books here and removes the other entry.</summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> SavePublisher(int id, string? name, CancellationToken ct)
+    {
+        var clean = CleanName(name, 200);
+        if (clean is null) return Back(L["Enter a publisher name of up to {0} characters.", 200], nameof(BookLists));
+        var publisher = await db.Publishers.FirstOrDefaultAsync(p => p.Id == id, ct);
+        if (publisher is null) return NotFound();
+        var normalized = Publisher.Normalize(clean);
+        var twin = await db.Publishers.FirstOrDefaultAsync(p => p.NormalizedName == normalized && p.Id != id, ct);
+        if (twin is not null)
+        {
+            // Same publisher typed two ways: keep the other entry, move this one's books to it.
+            await db.Books.Where(b => b.PublisherId == id).ExecuteUpdateAsync(u => u.SetProperty(b => b.PublisherId, twin.Id), ct);
+            db.Publishers.Remove(publisher);
+            twin.Name = clean;
+            await db.SaveChangesAsync(ct);
+            return Back(L["Merged into “{0}”.", clean], nameof(BookLists));
+        }
+        publisher.Name = clean;
+        publisher.NormalizedName = normalized;
+        await db.SaveChangesAsync(ct);
+        return Back(L["Saved."], nameof(BookLists));
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeletePublisher(int id, CancellationToken ct)
+    {
+        var publisher = await db.Publishers.FirstOrDefaultAsync(p => p.Id == id, ct);
+        if (publisher is null) return NotFound();
+        var used = await db.Books.CountAsync(b => b.PublisherId == id, ct);
+        if (used > 0) return Back(L["“{0}” is used by {1} books. Change their publisher first.", publisher.Name, used], nameof(BookLists));
+        db.Publishers.Remove(publisher);
+        await db.SaveChangesAsync(ct);
+        return Back(L["“{0}” was deleted.", publisher.Name], nameof(BookLists));
+    }
+
+    private static string? CleanName(string? name, int max)
+    {
+        var clean = string.Join(' ', (name ?? "").Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        return clean.Length > 0 && clean.Length <= max ? clean : null;
+    }
 
     /// <summary>How long a new book subscription of a User or Contributor lasts (0 = no end date).</summary>
     [HttpPost, ValidateAntiForgeryToken]

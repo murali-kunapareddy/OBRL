@@ -333,6 +333,7 @@ sudo cat /etc/obrl/obrl.env
 | `Obrl__StorageRoot=/var/lib/obrl` | Where the encrypted books are. Step 9 changes it to the storage server. |
 | `Obrl__KeyFile=/etc/obrl/master.key` | The master key. |
 | `Obrl__PasskeyServerDomain=books.example.com` | The domain passkeys are tied to. Never change it after members add passkeys. |
+| `Obrl__PublicUrl=https://books.example.com` | The address used in links inside emails. Older installs don't have it; add it (step 6.1). |
 | `AllowedHosts=books.example.com` | The app answers only to this name. |
 | `Obrl__Seed__AdminEmail` / `Obrl__Seed__AdminPassword` | Create the first admin. Removed in step 8. |
 
@@ -348,6 +349,63 @@ sudo systemctl restart obrl
 ```
 
 Never put this file, the master key or passwords in git or in a chat.
+
+### 6.1 Email (optional, from version 1.1 of 6 November 2026)
+
+OBRL can send email through any SMTP mail server: the mailbox provider of your domain (Zoho, Google Workspace,
+Microsoft 365, your hosting company), or a sending service such as Brevo, Mailgun or Amazon SES. With email set up:
+
+- Moderators and Admins get an email when a book is uploaded.
+- New members get an email with their temporary password and a sign-in link. At first sign-in they choose their own
+  password, then set up an authenticator app or a passkey. The same email goes out when an Admin sets a new temporary password.
+
+Without these lines nothing is emailed and everything else works as before: the Admin hands over the temporary
+password, and the member still has to change it at first sign-in.
+
+From your mail provider you need: the SMTP server name and port, a user name and password (often an "app password"
+or "SMTP key", not your normal password), and a sender address the provider lets you send from, e.g.
+`library@example.com`.
+
+**On the VM**
+
+```bash
+sudo nano /etc/obrl/obrl.env
+```
+
+Add these lines with your values (Ctrl+O, Enter, Ctrl+X to save):
+
+```
+Obrl__PublicUrl=https://books.example.com
+Obrl__Email__Host=smtp.example.com
+Obrl__Email__Port=587
+Obrl__Email__Username=library@example.com
+Obrl__Email__Password=the-smtp-password
+Obrl__Email__FromAddress=library@example.com
+Obrl__Email__FromName=Book Library
+```
+
+Then:
+
+```bash
+sudo systemctl restart obrl
+```
+
+| Line | Meaning |
+| --- | --- |
+| `Obrl__PublicUrl` | The address members open. Links in emails start with it. |
+| `Obrl__Email__Host` / `Port` | The SMTP server. Port 587 (STARTTLS) works with almost every provider; 465 is SSL. |
+| `Obrl__Email__Security` | Leave it out (Auto: SSL on 465, STARTTLS otherwise). `None` only for a mail relay on the same VM. |
+| `Obrl__Email__Username` / `Password` | Sign-in for the SMTP server. Leave both out for a relay that needs none. |
+| `Obrl__Email__FromAddress` / `FromName` | Sender address and the name shown in the inbox. |
+
+Check it: sign in as Admin, open **Admin > Settings**, and press **Send me a test email** in the Email box.
+The same box turns the two kinds of email on and off. If the test fails, the message on the page says why; the usual
+causes are a wrong password, a sender address the provider does not accept, or the VM's outgoing port being blocked
+(some cloud providers block 25 and sometimes 587: ask them, or use 465 or 2525 if your provider offers it). The log
+has the details: `sudo journalctl -u obrl -n 50`.
+
+To keep emails out of spam folders, add the SPF and DKIM records your mail provider gives you to the DNS of your
+domain (they are usually on the provider's "domain setup" page).
 
 ## Step 7. Build and start the app
 
@@ -831,6 +889,8 @@ It gets the newest code, builds it, saves a database dump (`obrl-before-update-*
 keeps the running version in `/opt/obrl.previous`, swaps in the new one, restarts and checks that the site answers.
 The footer of every page shows the version; click it to see what changed.
 
+- **New settings:** the version history (footer) says when a version needs a new line in `/etc/obrl/obrl.env`.
+  Version 1.1 of 6 November 2026 adds the optional email settings: see step 6.1.
 - **A particular version or branch:** `sudo bash deploy/update.sh v1.2` (a tag) or `sudo bash deploy/update.sh some-branch`.
 - **Go back if something is wrong:** `sudo bash deploy/update.sh --rollback`. This puts the previous app back. If the
   new version changed the database and the old one then fails to start, restore the `obrl-before-update-*` dump

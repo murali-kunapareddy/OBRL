@@ -260,6 +260,9 @@ namespace Obrl.Web.Data.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -391,6 +394,9 @@ namespace Obrl.Web.Data.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
+                    b.Property<int?>("LanguageId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Mode")
                         .HasColumnType("integer");
 
@@ -406,6 +412,12 @@ namespace Obrl.Web.Data.Migrations
 
                     b.Property<long>("OriginalSize")
                         .HasColumnType("bigint");
+
+                    b.Property<int?>("PublishedYear")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PublisherId")
+                        .HasColumnType("integer");
 
                     b.Property<double>("RatingAverage")
                         .HasColumnType("double precision");
@@ -457,6 +469,10 @@ namespace Obrl.Web.Data.Migrations
 
                     b.HasIndex("IsApproved");
 
+                    b.HasIndex("LanguageId");
+
+                    b.HasIndex("PublisherId");
+
                     b.HasIndex("RatingAverage");
 
                     b.HasIndex("SearchVector");
@@ -467,7 +483,10 @@ namespace Obrl.Web.Data.Migrations
 
                     b.HasIndex("UploadedById");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", t =>
+                        {
+                            t.HasCheckConstraint("CK_Book_PublishedYear", "\"PublishedYear\" IS NULL OR \"PublishedYear\" BETWEEN 1 AND 9999");
+                        });
                 });
 
             modelBuilder.Entity("Obrl.Web.Domain.BookCategory", b =>
@@ -483,6 +502,35 @@ namespace Obrl.Web.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("BookCategories");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.BookLanguage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique();
+
+                    b.ToTable("BookLanguages");
                 });
 
             modelBuilder.Entity("Obrl.Web.Domain.BookTranslation", b =>
@@ -730,6 +778,35 @@ namespace Obrl.Web.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Disclaimers");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.Publisher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique();
+
+                    b.ToTable("Publishers");
                 });
 
             modelBuilder.Entity("Obrl.Web.Domain.Rating", b =>
@@ -1002,11 +1079,25 @@ namespace Obrl.Web.Data.Migrations
 
             modelBuilder.Entity("Obrl.Web.Domain.Book", b =>
                 {
+                    b.HasOne("Obrl.Web.Domain.BookLanguage", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Obrl.Web.Domain.Publisher", "Publisher")
+                        .WithMany()
+                        .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Obrl.Web.Domain.ApplicationUser", "UploadedBy")
                         .WithMany()
                         .HasForeignKey("UploadedById")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Language");
+
+                    b.Navigation("Publisher");
 
                     b.Navigation("UploadedBy");
                 });

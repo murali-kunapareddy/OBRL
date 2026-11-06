@@ -1745,4 +1745,220 @@
   <data name="Required strong sign-in, one session per account, a disclaimer to accept, and an activity history." xml:space="preserve">
     <value>ಕಡ್ಡಾಯ ಬಲವಾದ ಸೈನ್-ಇನ್, ಪ್ರತಿ ಖಾತೆಗೆ ಒಂದೇ ಸೆಷನ್, ಒಪ್ಪಬೇಕಾದ ಹಕ್ಕು ನಿರಾಕರಣೆ ಮತ್ತು ಚಟುವಟಿಕೆ ಇತಿಹಾಸ.</value>
   </data>
+  <data name="Enter a temporary password, or have it emailed." xml:space="preserve">
+    <value>ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ, ಅಥವಾ ಅದನ್ನು ಇಮೇಲ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿ.</value>
+  </data>
+  <data name="Created {0}." xml:space="preserve">
+    <value>{0} ರಚಿಸಲಾಗಿದೆ.</value>
+  </data>
+  <data name="Give them the temporary password privately. They choose their own password and set up two-factor sign-in at first login." xml:space="preserve">
+    <value>ಅವರಿಗೆ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಖಾಸಗಿಯಾಗಿ ನೀಡಿ. ಮೊದಲ ಲಾಗಿನ್‌ನಲ್ಲಿ ಅವರು ತಮ್ಮದೇ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸಿ, ಎರಡು-ಹಂತದ ಸೈನ್-ಇನ್ ಹೊಂದಿಸುತ್ತಾರೆ.</value>
+  </data>
+  <data name="The sign-in details were emailed to them. They choose their own password and set up two-factor sign-in at first login." xml:space="preserve">
+    <value>ಸೈನ್-ಇನ್ ವಿವರಗಳನ್ನು ಅವರಿಗೆ ಇಮೇಲ್ ಮಾಡಲಾಗಿದೆ. ಮೊದಲ ಲಾಗಿನ್‌ನಲ್ಲಿ ಅವರು ತಮ್ಮದೇ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸಿ, ಎರಡು-ಹಂತದ ಸೈನ್-ಇನ್ ಹೊಂದಿಸುತ್ತಾರೆ.</value>
+  </data>
+  <data name="The email could not be sent ({0}). Give them this temporary password privately: {1}" xml:space="preserve">
+    <value>ಇಮೇಲ್ ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ ({0}). ಈ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಅವರಿಗೆ ಖಾಸಗಿಯಾಗಿ ನೀಡಿ: {1}</value>
+  </data>
+  <data name="The email could not be sent ({0}). Give them the temporary password privately." xml:space="preserve">
+    <value>ಇಮೇಲ್ ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ ({0}). ಅವರಿಗೆ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಖಾಸಗಿಯಾಗಿ ನೀಡಿ.</value>
+  </data>
+  <data name="Email settings saved." xml:space="preserve">
+    <value>ಇಮೇಲ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಉಳಿಸಲಾಗಿದೆ.</value>
+  </data>
+  <data name="A test email was sent to {0}. Check the inbox (and the spam folder)." xml:space="preserve">
+    <value>{0} ಗೆ ಪರೀಕ್ಷಾ ಇಮೇಲ್ ಕಳುಹಿಸಲಾಗಿದೆ. ಇನ್‌ಬಾಕ್ಸ್ (ಮತ್ತು ಸ್ಪ್ಯಾಮ್ ಫೋಲ್ಡರ್) ಪರಿಶೀಲಿಸಿ.</value>
+  </data>
+  <data name="The test email could not be sent: {0}" xml:space="preserve">
+    <value>ಪರೀಕ್ಷಾ ಇಮೇಲ್ ಕಳುಹಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ: {0}</value>
+  </data>
+  <data name="Enter a language name of up to {0} characters." xml:space="preserve">
+    <value>ಗರಿಷ್ಠ {0} ಅಕ್ಷರಗಳಲ್ಲಿ ಭಾಷೆಯ ಹೆಸರು ನಮೂದಿಸಿ.</value>
+  </data>
+  <data name="“{0}” is already on the list." xml:space="preserve">
+    <value>“{0}” ಈಗಾಗಲೇ ಪಟ್ಟಿಯಲ್ಲಿದೆ.</value>
+  </data>
+  <data name="“{0}” is used by {1} books. Change their language first." xml:space="preserve">
+    <value>“{0}” ಅನ್ನು {1} ಪುಸ್ತಕಗಳು ಬಳಸುತ್ತಿವೆ. ಮೊದಲು ಅವುಗಳ ಭಾಷೆಯನ್ನು ಬದಲಿಸಿ.</value>
+  </data>
+  <data name="Enter a publisher name of up to {0} characters." xml:space="preserve">
+    <value>ಗರಿಷ್ಠ {0} ಅಕ್ಷರಗಳಲ್ಲಿ ಪ್ರಕಾಶಕರ ಹೆಸರು ನಮೂದಿಸಿ.</value>
+  </data>
+  <data name="Merged into “{0}”." xml:space="preserve">
+    <value>“{0}” ಜೊತೆ ವಿಲೀನಗೊಳಿಸಲಾಗಿದೆ.</value>
+  </data>
+  <data name="“{0}” is used by {1} books. Change their publisher first." xml:space="preserve">
+    <value>“{0}” ಅನ್ನು {1} ಪುಸ್ತಕಗಳು ಬಳಸುತ್ತಿವೆ. ಮೊದಲು ಅವುಗಳ ಪ್ರಕಾಶಕರನ್ನು ಬದಲಿಸಿ.</value>
+  </data>
+  <data name="That language is no longer on the list. Pick another one." xml:space="preserve">
+    <value>ಆ ಭಾಷೆ ಈಗ ಪಟ್ಟಿಯಲ್ಲಿಲ್ಲ. ಬೇರೊಂದನ್ನು ಆರಿಸಿ.</value>
+  </data>
+  <data name="Enter a four-digit year from {0} to {1}." xml:space="preserve">
+    <value>{0} ರಿಂದ {1} ರವರೆಗಿನ ನಾಲ್ಕು ಅಂಕಿಯ ವರ್ಷ ನಮೂದಿಸಿ.</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>ಪ್ರಕಾಶಕರು</value>
+  </data>
+  <data name="Year of publication" xml:space="preserve">
+    <value>ಪ್ರಕಟಣೆಯ ವರ್ಷ</value>
+  </data>
+  <data name="Choose…" xml:space="preserve">
+    <value>ಆರಿಸಿ…</value>
+  </data>
+  <data name="Pick from the list or type a new one" xml:space="preserve">
+    <value>ಪಟ್ಟಿಯಿಂದ ಆರಿಸಿ ಅಥವಾ ಹೊಸದನ್ನು ಟೈಪ್ ಮಾಡಿ</value>
+  </data>
+  <data name="Book lists" xml:space="preserve">
+    <value>ಪುಸ್ತಕ ಪಟ್ಟಿಗಳು</value>
+  </data>
+  <data name="The languages and publishers uploaders choose from when they add or edit a book." xml:space="preserve">
+    <value>ಪುಸ್ತಕವನ್ನು ಸೇರಿಸುವಾಗ ಅಥವಾ ಸಂಪಾದಿಸುವಾಗ ಅಪ್‌ಲೋಡ್ ಮಾಡುವವರು ಆರಿಸುವ ಭಾಷೆಗಳು ಮತ್ತು ಪ್ರಕಾಶಕರು.</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>ಭಾಷೆಗಳು</value>
+  </data>
+  <data name="Uploaders pick the book's language from this list only. Lower numbers come first. A language used by books cannot be deleted." xml:space="preserve">
+    <value>ಅಪ್‌ಲೋಡ್ ಮಾಡುವವರು ಪುಸ್ತಕದ ಭಾಷೆಯನ್ನು ಈ ಪಟ್ಟಿಯಿಂದ ಮಾತ್ರ ಆರಿಸುತ್ತಾರೆ. ಚಿಕ್ಕ ಸಂಖ್ಯೆಗಳು ಮೊದಲು ಬರುತ್ತವೆ. ಪುಸ್ತಕಗಳು ಬಳಸುತ್ತಿರುವ ಭಾಷೆಯನ್ನು ಅಳಿಸಲಾಗುವುದಿಲ್ಲ.</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>ಕ್ರಮ</value>
+  </data>
+  <data name="Delete {0}?" xml:space="preserve">
+    <value>{0} ಅಳಿಸಬೇಕೇ?</value>
+  </data>
+  <data name="New language" xml:space="preserve">
+    <value>ಹೊಸ ಭಾಷೆ</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>ಸೇರಿಸಿ</value>
+  </data>
+  <data name="Publishers" xml:space="preserve">
+    <value>ಪ್ರಕಾಶಕರು</value>
+  </data>
+  <data name="Uploaders pick a publisher from this list or type a new one, which is added here. Fix spelling here; renaming one to another's name merges the two." xml:space="preserve">
+    <value>ಅಪ್‌ಲೋಡ್ ಮಾಡುವವರು ಈ ಪಟ್ಟಿಯಿಂದ ಪ್ರಕಾಶಕರನ್ನು ಆರಿಸುತ್ತಾರೆ ಅಥವಾ ಹೊಸದನ್ನು ಟೈಪ್ ಮಾಡುತ್ತಾರೆ, ಅದು ಇಲ್ಲಿ ಸೇರುತ್ತದೆ. ಕಾಗುಣಿತವನ್ನು ಇಲ್ಲಿ ಸರಿಪಡಿಸಿ; ಒಂದರ ಹೆಸರನ್ನು ಇನ್ನೊಂದರ ಹೆಸರಿಗೆ ಬದಲಿಸಿದರೆ ಎರಡೂ ವಿಲೀನವಾಗುತ್ತವೆ.</value>
+  </data>
+  <data name="No publishers yet." xml:space="preserve">
+    <value>ಇನ್ನೂ ಪ್ರಕಾಶಕರು ಇಲ್ಲ.</value>
+  </data>
+  <data name="Empty: make one up" xml:space="preserve">
+    <value>ಖಾಲಿ ಇದ್ದರೆ: ಒಂದನ್ನು ರಚಿಸಲಾಗುತ್ತದೆ</value>
+  </data>
+  <data name="Email it to them" xml:space="preserve">
+    <value>ಅವರಿಗೆ ಇಮೇಲ್ ಮಾಡಿ</value>
+  </data>
+  <data name="At first sign-in the person chooses their own password, sets up an authenticator app or a passkey, and accepts the disclaimer." xml:space="preserve">
+    <value>ಮೊದಲ ಸೈನ್-ಇನ್‌ನಲ್ಲಿ ಆ ವ್ಯಕ್ತಿ ತಮ್ಮದೇ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸಿ, ದೃಢೀಕರಣ ಆ್ಯಪ್ ಅಥವಾ ಪಾಸ್‌ಕೀ ಹೊಂದಿಸಿ, ಹಕ್ಕುತ್ಯಾಗವನ್ನು ಒಪ್ಪುತ್ತಾರೆ.</value>
+  </data>
+  <data name="Leave it empty to have one made up and emailed, so nobody else sees it." xml:space="preserve">
+    <value>ಖಾಲಿ ಬಿಟ್ಟರೆ ಒಂದನ್ನು ರಚಿಸಿ ಇಮೇಲ್ ಮಾಡಲಾಗುತ್ತದೆ, ಬೇರೆ ಯಾರೂ ಅದನ್ನು ನೋಡುವುದಿಲ್ಲ.</value>
+  </data>
+  <data name="Email the sign-in details (email, temporary password and sign-in link) to the person" xml:space="preserve">
+    <value>ಸೈನ್-ಇನ್ ವಿವರಗಳನ್ನು (ಇಮೇಲ್, ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಮತ್ತು ಸೈನ್-ಇನ್ ಲಿಂಕ್) ಆ ವ್ಯಕ್ತಿಗೆ ಇಮೇಲ್ ಮಾಡಿ</value>
+  </data>
+  <data name="Email is off, so share the temporary password with the person privately. Admins can turn on email under Admin &gt; Settings once the mail server is set up." xml:space="preserve">
+    <value>ಇಮೇಲ್ ಆಫ್ ಆಗಿದೆ, ಆದ್ದರಿಂದ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಆ ವ್ಯಕ್ತಿಗೆ ಖಾಸಗಿಯಾಗಿ ನೀಡಿ. ಮೇಲ್ ಸರ್ವರ್ ಹೊಂದಿಸಿದ ನಂತರ ನಿರ್ವಾಹಕರು ನಿರ್ವಾಹಕ &gt; ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಇಮೇಲ್ ಆನ್ ಮಾಡಬಹುದು.</value>
+  </data>
+  <data name="Mail server {0}, sending as {1}." xml:space="preserve">
+    <value>ಮೇಲ್ ಸರ್ವರ್ {0}, {1} ಆಗಿ ಕಳುಹಿಸುತ್ತಿದೆ.</value>
+  </data>
+  <data name="Email is not set up on the server, so no email is sent. Set the Obrl:Email settings (mail server, sender address, user name and password) on the server and restart OBRL. The deployment guide explains how." xml:space="preserve">
+    <value>ಸರ್ವರ್‌ನಲ್ಲಿ ಇಮೇಲ್ ಹೊಂದಿಸಲಾಗಿಲ್ಲ, ಆದ್ದರಿಂದ ಯಾವುದೇ ಇಮೇಲ್ ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ. ಸರ್ವರ್‌ನಲ್ಲಿ Obrl:Email ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು (ಮೇಲ್ ಸರ್ವರ್, ಕಳುಹಿಸುವ ವಿಳಾಸ, ಬಳಕೆದಾರ ಹೆಸರು ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್) ಹೊಂದಿಸಿ OBRL ಅನ್ನು ಮರುಪ್ರಾರಂಭಿಸಿ. ನಿಯೋಜನೆ ಮಾರ್ಗದರ್ಶಿ ಹೇಗೆ ಎಂದು ವಿವರಿಸುತ್ತದೆ.</value>
+  </data>
+  <data name="Email Moderators and Admins when a book is uploaded" xml:space="preserve">
+    <value>ಪುಸ್ತಕ ಅಪ್‌ಲೋಡ್ ಆದಾಗ ಮಾಡರೇಟರ್‌ಗಳು ಮತ್ತು ನಿರ್ವಾಹಕರಿಗೆ ಇಮೇಲ್ ಮಾಡಿ</value>
+  </data>
+  <data name="Email new members their temporary password and the sign-in link" xml:space="preserve">
+    <value>ಹೊಸ ಸದಸ್ಯರಿಗೆ ಅವರ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಮತ್ತು ಸೈನ್-ಇನ್ ಲಿಂಕ್ ಇಮೇಲ್ ಮಾಡಿ</value>
+  </data>
+  <data name="Send me a test email" xml:space="preserve">
+    <value>ನನಗೆ ಪರೀಕ್ಷಾ ಇಮೇಲ್ ಕಳುಹಿಸಿ</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>ವರ್ಷ</value>
+  </data>
+  <data name="New book: {0}" xml:space="preserve">
+    <value>ಹೊಸ ಪುಸ್ತಕ: {0}</value>
+  </data>
+  <data name="New book waiting for approval: {0}" xml:space="preserve">
+    <value>ಅನುಮೋದನೆಗಾಗಿ ಕಾಯುತ್ತಿರುವ ಹೊಸ ಪುಸ್ತಕ: {0}</value>
+  </data>
+  <data name="Hello {0}," xml:space="preserve">
+    <value>ನಮಸ್ಕಾರ {0},</value>
+  </data>
+  <data name="{0} uploaded “{1}” ({2}, {3})." xml:space="preserve">
+    <value>{0} “{1}” ಅನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ್ದಾರೆ ({2}, {3}).</value>
+  </data>
+  <data name="It is in the library already, and readers see it once it is prepared." xml:space="preserve">
+    <value>ಇದು ಈಗಾಗಲೇ ಗ್ರಂಥಾಲಯದಲ್ಲಿದೆ; ಸಿದ್ಧವಾದ ನಂತರ ಓದುಗರಿಗೆ ಕಾಣಿಸುತ್ತದೆ.</value>
+  </data>
+  <data name="Readers will see it once a Moderator approves it in the review queue." xml:space="preserve">
+    <value>ಮಾಡರೇಟರ್ ಪರಿಶೀಲನಾ ಸರತಿಯಲ್ಲಿ ಅನುಮೋದಿಸಿದ ನಂತರ ಓದುಗರಿಗೆ ಇದು ಕಾಣಿಸುತ್ತದೆ.</value>
+  </data>
+  <data name="Open the book" xml:space="preserve">
+    <value>ಪುಸ್ತಕ ತೆರೆಯಿರಿ</value>
+  </data>
+  <data name="Open the review queue" xml:space="preserve">
+    <value>ಪರಿಶೀಲನಾ ಸರತಿ ತೆರೆಯಿರಿ</value>
+  </data>
+  <data name="You get this email because you are a Moderator or Admin. Admins can turn these emails off under Admin &gt; Settings." xml:space="preserve">
+    <value>ನೀವು ಮಾಡರೇಟರ್ ಅಥವಾ ನಿರ್ವಾಹಕರಾಗಿರುವುದರಿಂದ ಈ ಇಮೇಲ್ ನಿಮಗೆ ಬಂದಿದೆ. ನಿರ್ವಾಹಕರು ನಿರ್ವಾಹಕ &gt; ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಈ ಇಮೇಲ್‌ಗಳನ್ನು ನಿಲ್ಲಿಸಬಹುದು.</value>
+  </data>
+  <data name="Email is turned off." xml:space="preserve">
+    <value>ಇಮೇಲ್ ಆಫ್ ಮಾಡಲಾಗಿದೆ.</value>
+  </data>
+  <data name="Your new temporary password" xml:space="preserve">
+    <value>ನಿಮ್ಮ ಹೊಸ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್</value>
+  </data>
+  <data name="Your library account is ready" xml:space="preserve">
+    <value>ನಿಮ್ಮ ಗ್ರಂಥಾಲಯ ಖಾತೆ ಸಿದ್ಧವಾಗಿದೆ</value>
+  </data>
+  <data name="An administrator set a new temporary password for your library account." xml:space="preserve">
+    <value>ಒಬ್ಬ ನಿರ್ವಾಹಕರು ನಿಮ್ಮ ಗ್ರಂಥಾಲಯ ಖಾತೆಗೆ ಹೊಸ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಹೊಂದಿಸಿದ್ದಾರೆ.</value>
+  </data>
+  <data name="An administrator created a library account for you." xml:space="preserve">
+    <value>ಒಬ್ಬ ನಿರ್ವಾಹಕರು ನಿಮಗಾಗಿ ಗ್ರಂಥಾಲಯ ಖಾತೆಯನ್ನು ರಚಿಸಿದ್ದಾರೆ.</value>
+  </data>
+  <data name="After signing in you choose your own password, then set up an authenticator app or a passkey. The temporary password stops working once you have changed it." xml:space="preserve">
+    <value>ಸೈನ್ ಇನ್ ಆದ ನಂತರ ನೀವು ನಿಮ್ಮದೇ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸಿ, ನಂತರ ದೃಢೀಕರಣ ಆ್ಯಪ್ ಅಥವಾ ಪಾಸ್‌ಕೀ ಹೊಂದಿಸುತ್ತೀರಿ. ನೀವು ಬದಲಿಸಿದ ನಂತರ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ.</value>
+  </data>
+  <data name="If you did not expect this email, you can ignore it." xml:space="preserve">
+    <value>ನೀವು ಈ ಇಮೇಲ್ ನಿರೀಕ್ಷಿಸದಿದ್ದರೆ, ಇದನ್ನು ನಿರ್ಲಕ್ಷಿಸಬಹುದು.</value>
+  </data>
+  <data name="Email is not set up on the server." xml:space="preserve">
+    <value>ಸರ್ವರ್‌ನಲ್ಲಿ ಇಮೇಲ್ ಹೊಂದಿಸಲಾಗಿಲ್ಲ.</value>
+  </data>
+  <data name="This is a test email from the library. Email is working." xml:space="preserve">
+    <value>ಇದು ಗ್ರಂಥಾಲಯದಿಂದ ಬಂದ ಪರೀಕ್ಷಾ ಇಮೇಲ್. ಇಮೇಲ್ ಕೆಲಸ ಮಾಡುತ್ತಿದೆ.</value>
+  </data>
+  <data name="Open the library" xml:space="preserve">
+    <value>ಗ್ರಂಥಾಲಯ ತೆರೆಯಿರಿ</value>
+  </data>
+  <data name="Test email" xml:space="preserve">
+    <value>ಪರೀಕ್ಷಾ ಇಮೇಲ್</value>
+  </data>
+  <data name="Welcome! Sign in with your email and the temporary password from the email. Then you choose your own password and set up an authenticator app or a passkey." xml:space="preserve">
+    <value>ಸ್ವಾಗತ! ನಿಮ್ಮ ಇಮೇಲ್ ಮತ್ತು ಇಮೇಲ್‌ನಲ್ಲಿ ಬಂದ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್‌ನೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ. ನಂತರ ನಿಮ್ಮದೇ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸಿ, ದೃಢೀಕರಣ ಆ್ಯಪ್ ಅಥವಾ ಪಾಸ್‌ಕೀ ಹೊಂದಿಸುತ್ತೀರಿ.</value>
+  </data>
+  <data name="You signed in with a temporary password. Choose your own password to continue. Next you set up an authenticator app or a passkey." xml:space="preserve">
+    <value>ನೀವು ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್‌ನೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಆಗಿದ್ದೀರಿ. ಮುಂದುವರಿಯಲು ನಿಮ್ಮದೇ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸಿ. ನಂತರ ದೃಢೀಕರಣ ಆ್ಯಪ್ ಅಥವಾ ಪಾಸ್‌ಕೀ ಹೊಂದಿಸುತ್ತೀರಿ.</value>
+  </data>
+  <data name="Choose a password different from the current one." xml:space="preserve">
+    <value>ಪ್ರಸ್ತುತ ಪಾಸ್‌ವರ್ಡ್‌ಗಿಂತ ಬೇರೆಯದನ್ನು ಆರಿಸಿ.</value>
+  </data>
+  <data name="Book language, publisher and year, and email" xml:space="preserve">
+    <value>ಪುಸ್ತಕದ ಭಾಷೆ, ಪ್ರಕಾಶಕರು, ವರ್ಷ ಮತ್ತು ಇಮೇಲ್</value>
+  </data>
+  <data name="Books have a language, a publisher and a year of publication. Uploaders pick the language from a list Admins keep under Admin &gt; Book lists, and pick a publisher or type a new one." xml:space="preserve">
+    <value>ಪುಸ್ತಕಗಳಿಗೆ ಭಾಷೆ, ಪ್ರಕಾಶಕರು ಮತ್ತು ಪ್ರಕಟಣೆಯ ವರ್ಷ ಇರುತ್ತವೆ. ನಿರ್ವಾಹಕರು ನಿರ್ವಾಹಕ &gt; ಪುಸ್ತಕ ಪಟ್ಟಿಗಳಲ್ಲಿ ನಿರ್ವಹಿಸುವ ಪಟ್ಟಿಯಿಂದ ಅಪ್‌ಲೋಡ್ ಮಾಡುವವರು ಭಾಷೆಯನ್ನು ಆರಿಸುತ್ತಾರೆ, ಪ್ರಕಾಶಕರನ್ನು ಆರಿಸುತ್ತಾರೆ ಅಥವಾ ಹೊಸದನ್ನು ಟೈಪ್ ಮಾಡುತ್ತಾರೆ.</value>
+  </data>
+  <data name="Moderators and Admins get an email when a book is uploaded." xml:space="preserve">
+    <value>ಪುಸ್ತಕ ಅಪ್‌ಲೋಡ್ ಆದಾಗ ಮಾಡರೇಟರ್‌ಗಳು ಮತ್ತು ನಿರ್ವಾಹಕರಿಗೆ ಇಮೇಲ್ ಬರುತ್ತದೆ.</value>
+  </data>
+  <data name="New members get an email with their temporary password and a sign-in link. At first sign-in they choose their own password, then set up an authenticator app or a passkey." xml:space="preserve">
+    <value>ಹೊಸ ಸದಸ್ಯರಿಗೆ ಅವರ ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಮತ್ತು ಸೈನ್-ಇನ್ ಲಿಂಕ್‌ನೊಂದಿಗೆ ಇಮೇಲ್ ಬರುತ್ತದೆ. ಮೊದಲ ಸೈನ್-ಇನ್‌ನಲ್ಲಿ ಅವರು ತಮ್ಮದೇ ಪಾಸ್‌ವರ್ಡ್ ಆರಿಸಿ, ನಂತರ ದೃಢೀಕರಣ ಆ್ಯಪ್ ಅಥವಾ ಪಾಸ್‌ಕೀ ಹೊಂದಿಸುತ್ತಾರೆ.</value>
+  </data>
+  <data name="Admins choose which emails go out, and can send themselves a test email, under Admin &gt; Settings." xml:space="preserve">
+    <value>ಯಾವ ಇಮೇಲ್‌ಗಳು ಹೋಗಬೇಕೆಂದು ನಿರ್ವಾಹಕರು ನಿರ್ವಾಹಕ &gt; ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಆರಿಸುತ್ತಾರೆ, ತಮಗೆ ಪರೀಕ್ಷಾ ಇಮೇಲ್ ಸಹ ಕಳುಹಿಸಿಕೊಳ್ಳಬಹುದು.</value>
+  </data>
 </root>

@@ -35,3 +35,32 @@
     </div>
     <button type="submit" class="btn btn-primary">@L["Save"]</button>
 </form>
+
+<form method="post" asp-action="Email" class="panel p-4 mt-4" style="max-width:640px" id="email">
+    <h2 class="h5">@L["Email"]</h2>
+    @if (Model.Email.Configured)
+    {
+        <p class="text-muted small">@L["Mail server {0}, sending as {1}.", Model.Email.Server!, Model.Email.From!]</p>
+    }
+    else
+    {
+        <div class="alert alert-warning small">
+            @L["Email is not set up on the server, so no email is sent. Set the Obrl:Email settings (mail server, sender address, user name and password) on the server and restart OBRL. The deployment guide explains how."]
+        </div>
+    }
+    <div class="form-check form-switch mb-2">
+        <input class="form-check-input" type="checkbox" role="switch" name="notifyUploads" value="true" id="notify-uploads" checked="@Model.Email.NotifyUploads" />
+        <label class="form-check-label" for="notify-uploads">@L["Email Moderators and Admins when a book is uploaded"]</label>
+    </div>
+    <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" role="switch" name="welcomeUsers" value="true" id="welcome-users" checked="@Model.Email.WelcomeUsers" />
+        <label class="form-check-label" for="welcome-users">@L["Email new members their temporary password and the sign-in link"]</label>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-primary">@L["Save"]</button>
+        @if (Model.Email.Configured)
+        {
+            <button type="submit" class="btn btn-outline-secondary" asp-action="TestEmail" formnovalidate><i class="bi bi-envelope me-1"></i>@L["Send me a test email"]</button>
+        }
+    </div>
+</form>

@@ -163,6 +163,18 @@ public sealed class UploadVm
     [Display(Name = "Categories")]
     public List<int> CategoryIds { get; set; } = [];
 
+    /// <summary>The book's language, from the list Admins keep.</summary>
+    [Display(Name = "Language")]
+    public int? LanguageId { get; set; }
+
+    /// <summary>A publisher from the list, or a new one (added to the list on save).</summary>
+    [StringLength(200), Display(Name = "Publisher")]
+    public string? PublisherName { get; set; }
+
+    /// <summary>Year of publication. Checked in the controller: four digits, not in the future.</summary>
+    [Display(Name = "Year of publication")]
+    public int? PublishedYear { get; set; }
+
     [Display(Name = "Book file")]
     public IFormFile? File { get; set; }
 
@@ -197,6 +209,8 @@ public sealed class UploadVm
     public List<BookTranslationInput> Translations { get; set; } = [];
 
     public List<CategoryNode> AllCategories { get; set; } = [];
+    public List<BookLanguage> AllLanguages { get; set; } = [];
+    public List<string> AllPublishers { get; set; } = [];
 
     /// <summary>One entry for every non-English language, filled from the book's saved translations or the posted form.</summary>
     public void FillTranslations(IEnumerable<BookTranslation> saved)
@@ -305,8 +319,12 @@ public sealed class CreateUserVm
     [Required, Display(Name = "Role")]
     public string Role { get; set; } = Roles.User;
 
-    [Required, StringLength(128, MinimumLength = 12), DataType(DataType.Password), Display(Name = "Temporary password")]
-    public string Password { get; set; } = "";
+    /// <summary>Required unless the sign-in details are emailed, in which case an empty one is generated.</summary>
+    [StringLength(128, MinimumLength = 12), DataType(DataType.Password), Display(Name = "Temporary password")]
+    public string? Password { get; set; }
+
+    /// <summary>Email the new member their address, temporary password and the sign-in link.</summary>
+    public bool SendEmail { get; set; } = true;
 }
 
 public sealed record UserRow(
@@ -327,4 +345,16 @@ public sealed class DisclaimerVm
 }
 
 /// <summary>Admin &gt; Settings.</summary>
-public sealed record SettingsVm(int IdleMinutes, int LoanDays, int MaxBooks);
+public sealed record SettingsVm(int IdleMinutes, int LoanDays, int MaxBooks, EmailStatusVm Email);
+
+/// <summary>The Email part of Admin &gt; Settings.</summary>
+public sealed record EmailStatusVm(bool Configured, string? Server, string? From, bool NotifyUploads, bool WelcomeUsers);
+
+/// <summary>Admin &gt; Book lists: the languages and publishers uploaders pick from.</summary>
+public sealed class BookListsVm
+{
+    public List<BookListRow> Languages { get; init; } = [];
+    public List<BookListRow> Publishers { get; init; } = [];
+}
+
+public sealed record BookListRow(int Id, string Name, int SortOrder, int Books);

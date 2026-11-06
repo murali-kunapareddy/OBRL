@@ -17,6 +17,12 @@ public class ApplicationUser : IdentityUser
 
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? LastLoginAt { get; set; }
+
+    /// <summary>
+    /// Set when an Admin gives the account a temporary password (new account or password reset). Until the member
+    /// picks their own password, every page sends them to the change password page.
+    /// </summary>
+    public bool MustChangePassword { get; set; }
 }
 
 public class Category
@@ -111,6 +117,16 @@ public class Book
 
     public bool HasCover { get; set; }
 
+    /// <summary>The language the book is written in, from the list Admins keep. Null for books from before the field existed.</summary>
+    public int? LanguageId { get; set; }
+    public BookLanguage? Language { get; set; }
+
+    public int? PublisherId { get; set; }
+    public Publisher? Publisher { get; set; }
+
+    /// <summary>Year of publication, e.g. 1998. Never later than the current year.</summary>
+    public int? PublishedYear { get; set; }
+
     /// <summary>Where the cover comes from. If the choice can't be used (no image, page out of range) the default is used.</summary>
     public CoverSource CoverSource { get; set; }
 
@@ -163,6 +179,31 @@ public class BookTranslation
     public string? Author { get; set; }
     public string? Description { get; set; }
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+}
+
+/// <summary>A language a book can be written in. Admins keep the list (Admin &gt; Book lists).</summary>
+public class BookLanguage
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+
+    /// <summary>Upper-case name, for the unique check (so "telugu" and "Telugu" are the same language).</summary>
+    public string NormalizedName { get; set; } = "";
+    public int SortOrder { get; set; }
+}
+
+/// <summary>A publisher or publication. Uploaders pick one from the list or type a new one, which is added to the list.</summary>
+public class Publisher
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+
+    /// <summary>Upper-case name with single spaces, for the unique check.</summary>
+    public string NormalizedName { get; set; } = "";
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    public static string Normalize(string name) =>
+        string.Join(' ', name.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)).ToUpperInvariant();
 }
 
 public class BookCategory
@@ -368,4 +409,7 @@ public static class ActivityTypes
     public const string PasskeyRemoved = "passkey_removed";
     public const string IdleSignOut = "idle_sign_out";
     public const string SettingChanged = "setting_changed";
+    public const string PasswordChanged = "password_changed";
+    public const string EmailSent = "email_sent";
+    public const string EmailFailed = "email_failed";
 }
