@@ -428,7 +428,7 @@ Then pick one:
 | A full Linux server where you are root | **Option A: WireGuard + NFS** (fast and encrypted). Option D also works and needs fewer steps. |
 | A storage space with NFS shared to your VM's address | **Option B: NFS** |
 | A storage space with SMB | **Option C: SMB** |
-| A storage space with only SFTP/SSH | **Option D: SFTP (sshfs)** |
+| A storage space with only SFTP/SSH | **Option D: SFTP (sshfs)**, or **Option E: rclone** if you already use rclone with it |
 | Only FTP or WebDAV | Not suitable for a live library. Ask the provider to enable SFTP, or use it only for backups. |
 
 ### 9.2 Preparation (all options)
@@ -603,6 +603,40 @@ echo 'USERNAME@198.51.100.20:/home/USERNAME/obrl-library  /mnt/obrl-library  fus
 sudo nano /etc/fstab        # check the last line: user name, path, port, 998 numbers
 ```
 
+### Option E: rclone (for example, when another app such as Immich already uses it)
+
+rclone can mount an SFTP, SMB, WebDAV or cloud storage remote like a folder. Run these as root (`sudo -i` first).
+List the remotes you already have (here `serverbyt:`); `rclone config` creates one if you have none:
+
+```bash
+rclone listremotes
+rclone mkdir serverbyt:obrl-library
+```
+
+On a hosting account, keep the library **outside** `public_html` (anything inside it can be downloaded from the web).
+`serverbyt:obrl-library` is in the account's home folder, next to `public_html`.
+
+If the remote is SFTP and rclone prints "No host key validation is being performed", make it check the server
+(use the remote's `host` and `port`, shown by `rclone config show serverbyt`):
+
+```bash
+ssh-keyscan -p 22 HOST_FROM_THE_CONFIG >> /root/.ssh/known_hosts
+rclone config update serverbyt known_hosts_file /root/.ssh/known_hosts
+```
+
+Add the mount. `vfs_cache_mode=writes` is required: OBRL saves each file under a temporary name and renames it,
+which rclone only handles reliably in this mode.
+
+```bash
+ln -sf "$(command -v rclone)" /sbin/mount.rclone
+install -d -m 700 /var/cache/rclone-obrl
+echo "serverbyt:obrl-library  /mnt/obrl-library  rclone  rw,_netdev,nofail,allow_other,uid=$(id -u obrl),gid=$(id -g obrl),umask=027,vfs_cache_mode=writes,config=$(rclone config file | tail -n1),cache_dir=/var/cache/rclone-obrl,args2env  0 0" >> /etc/fstab
+tail -n 1 /etc/fstab
+```
+
+rclone saves new uploads on the VM first and sends them to the storage a moment later; after a power cut it finishes
+sending them at the next mount. Go to 9.3.
+
 ### 9.3 Mount it and check it
 
 **On the VM**
@@ -642,6 +676,7 @@ mounted, and stops it if the share goes away, so OBRL never writes books into th
 the VM's own disk:
 
 ```bash
+# ~ must be your own user's home: if you are logged in as root, write /home/libadmin/OBRL instead of ~/OBRL
 sudo install -D -m 644 ~/OBRL/deploy/obrl-remote-storage.conf /etc/systemd/system/obrl.service.d/remote-storage.conf
 sudo systemctl daemon-reload
 sudo systemctl start obrl
@@ -686,7 +721,13 @@ the one thing a backup of the storage server cannot replace.
 
 ### 10.3 Copy backups off the VM with restic
 
-restic makes encrypted, deduplicated backups. This example sends them to the storage server over SFTP (for Option A
+restic makes encrypted, deduplicated backups.
+
+**If you used rclone (Option E),** restic can use the same remote, so skip the SSH part below: run
+`sudo rclone mkdir serverbyt:obrl-backups`, and in `backup.env` use `RESTIC_REPOSITORY=rclone:serverbyt:obrl-backups`
+instead of the `sftp:` line. Everything else is the same.
+
+Otherwise, this example sends them to the storage server over SFTP (for Option A
 or D; for B and C, ask the provider whether SFTP is also available, or use another place restic supports, such as
 Backblaze B2 or another server).
 
@@ -741,13 +782,28 @@ Practise this once, so you know it works.
 
 - **The database, from the VM's own nightly dumps:**
 
+  First list the dumps, newest first, and pick one:
+
   ```bash
-  ls -lt /var/backups/obrl/                    # pick a file
-  sudo systemctl stop obrl
-  sudo -u postgres dropdb obrl
-  sudo -u postgres createdb -O obrl obrl
-  sudo cat /var/backups/obrl/obrl-YYYYMMDD-HHMMSS.dump | sudo -u postgres pg_restore -d obrl
-  sudo systemctl start obrl
+  sudo ls -lt /var/backups/obrl/
+  ```
+
+  Put its name in the first line below (replace the example name), then paste the whole block. It does nothing if the
+  file does not exist, and saves the current database first, so a wrong choice can be undone.
+
+  ```bash
+  DUMP=/var/backups/obrl/obrl-20261106-121232.dump
+  if sudo test -s "$DUMP"; then
+    sudo systemctl stop obrl
+    sudo -u postgres pg_dump -Fc obrl | sudo tee "/var/backups/obrl/obrl-before-restore-$(date +%Y%m%d-%H%M%S).dump" > /dev/null
+    sudo -u postgres dropdb obrl
+    sudo -u postgres createdb -O obrl obrl
+    sudo cat "$DUMP" | sudo -u postgres pg_restore -d obrl
+    sudo systemctl start obrl
+    echo "Restored $DUMP"
+  else
+    echo "No dump called $DUMP: nothing was changed."
+  fi
   ```
 
 - **Files from restic** (database dumps, `/etc/obrl` with the keys and settings, and the books if they are backed up):
