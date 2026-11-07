@@ -218,6 +218,15 @@ Set these in `appsettings.json`, or as environment variables in `/etc/obrl/obrl.
 | `Obrl:LibreOfficePath` / `CalibreConvertPath` | `soffice` / `ebook-convert` | Conversion tools |
 | `Obrl:Seed:AdminEmail` / `AdminPassword` | | Creates the first admin when none exists |
 | `Obrl:CopyrightHolder` | `OBRL` | Name after "©" in the footer |
+| `Obrl:PublicUrl` | empty | Address members open, e.g. `https://books.example.org`, used for links in emails. Empty uses the address of the request that sent the email |
+| `Obrl:Email:Host` / `Port` | empty / `587` | SMTP server. Email is off until `Host` and `FromAddress` are set |
+| `Obrl:Email:Security` | `Auto` | `Auto` (SSL on port 465, STARTTLS otherwise), `StartTls`, `SslOnConnect` or `None` |
+| `Obrl:Email:Username` / `Password` | empty | SMTP sign-in. Put the password in `/etc/obrl/obrl.env` (`Obrl__Email__Password=...`), never in `appsettings.json` |
+| `Obrl:Email:FromAddress` / `FromName` | empty / `OBRL` | Sender of every email |
+
+Which emails go out (new uploads to Moderators and Admins; sign-in details to new members) is chosen under
+Admin > Settings, where Admins can also send themselves a test email. The book language list and publishers are kept
+under Admin > Book lists.
 
 ## Footer and version
 

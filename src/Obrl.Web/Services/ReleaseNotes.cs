@@ -13,6 +13,13 @@ public static class ReleaseNotes
 {
     public static readonly IReadOnlyList<Release> All =
     [
+        new("1.1", new DateOnly(2026, 11, 6), "Book language, publisher and year, and email",
+        [
+            "Books have a language, a publisher and a year of publication. Uploaders pick the language from a list Admins keep under Admin > Book lists, and pick a publisher or type a new one.",
+            "Moderators and Admins get an email when a book is uploaded.",
+            "New members get an email with their temporary password and a sign-in link. At first sign-in they choose their own password, then set up an authenticator app or a passkey.",
+            "Admins choose which emails go out, and can send themselves a test email, under Admin > Settings.",
+        ]),
         new("1.1", new DateOnly(2026, 11, 5), "Book limits and cover cropping",
         [
             "Users and Contributors can be subscribed to up to 5 books at a time. Moderators and Admins have no limit.",

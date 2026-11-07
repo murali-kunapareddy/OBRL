@@ -3,7 +3,8 @@
     ViewData["Title"] = L["Add user"].Value;
 }
 <h1 class="page-title">@L["Add user"]</h1>
-<p class="page-sub">@L["Share the temporary password with the person privately. At first sign-in they must set up an authenticator app and accept the disclaimer."]</p>
+@{ var canEmail = ViewBag.CanEmail == true; }
+<p class="page-sub">@L["At first sign-in the person chooses their own password, sets up an authenticator app or a passkey, and accepts the disclaimer."]</p>
 <form method="post" class="panel" style="max-width:560px">
     <div asp-validation-summary="All" class="alert alert-danger"></div>
     <div class="mb-3">
@@ -21,11 +22,27 @@
         </select>
         <div class="form-text">@L["User reads · Contributor also uploads · Moderator also manages categories and all books · Admin has full rights."]</div>
     </div>
-    <div class="mb-4">
+    <div class="mb-3">
         <label asp-for="Password" class="form-label fw-semibold"></label>
         <input asp-for="Password" class="form-control" type="text" autocomplete="off" />
-        <div class="form-text">@L["At least 12 characters. Common leaked passwords are refused."]</div>
+        <div class="form-text">
+            @L["At least 12 characters. Common leaked passwords are refused."]
+            @if (canEmail) { @L["Leave it empty to have one made up and emailed, so nobody else sees it."] }
+        </div>
+        <span asp-validation-for="Password" class="text-danger small"></span>
     </div>
+    @if (canEmail)
+    {
+        <div class="form-check mb-4">
+            <input asp-for="SendEmail" class="form-check-input" />
+            <label asp-for="SendEmail" class="form-check-label">@L["Email the sign-in details (email, temporary password and sign-in link) to the person"]</label>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" name="SendEmail" value="false" />
+        <div class="alert alert-secondary small mb-4">@L["Email is off, so share the temporary password with the person privately. Admins can turn on email under Admin > Settings once the mail server is set up."]</div>
+    }
     <button class="btn btn-primary">@L["Create account"]</button>
     <a class="btn btn-link" asp-action="Users">@L["Cancel"]</a>
 </form>

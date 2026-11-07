@@ -40,6 +40,10 @@ else if (reason == "ended")
 {
     <div class="alert alert-info small">@L["Your session ended. Please sign in again."]</div>
 }
+else if (reason == "welcome")
+{
+    <div class="alert alert-info small">@L["Welcome! Sign in with your email and the temporary password from the email. Then you choose your own password and set up an authenticator app or a passkey."]</div>
+}
 @if (passkeyOnly)
 {
     <div class="alert alert-warning small"><i class="bi bi-key me-1"></i>@H["Your account signs in with a passkey. Choose <strong>Sign in with a passkey</strong> below."]</div>

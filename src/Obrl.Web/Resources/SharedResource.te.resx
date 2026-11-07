@@ -1745,4 +1745,220 @@
   <data name="Required strong sign-in, one session per account, a disclaimer to accept, and an activity history." xml:space="preserve">
     <value>తప్పనిసరి బలమైన సైన్-ఇన్, ఒక్కో ఖాతాకు ఒకే సెషన్, అంగీకరించాల్సిన నిరాకరణ, మరియు కార్యకలాపాల చరిత్ర.</value>
   </data>
+  <data name="Enter a temporary password, or have it emailed." xml:space="preserve">
+    <value>తాత్కాలిక పాస్‌వర్డ్ నమోదు చేయండి, లేదా దానిని ఇమెయిల్‌లో పంపించండి.</value>
+  </data>
+  <data name="Created {0}." xml:space="preserve">
+    <value>{0} సృష్టించబడింది.</value>
+  </data>
+  <data name="Give them the temporary password privately. They choose their own password and set up two-factor sign-in at first login." xml:space="preserve">
+    <value>వారికి తాత్కాలిక పాస్‌వర్డ్‌ను వ్యక్తిగతంగా ఇవ్వండి. మొదటి లాగిన్‌లో వారు తమ సొంత పాస్‌వర్డ్ ఎంచుకుని, రెండు-దశల సైన్-ఇన్‌ను సెటప్ చేస్తారు.</value>
+  </data>
+  <data name="The sign-in details were emailed to them. They choose their own password and set up two-factor sign-in at first login." xml:space="preserve">
+    <value>సైన్-ఇన్ వివరాలు వారికి ఇమెయిల్ చేయబడ్డాయి. మొదటి లాగిన్‌లో వారు తమ సొంత పాస్‌వర్డ్ ఎంచుకుని, రెండు-దశల సైన్-ఇన్‌ను సెటప్ చేస్తారు.</value>
+  </data>
+  <data name="The email could not be sent ({0}). Give them this temporary password privately: {1}" xml:space="preserve">
+    <value>ఇమెయిల్ పంపడం సాధ్యం కాలేదు ({0}). ఈ తాత్కాలిక పాస్‌వర్డ్‌ను వారికి వ్యక్తిగతంగా ఇవ్వండి: {1}</value>
+  </data>
+  <data name="The email could not be sent ({0}). Give them the temporary password privately." xml:space="preserve">
+    <value>ఇమెయిల్ పంపడం సాధ్యం కాలేదు ({0}). వారికి తాత్కాలిక పాస్‌వర్డ్‌ను వ్యక్తిగతంగా ఇవ్వండి.</value>
+  </data>
+  <data name="Email settings saved." xml:space="preserve">
+    <value>ఇమెయిల్ సెట్టింగ్‌లు సేవ్ చేయబడ్డాయి.</value>
+  </data>
+  <data name="A test email was sent to {0}. Check the inbox (and the spam folder)." xml:space="preserve">
+    <value>{0}కు పరీక్ష ఇమెయిల్ పంపబడింది. ఇన్‌బాక్స్‌ను (మరియు స్పామ్ ఫోల్డర్‌ను) చూడండి.</value>
+  </data>
+  <data name="The test email could not be sent: {0}" xml:space="preserve">
+    <value>పరీక్ష ఇమెయిల్ పంపడం సాధ్యం కాలేదు: {0}</value>
+  </data>
+  <data name="Enter a language name of up to {0} characters." xml:space="preserve">
+    <value>గరిష్ఠంగా {0} అక్షరాలలో భాష పేరు నమోదు చేయండి.</value>
+  </data>
+  <data name="“{0}” is already on the list." xml:space="preserve">
+    <value>“{0}” ఇప్పటికే జాబితాలో ఉంది.</value>
+  </data>
+  <data name="“{0}” is used by {1} books. Change their language first." xml:space="preserve">
+    <value>“{0}”ను {1} పుస్తకాలు ఉపయోగిస్తున్నాయి. ముందుగా వాటి భాషను మార్చండి.</value>
+  </data>
+  <data name="Enter a publisher name of up to {0} characters." xml:space="preserve">
+    <value>గరిష్ఠంగా {0} అక్షరాలలో ప్రచురణకర్త పేరు నమోదు చేయండి.</value>
+  </data>
+  <data name="Merged into “{0}”." xml:space="preserve">
+    <value>“{0}”లో విలీనం చేయబడింది.</value>
+  </data>
+  <data name="“{0}” is used by {1} books. Change their publisher first." xml:space="preserve">
+    <value>“{0}”ను {1} పుస్తకాలు ఉపయోగిస్తున్నాయి. ముందుగా వాటి ప్రచురణకర్తను మార్చండి.</value>
+  </data>
+  <data name="That language is no longer on the list. Pick another one." xml:space="preserve">
+    <value>ఆ భాష ఇప్పుడు జాబితాలో లేదు. మరొకటి ఎంచుకోండి.</value>
+  </data>
+  <data name="Enter a four-digit year from {0} to {1}." xml:space="preserve">
+    <value>{0} నుండి {1} వరకు నాలుగు అంకెల సంవత్సరం నమోదు చేయండి.</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>ప్రచురణకర్త</value>
+  </data>
+  <data name="Year of publication" xml:space="preserve">
+    <value>ప్రచురణ సంవత్సరం</value>
+  </data>
+  <data name="Choose…" xml:space="preserve">
+    <value>ఎంచుకోండి…</value>
+  </data>
+  <data name="Pick from the list or type a new one" xml:space="preserve">
+    <value>జాబితా నుండి ఎంచుకోండి లేదా కొత్తది టైప్ చేయండి</value>
+  </data>
+  <data name="Book lists" xml:space="preserve">
+    <value>పుస్తక జాబితాలు</value>
+  </data>
+  <data name="The languages and publishers uploaders choose from when they add or edit a book." xml:space="preserve">
+    <value>పుస్తకాన్ని జోడించేటప్పుడు లేదా సవరించేటప్పుడు అప్‌లోడర్లు ఎంచుకునే భాషలు మరియు ప్రచురణకర్తలు.</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>భాషలు</value>
+  </data>
+  <data name="Uploaders pick the book's language from this list only. Lower numbers come first. A language used by books cannot be deleted." xml:space="preserve">
+    <value>అప్‌లోడర్లు పుస్తకం భాషను ఈ జాబితా నుండి మాత్రమే ఎంచుకుంటారు. చిన్న సంఖ్యలు ముందు వస్తాయి. పుస్తకాలు ఉపయోగిస్తున్న భాషను తొలగించలేరు.</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>క్రమం</value>
+  </data>
+  <data name="Delete {0}?" xml:space="preserve">
+    <value>{0}ను తొలగించాలా?</value>
+  </data>
+  <data name="New language" xml:space="preserve">
+    <value>కొత్త భాష</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>జోడించు</value>
+  </data>
+  <data name="Publishers" xml:space="preserve">
+    <value>ప్రచురణకర్తలు</value>
+  </data>
+  <data name="Uploaders pick a publisher from this list or type a new one, which is added here. Fix spelling here; renaming one to another's name merges the two." xml:space="preserve">
+    <value>అప్‌లోడర్లు ఈ జాబితా నుండి ప్రచురణకర్తను ఎంచుకుంటారు లేదా కొత్తది టైప్ చేస్తారు, అది ఇక్కడ చేరుతుంది. స్పెల్లింగ్‌ను ఇక్కడ సరిచేయండి; ఒకదాని పేరును మరొకదాని పేరుకు మార్చితే రెండూ విలీనమవుతాయి.</value>
+  </data>
+  <data name="No publishers yet." xml:space="preserve">
+    <value>ఇంకా ప్రచురణకర్తలు లేరు.</value>
+  </data>
+  <data name="Empty: make one up" xml:space="preserve">
+    <value>ఖాళీగా ఉంటే: ఒకటి తయారవుతుంది</value>
+  </data>
+  <data name="Email it to them" xml:space="preserve">
+    <value>వారికి ఇమెయిల్ చేయండి</value>
+  </data>
+  <data name="At first sign-in the person chooses their own password, sets up an authenticator app or a passkey, and accepts the disclaimer." xml:space="preserve">
+    <value>మొదటి సైన్-ఇన్‌లో ఆ వ్యక్తి తమ సొంత పాస్‌వర్డ్ ఎంచుకుని, ఆథెంటికేటర్ యాప్ లేదా పాస్‌కీని సెటప్ చేసి, నిరాకరణను అంగీకరిస్తారు.</value>
+  </data>
+  <data name="Leave it empty to have one made up and emailed, so nobody else sees it." xml:space="preserve">
+    <value>ఖాళీగా వదిలేస్తే ఒకటి తయారై ఇమెయిల్‌లో వెళ్తుంది, ఇంకెవరూ దానిని చూడరు.</value>
+  </data>
+  <data name="Email the sign-in details (email, temporary password and sign-in link) to the person" xml:space="preserve">
+    <value>సైన్-ఇన్ వివరాలను (ఇమెయిల్, తాత్కాలిక పాస్‌వర్డ్ మరియు సైన్-ఇన్ లింక్) ఆ వ్యక్తికి ఇమెయిల్ చేయండి</value>
+  </data>
+  <data name="Email is off, so share the temporary password with the person privately. Admins can turn on email under Admin &gt; Settings once the mail server is set up." xml:space="preserve">
+    <value>ఇమెయిల్ ఆఫ్‌లో ఉంది, కాబట్టి తాత్కాలిక పాస్‌వర్డ్‌ను ఆ వ్యక్తికి వ్యక్తిగతంగా ఇవ్వండి. మెయిల్ సర్వర్ సెటప్ అయ్యాక అడ్మిన్లు అడ్మిన్ &gt; సెట్టింగ్‌లలో ఇమెయిల్‌ను ఆన్ చేయవచ్చు.</value>
+  </data>
+  <data name="Mail server {0}, sending as {1}." xml:space="preserve">
+    <value>మెయిల్ సర్వర్ {0}, {1}గా పంపుతోంది.</value>
+  </data>
+  <data name="Email is not set up on the server, so no email is sent. Set the Obrl:Email settings (mail server, sender address, user name and password) on the server and restart OBRL. The deployment guide explains how." xml:space="preserve">
+    <value>సర్వర్‌లో ఇమెయిల్ సెటప్ కాలేదు, కాబట్టి ఏ ఇమెయిల్ పంపబడదు. సర్వర్‌లో Obrl:Email సెట్టింగ్‌లను (మెయిల్ సర్వర్, పంపే చిరునామా, యూజర్ పేరు మరియు పాస్‌వర్డ్) సెట్ చేసి OBRLను రీస్టార్ట్ చేయండి. డిప్లాయ్‌మెంట్ గైడ్ ఎలాగో వివరిస్తుంది.</value>
+  </data>
+  <data name="Email Moderators and Admins when a book is uploaded" xml:space="preserve">
+    <value>పుస్తకం అప్‌లోడ్ అయినప్పుడు మోడరేటర్లు మరియు అడ్మిన్లకు ఇమెయిల్ చేయండి</value>
+  </data>
+  <data name="Email new members their temporary password and the sign-in link" xml:space="preserve">
+    <value>కొత్త సభ్యులకు వారి తాత్కాలిక పాస్‌వర్డ్ మరియు సైన్-ఇన్ లింక్‌ను ఇమెయిల్ చేయండి</value>
+  </data>
+  <data name="Send me a test email" xml:space="preserve">
+    <value>నాకు పరీక్ష ఇమెయిల్ పంపండి</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>సంవత్సరం</value>
+  </data>
+  <data name="New book: {0}" xml:space="preserve">
+    <value>కొత్త పుస్తకం: {0}</value>
+  </data>
+  <data name="New book waiting for approval: {0}" xml:space="preserve">
+    <value>ఆమోదం కోసం ఎదురుచూస్తున్న కొత్త పుస్తకం: {0}</value>
+  </data>
+  <data name="Hello {0}," xml:space="preserve">
+    <value>నమస్కారం {0},</value>
+  </data>
+  <data name="{0} uploaded “{1}” ({2}, {3})." xml:space="preserve">
+    <value>{0} “{1}”ను అప్‌లోడ్ చేశారు ({2}, {3}).</value>
+  </data>
+  <data name="It is in the library already, and readers see it once it is prepared." xml:space="preserve">
+    <value>ఇది ఇప్పటికే లైబ్రరీలో ఉంది; సిద్ధమైన తర్వాత పాఠకులకు కనిపిస్తుంది.</value>
+  </data>
+  <data name="Readers will see it once a Moderator approves it in the review queue." xml:space="preserve">
+    <value>మోడరేటర్ సమీక్ష జాబితాలో ఆమోదించిన తర్వాత పాఠకులకు ఇది కనిపిస్తుంది.</value>
+  </data>
+  <data name="Open the book" xml:space="preserve">
+    <value>పుస్తకాన్ని తెరవండి</value>
+  </data>
+  <data name="Open the review queue" xml:space="preserve">
+    <value>సమీక్ష జాబితాను తెరవండి</value>
+  </data>
+  <data name="You get this email because you are a Moderator or Admin. Admins can turn these emails off under Admin &gt; Settings." xml:space="preserve">
+    <value>మీరు మోడరేటర్ లేదా అడ్మిన్ కాబట్టి ఈ ఇమెయిల్ మీకు వచ్చింది. అడ్మిన్లు అడ్మిన్ &gt; సెట్టింగ్‌లలో ఈ ఇమెయిల్‌లను ఆపివేయవచ్చు.</value>
+  </data>
+  <data name="Email is turned off." xml:space="preserve">
+    <value>ఇమెయిల్ ఆఫ్ చేయబడింది.</value>
+  </data>
+  <data name="Your new temporary password" xml:space="preserve">
+    <value>మీ కొత్త తాత్కాలిక పాస్‌వర్డ్</value>
+  </data>
+  <data name="Your library account is ready" xml:space="preserve">
+    <value>మీ లైబ్రరీ ఖాతా సిద్ధంగా ఉంది</value>
+  </data>
+  <data name="An administrator set a new temporary password for your library account." xml:space="preserve">
+    <value>ఒక అడ్మిన్ మీ లైబ్రరీ ఖాతాకు కొత్త తాత్కాలిక పాస్‌వర్డ్ సెట్ చేశారు.</value>
+  </data>
+  <data name="An administrator created a library account for you." xml:space="preserve">
+    <value>ఒక అడ్మిన్ మీ కోసం లైబ్రరీ ఖాతాను సృష్టించారు.</value>
+  </data>
+  <data name="After signing in you choose your own password, then set up an authenticator app or a passkey. The temporary password stops working once you have changed it." xml:space="preserve">
+    <value>సైన్ ఇన్ అయ్యాక మీరు మీ సొంత పాస్‌వర్డ్ ఎంచుకుని, ఆపై ఆథెంటికేటర్ యాప్ లేదా పాస్‌కీని సెటప్ చేస్తారు. మీరు మార్చిన తర్వాత తాత్కాలిక పాస్‌వర్డ్ పనిచేయదు.</value>
+  </data>
+  <data name="If you did not expect this email, you can ignore it." xml:space="preserve">
+    <value>మీరు ఈ ఇమెయిల్‌ను ఆశించకపోతే, దీనిని పట్టించుకోనవసరం లేదు.</value>
+  </data>
+  <data name="Email is not set up on the server." xml:space="preserve">
+    <value>సర్వర్‌లో ఇమెయిల్ సెటప్ కాలేదు.</value>
+  </data>
+  <data name="This is a test email from the library. Email is working." xml:space="preserve">
+    <value>ఇది లైబ్రరీ నుండి వచ్చిన పరీక్ష ఇమెయిల్. ఇమెయిల్ పనిచేస్తోంది.</value>
+  </data>
+  <data name="Open the library" xml:space="preserve">
+    <value>లైబ్రరీని తెరవండి</value>
+  </data>
+  <data name="Test email" xml:space="preserve">
+    <value>పరీక్ష ఇమెయిల్</value>
+  </data>
+  <data name="Welcome! Sign in with your email and the temporary password from the email. Then you choose your own password and set up an authenticator app or a passkey." xml:space="preserve">
+    <value>స్వాగతం! మీ ఇమెయిల్ మరియు ఇమెయిల్‌లో వచ్చిన తాత్కాలిక పాస్‌వర్డ్‌తో సైన్ ఇన్ చేయండి. తర్వాత మీ సొంత పాస్‌వర్డ్ ఎంచుకుని, ఆథెంటికేటర్ యాప్ లేదా పాస్‌కీని సెటప్ చేస్తారు.</value>
+  </data>
+  <data name="You signed in with a temporary password. Choose your own password to continue. Next you set up an authenticator app or a passkey." xml:space="preserve">
+    <value>మీరు తాత్కాలిక పాస్‌వర్డ్‌తో సైన్ ఇన్ అయ్యారు. కొనసాగడానికి మీ సొంత పాస్‌వర్డ్ ఎంచుకోండి. తర్వాత ఆథెంటికేటర్ యాప్ లేదా పాస్‌కీని సెటప్ చేస్తారు.</value>
+  </data>
+  <data name="Choose a password different from the current one." xml:space="preserve">
+    <value>ప్రస్తుత పాస్‌వర్డ్‌కు భిన్నమైనదాన్ని ఎంచుకోండి.</value>
+  </data>
+  <data name="Book language, publisher and year, and email" xml:space="preserve">
+    <value>పుస్తక భాష, ప్రచురణకర్త, సంవత్సరం మరియు ఇమెయిల్</value>
+  </data>
+  <data name="Books have a language, a publisher and a year of publication. Uploaders pick the language from a list Admins keep under Admin &gt; Book lists, and pick a publisher or type a new one." xml:space="preserve">
+    <value>పుస్తకాలకు భాష, ప్రచురణకర్త మరియు ప్రచురణ సంవత్సరం ఉంటాయి. అడ్మిన్లు అడ్మిన్ &gt; పుస్తక జాబితాలలో నిర్వహించే జాబితా నుండి అప్‌లోడర్లు భాషను ఎంచుకుంటారు, ప్రచురణకర్తను ఎంచుకుంటారు లేదా కొత్తది టైప్ చేస్తారు.</value>
+  </data>
+  <data name="Moderators and Admins get an email when a book is uploaded." xml:space="preserve">
+    <value>పుస్తకం అప్‌లోడ్ అయినప్పుడు మోడరేటర్లు మరియు అడ్మిన్లకు ఇమెయిల్ వస్తుంది.</value>
+  </data>
+  <data name="New members get an email with their temporary password and a sign-in link. At first sign-in they choose their own password, then set up an authenticator app or a passkey." xml:space="preserve">
+    <value>కొత్త సభ్యులకు వారి తాత్కాలిక పాస్‌వర్డ్ మరియు సైన్-ఇన్ లింక్‌తో ఇమెయిల్ వస్తుంది. మొదటి సైన్-ఇన్‌లో వారు తమ సొంత పాస్‌వర్డ్ ఎంచుకుని, ఆపై ఆథెంటికేటర్ యాప్ లేదా పాస్‌కీని సెటప్ చేస్తారు.</value>
+  </data>
+  <data name="Admins choose which emails go out, and can send themselves a test email, under Admin &gt; Settings." xml:space="preserve">
+    <value>ఏ ఇమెయిల్‌లు వెళ్లాలో అడ్మిన్లు అడ్మిన్ &gt; సెట్టింగ్‌లలో ఎంచుకుంటారు, తమకు పరీక్ష ఇమెయిల్ కూడా పంపుకోవచ్చు.</value>
+  </data>
 </root>

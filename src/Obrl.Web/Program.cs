@@ -37,6 +37,12 @@ builder.Services.AddSingleton<Lending>();
 builder.Services.AddScoped<BookText>();
 builder.Services.AddScoped<ActivityLog>();
 builder.Services.AddHostedService<ConversionWorker>();
+// Email (SMTP via MailKit). Off until Obrl:Email:Host and Obrl:Email:FromAddress are set.
+builder.Services.AddSingleton<Obrl.Web.Services.Email.Mailer>();
+builder.Services.AddSingleton<Obrl.Web.Services.Email.MailQueue>();
+builder.Services.AddSingleton<Obrl.Web.Services.Email.EmailSettings>();
+builder.Services.AddScoped<Obrl.Web.Services.Email.Notifications>();
+builder.Services.AddHostedService<Obrl.Web.Services.Email.MailWorker>();
 builder.Services.AddHttpContextAccessor();
 
 // Keys that protect sign-in cookies and 2FA tokens are kept on disk, so they survive restarts. They are not
@@ -204,6 +210,7 @@ using (var scope = app.Services.CreateScope())
     var startupDb = scope.ServiceProvider.GetRequiredService<ObrlDbContext>();
     await app.Services.GetRequiredService<IdleTimeout>().LoadAsync(startupDb, obrl.IdleTimeoutMinutes);
     await app.Services.GetRequiredService<Lending>().LoadAsync(startupDb);
+    await app.Services.GetRequiredService<Obrl.Web.Services.Email.EmailSettings>().LoadAsync(startupDb);
 }
 
 // ---------- Pipeline ----------

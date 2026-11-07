@@ -93,6 +93,32 @@
             </div>
         }
     </div>
+    <div class="row g-3 mb-3">
+        <div class="col-sm-4">
+            <label asp-for="LanguageId" class="form-label fw-semibold"></label>
+            <select asp-for="LanguageId" class="form-select">
+                <option value="">@L["Choose…"]</option>
+                @foreach (var lang in Model.AllLanguages)
+                {
+                    <option value="@lang.Id">@lang.Name</option>
+                }
+            </select>
+            <span asp-validation-for="LanguageId" class="text-danger small"></span>
+        </div>
+        <div class="col-sm-5">
+            <label asp-for="PublisherName" class="form-label fw-semibold"></label>
+            <input asp-for="PublisherName" class="form-control" list="publisher-list" autocomplete="off" placeholder="@L["Pick from the list or type a new one"]" />
+            <datalist id="publisher-list">
+                @foreach (var p in Model.AllPublishers) { <option value="@p"></option> }
+            </datalist>
+            <span asp-validation-for="PublisherName" class="text-danger small"></span>
+        </div>
+        <div class="col-sm-3">
+            <label asp-for="PublishedYear" class="form-label fw-semibold"></label>
+            <input asp-for="PublishedYear" type="number" inputmode="numeric" min="@Obrl.Web.Controllers.UploadsController.MinYear" max="@DateTime.UtcNow.Year" step="1" class="form-control" placeholder="@DateTime.UtcNow.Year" />
+            <span asp-validation-for="PublishedYear" class="text-danger small"></span>
+        </div>
+    </div>
     <div class="mb-4">
         <label class="form-label fw-semibold">@L["Categories"]</label>
         @if (Model.AllCategories.Count == 0)
