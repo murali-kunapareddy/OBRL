@@ -6,6 +6,7 @@
             <a class="@(Model.Vm.Current?.Id == c.Id ? "active" : "")" href="/Library?category=@c.Id">
                 <i class="bi @(c.Children.Count > 0 ? "bi-folder2" : "bi-tag")"></i>
                 <span class="text-truncate">@c.Name</span>
+                <span class="cat-count" title="@L["{0} books", Model.Vm.CategoryCounts.GetValueOrDefault(c.Id)]">(@Model.Vm.CategoryCounts.GetValueOrDefault(c.Id))</span>
                 @if (Model.Vm.IsCovered(c))
                 {
                     <i class="bi bi-check-circle-fill" title="@L["Following"]"></i>

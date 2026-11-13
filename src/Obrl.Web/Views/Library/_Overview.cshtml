@@ -1,0 +1,63 @@
+@model Obrl.Web.Services.LibraryOverview
+@{
+    var charts = new (string Id, string Title, string Icon, string Unit, List<Obrl.Web.Services.ChartItem> Items, string Empty)[]
+    {
+        ("languages", L["Books by language"].Value, "bi-translate", "books", Model.ByLanguage, L["No books yet."].Value),
+        ("publishers", L["Top 10 publishers"].Value, "bi-building", "books", Model.TopPublishers, L["No publishers entered yet."].Value),
+        ("categories", L["Top 10 categories"].Value, "bi-diagram-3", "books", Model.TopCategories, L["No categories yet."].Value),
+        ("read", L["Most read"].Value, "bi-eye", "readers", Model.MostRead, L["Nobody has opened a book yet."].Value),
+        ("rated", L["Top rated"].Value, "bi-star", "stars", Model.TopRated, L["No ratings yet."].Value),
+    };
+    string UnitText(string unit, double v) => unit switch
+    {
+        "readers" => v == 1 ? L["1 reader"].Value : L["{0} readers", v].Value,
+        "stars" => L["{0} stars", v.ToString("0.0#", System.Globalization.CultureInfo.CurrentCulture)].Value,
+        _ => v == 1 ? L["1 book"].Value : L["{0} books", v].Value,
+    };
+}
+<details class="overview mb-4" open data-collapse-small data-remember="obrl.overview">
+    <summary class="overview-head">
+        <h2 class="h5 mb-0"><i class="bi bi-bar-chart-line me-2"></i>@L["Library at a glance"]</h2>
+        <i class="bi bi-chevron-down" aria-hidden="true"></i>
+    </summary>
+    <div class="stat-tiles">
+        <div class="stat-tile"><span class="stat-value">@Model.Books</span><span class="stat-label">@L["Books"]</span></div>
+        <div class="stat-tile"><span class="stat-value">@Model.Languages</span><span class="stat-label">@L["Languages"]</span></div>
+        <div class="stat-tile"><span class="stat-value">@Model.Publishers</span><span class="stat-label">@L["Publishers"]</span></div>
+        <div class="stat-tile"><span class="stat-value">@Model.Categories</span><span class="stat-label">@L["Categories"]</span></div>
+        <div class="stat-tile"><span class="stat-value">@Model.Readers</span><span class="stat-label">@L["Readers"]</span></div>
+    </div>
+    <div class="chart-grid">
+        @foreach (var c in charts)
+        {
+            var data = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                unit = c.Unit,
+                max = c.Unit == "stars" ? 5 : (double?)null,
+                items = c.Items.Select(i => new { label = i.Label, value = i.Value, url = i.Url, note = i.Note, text = UnitText(c.Unit, i.Value) }),
+            });
+            <section class="panel chart-card" aria-labelledby="chart-@c.Id-title">
+                <h3 class="chart-title" id="chart-@c.Id-title"><i class="bi @c.Icon me-2"></i>@c.Title</h3>
+                @if (c.Items.Count == 0)
+                {
+                    <p class="small text-muted mb-0">@c.Empty</p>
+                }
+                else
+                {
+                    <div class="chart-box" style="height:@(c.Items.Count * 30 + 24)px">
+                        <canvas data-chart="@data" role="img" aria-label="@c.Title"></canvas>
+                    </div>
+                    <table class="visually-hidden">
+                        <caption>@c.Title</caption>
+                        <tbody>
+                            @foreach (var i in c.Items)
+                            {
+                                <tr><th scope="row">@i.Label</th><td>@UnitText(c.Unit, i.Value)</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </section>
+        }
+    </div>
+</details>

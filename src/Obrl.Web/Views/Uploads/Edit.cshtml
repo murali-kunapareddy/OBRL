@@ -17,6 +17,7 @@
 
 <form method="post" enctype="multipart/form-data" class="panel" style="max-width:720px" asp-action="@(creating ? "Create" : "Edit")" asp-route-id="@Model.Id">
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <input type="hidden" asp-for="ReturnUrl" />
     @if (creating)
     {
         <div class="mb-3">
@@ -85,6 +86,12 @@
                     <input asp-for="Translations[i].Author" class="form-control" lang="@code" placeholder="@L["Empty shows the English author"]" />
                     <span asp-validation-for="Translations[i].Author" class="text-danger small"></span>
                 </div>
+                <div class="mb-3">
+                    <label asp-for="Translations[i].PublisherName" class="form-label fw-semibold"></label>
+                    <input asp-for="Translations[i].PublisherName" class="form-control" lang="@code" data-publisher-name="@code" placeholder="@L["Empty shows the English publisher"]" />
+                    <div class="form-text">@L["The publisher’s name is shared by all its books, so changing it here changes it on every book from this publisher."]</div>
+                    <span asp-validation-for="Translations[i].PublisherName" class="text-danger small"></span>
+                </div>
                 <div>
                     <label asp-for="Translations[i].Description" class="form-label fw-semibold"></label>
                     <textarea asp-for="Translations[i].Description" class="form-control" rows="4" lang="@code" placeholder="@L["Empty shows the English description"]"></textarea>
@@ -100,17 +107,18 @@
                 <option value="">@L["Choose…"]</option>
                 @foreach (var lang in Model.AllLanguages)
                 {
-                    <option value="@lang.Id">@lang.Name</option>
+                    <option value="@lang.Id">@L[lang.Name]</option>
                 }
             </select>
             <span asp-validation-for="LanguageId" class="text-danger small"></span>
         </div>
         <div class="col-sm-5">
             <label asp-for="PublisherName" class="form-label fw-semibold"></label>
-            <input asp-for="PublisherName" class="form-control" list="publisher-list" autocomplete="off" placeholder="@L["Pick from the list or type a new one"]" />
+            <input asp-for="PublisherName" class="form-control" list="publisher-list" autocomplete="off" placeholder="@L["Pick from the list or type a new one"]" data-publisher-input />
             <datalist id="publisher-list">
-                @foreach (var p in Model.AllPublishers) { <option value="@p"></option> }
+                @foreach (var p in Model.AllPublishers) { <option value="@p.Name"></option> }
             </datalist>
+            <div class="form-text">@L["Enter the name in English here; other languages go in their tabs above."]</div>
             <span asp-validation-for="PublisherName" class="text-danger small"></span>
         </div>
         <div class="col-sm-3">
@@ -238,9 +246,12 @@
             }
         }
     </div>
-    <button class="btn btn-primary" type="submit">@(creating ? L["Upload"] : L["Save"])</button>
-    <a class="btn btn-link" asp-action="Index">@L["Cancel"]</a>
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">@(creating ? L["Upload"] : L["Save"])</button>
+        <a class="btn btn-link" href="@(Model.ReturnUrl ?? Url.Action("Index"))">@L["Cancel"]</a>
+    </div>
 </form>
+<script type="application/json" id="publisher-names">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AllPublishers.ToDictionary(p => Obrl.Web.Domain.Publisher.Normalize(p.Name), p => p.Names)))</script>
 
 <div class="modal fade" id="cover-crop-modal" tabindex="-1" aria-labelledby="cover-crop-title" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
@@ -285,4 +296,5 @@
 @section Scripts {
     <script src="~/lib/cropperjs/cropper.min.js"></script>
     <script src="~/js/cover-crop.js" asp-append-version="true"></script>
+    <script src="~/js/publisher-names.js" asp-append-version="true"></script>
 }

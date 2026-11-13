@@ -232,33 +232,51 @@ public class AdminController(
         {
             Languages = (await db.BookLanguages.AsNoTracking().OrderBy(l => l.SortOrder).ThenBy(l => l.Name).ToListAsync(ct))
                 .Select(l => new BookListRow(l.Id, l.Name, l.SortOrder, languageUse.GetValueOrDefault(l.Id))).ToList(),
-            Publishers = (await db.Publishers.AsNoTracking().OrderBy(p => p.Name).ToListAsync(ct))
-                .Select(p => new BookListRow(p.Id, p.Name, 0, publisherUse.GetValueOrDefault(p.Id))).ToList(),
+            Publishers = (await db.Publishers.AsNoTracking().Include(p => p.Translations).OrderBy(p => p.Name).ToListAsync(ct))
+                .Select(p => new BookListRow(p.Id, p.Name, 0, publisherUse.GetValueOrDefault(p.Id))
+                {
+                    Names = p.Translations.ToDictionary(t => t.Language, t => t.Name),
+                }).ToList(),
         });
     }
 
-    [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> SaveLanguage(int? id, string? name, int sortOrder, CancellationToken ct)
+    [HttpGet]
+    public async Task<IActionResult> EditLanguage(int? id, CancellationToken ct)
     {
-        var clean = CleanName(name, 60);
-        if (clean is null) return Back(L["Enter a language name of up to {0} characters.", 60], nameof(BookLists));
-        var normalized = clean.ToUpperInvariant();
-        if (await db.BookLanguages.AnyAsync(l => l.NormalizedName == normalized && l.Id != id, ct))
-            return Back(L["“{0}” is already on the list.", clean], nameof(BookLists));
-        BookLanguage? language;
-        if (id is null)
+        if (id is null) return View(new BookLanguageEditVm { SortOrder = (await db.BookLanguages.MaxAsync(l => (int?)l.SortOrder, ct) ?? 0) + 1 });
+        var language = await db.BookLanguages.AsNoTracking().FirstOrDefaultAsync(l => l.Id == id, ct);
+        if (language is null) return NotFound();
+        return View(new BookLanguageEditVm
         {
-            var nextOrder = (await db.BookLanguages.MaxAsync(l => (int?)l.SortOrder, ct) ?? 0) + 1;
-            db.BookLanguages.Add(language = new BookLanguage { SortOrder = sortOrder > 0 ? sortOrder : nextOrder });
-        }
-        else
+            Id = language.Id, Name = language.Name, SortOrder = language.SortOrder,
+            Books = await db.Books.CountAsync(b => b.LanguageId == id, ct),
+        });
+    }
+
+    /// <summary>Adds a book language, or renames one and changes its place in the list.</summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditLanguage(BookLanguageEditVm vm, CancellationToken ct)
+    {
+        var clean = CleanName(vm.Name, 60);
+        if (clean is null) ModelState.AddModelError(nameof(vm.Name), L["Enter a language name of up to {0} characters.", 60]);
+        var normalized = clean?.ToUpperInvariant();
+        if (clean is not null && await db.BookLanguages.AnyAsync(l => l.NormalizedName == normalized && l.Id != vm.Id, ct))
+            ModelState.AddModelError(nameof(vm.Name), L["“{0}” is already on the list.", clean]);
+        BookLanguage? language = null;
+        if (vm.Id is int id)
         {
             language = await db.BookLanguages.FirstOrDefaultAsync(l => l.Id == id, ct);
             if (language is null) return NotFound();
-            language.SortOrder = sortOrder;
         }
-        language.Name = clean;
-        language.NormalizedName = normalized;
+        if (!ModelState.IsValid)
+        {
+            vm.Books = vm.Id is int used ? await db.Books.CountAsync(b => b.LanguageId == used, ct) : 0;
+            return View(vm);
+        }
+        if (language is null) db.BookLanguages.Add(language = new BookLanguage());
+        language.Name = clean!;
+        language.NormalizedName = normalized!;
+        language.SortOrder = Math.Max(0, vm.SortOrder);
         await db.SaveChangesAsync(ct);
         return Back(L["Saved."], nameof(BookLists));
     }
@@ -275,27 +293,65 @@ public class AdminController(
         return Back(L["“{0}” was deleted.", language.Name], nameof(BookLists));
     }
 
-    /// <summary>Renames a publisher. Renaming it to another publisher's name moves that name's books here and removes the other entry.</summary>
-    [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> SavePublisher(int id, string? name, CancellationToken ct)
+    [HttpGet]
+    public async Task<IActionResult> EditPublisher(int? id, CancellationToken ct)
     {
-        var clean = CleanName(name, 200);
-        if (clean is null) return Back(L["Enter a publisher name of up to {0} characters.", 200], nameof(BookLists));
-        var publisher = await db.Publishers.FirstOrDefaultAsync(p => p.Id == id, ct);
-        if (publisher is null) return NotFound();
-        var normalized = Publisher.Normalize(clean);
-        var twin = await db.Publishers.FirstOrDefaultAsync(p => p.NormalizedName == normalized && p.Id != id, ct);
-        if (twin is not null)
+        var vm = new PublisherEditVm();
+        if (id is not null)
+        {
+            var publisher = await db.Publishers.AsNoTracking().Include(p => p.Translations).FirstOrDefaultAsync(p => p.Id == id, ct);
+            if (publisher is null) return NotFound();
+            vm.Id = publisher.Id;
+            vm.Name = publisher.Name;
+            vm.Books = await db.Books.CountAsync(b => b.PublisherId == id, ct);
+            vm.FillTranslations(publisher.Translations);
+        }
+        else vm.FillTranslations([]);
+        return View(vm);
+    }
+
+    /// <summary>
+    /// Adds a publisher, or renames one and sets its name in other languages. Renaming it to another publisher's name
+    /// moves its books to that publisher and removes this entry.
+    /// </summary>
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditPublisher(PublisherEditVm vm, CancellationToken ct)
+    {
+        var clean = CleanName(vm.Name, 200);
+        if (clean is null) ModelState.AddModelError(nameof(vm.Name), L["Enter a publisher name of up to {0} characters.", 200]);
+        Publisher? publisher = null;
+        if (vm.Id is int id)
+        {
+            publisher = await db.Publishers.Include(p => p.Translations).FirstOrDefaultAsync(p => p.Id == id, ct);
+            if (publisher is null) return NotFound();
+        }
+        var normalized = clean is null ? null : Publisher.Normalize(clean);
+        var twin = normalized is null ? null
+            : await db.Publishers.Include(p => p.Translations).FirstOrDefaultAsync(p => p.NormalizedName == normalized && p.Id != vm.Id, ct);
+        if (twin is not null && publisher is null)
+            ModelState.AddModelError(nameof(vm.Name), L["“{0}” is already on the list.", clean!]);
+        if (!ModelState.IsValid)
+        {
+            vm.Books = vm.Id is int used ? await db.Books.CountAsync(b => b.PublisherId == used, ct) : 0;
+            vm.FillTranslations(publisher?.Translations ?? []);
+            return View(vm);
+        }
+
+        var names = vm.Translations.Select(t => KeyValuePair.Create(t.Language, t.Name));
+        if (twin is not null && publisher is not null)
         {
             // Same publisher typed two ways: keep the other entry, move this one's books to it.
-            await db.Books.Where(b => b.PublisherId == id).ExecuteUpdateAsync(u => u.SetProperty(b => b.PublisherId, twin.Id), ct);
+            await db.Books.Where(b => b.PublisherId == publisher.Id).ExecuteUpdateAsync(u => u.SetProperty(b => b.PublisherId, twin.Id), ct);
             db.Publishers.Remove(publisher);
-            twin.Name = clean;
+            twin.Name = clean!;
+            PublisherText.Apply(twin, names, emptyRemoves: false);
             await db.SaveChangesAsync(ct);
-            return Back(L["Merged into “{0}”.", clean], nameof(BookLists));
+            return Back(L["Merged into “{0}”.", clean!], nameof(BookLists));
         }
-        publisher.Name = clean;
-        publisher.NormalizedName = normalized;
+        if (publisher is null) db.Publishers.Add(publisher = new Publisher());
+        publisher.Name = clean!;
+        publisher.NormalizedName = normalized!;
+        PublisherText.Apply(publisher, names, emptyRemoves: true);
         await db.SaveChangesAsync(ct);
         return Back(L["Saved."], nameof(BookLists));
     }

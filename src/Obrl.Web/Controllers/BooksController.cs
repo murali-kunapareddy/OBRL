@@ -15,7 +15,7 @@ public class BooksController(ObrlDbContext db, AccessService access, Lending len
     public async Task<IActionResult> Details(Guid id, CancellationToken ct)
     {
         var userId = AccessService.UserId(User);
-        var book = await db.Books.AsNoTracking().Include(b => b.Categories).Include(b => b.Language).Include(b => b.Publisher)
+        var book = await db.Books.AsNoTracking().Include(b => b.Categories).Include(b => b.Language).Include(b => b.Publisher).ThenInclude(p => p!.Translations)
             .FirstOrDefaultAsync(b => b.Id == id, ct);
         if (book is null) return NotFound();
         var canEdit = CanEdit(book);

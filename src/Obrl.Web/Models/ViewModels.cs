@@ -111,6 +111,15 @@ public sealed class LibraryVm
     public int SlotsInUse { get; init; }
     public int MaxBooks { get; init; }
 
+    /// <summary>Books in each category, sub categories included.</summary>
+    public Dictionary<int, int> CategoryCounts { get; init; } = [];
+
+    /// <summary>Every book the member can see.</summary>
+    public int TotalBooks { get; init; }
+
+    /// <summary>Charts for the library's front page; null on category, search and subscription pages.</summary>
+    public Obrl.Web.Services.LibraryOverview? Overview { get; init; }
+
     public bool IsCovered(CategoryNode c) => SubscribedPaths.Any(p => c.Path.StartsWith(p, StringComparison.Ordinal));
 }
 
@@ -210,10 +219,17 @@ public sealed class UploadVm
 
     public List<CategoryNode> AllCategories { get; set; } = [];
     public List<BookLanguage> AllLanguages { get; set; } = [];
-    public List<string> AllPublishers { get; set; } = [];
+    /// <summary>Publishers to pick from, with their names in other languages (the form fills those in when one is picked).</summary>
+    public List<PublisherOption> AllPublishers { get; set; } = [];
 
-    /// <summary>One entry for every non-English language, filled from the book's saved translations or the posted form.</summary>
-    public void FillTranslations(IEnumerable<BookTranslation> saved)
+    /// <summary>Where to go after saving or cancelling: the page the edit was started from.</summary>
+    public string? ReturnUrl { get; set; }
+
+    /// <summary>
+    /// One entry for every non-English language, filled from the book's saved translations or the posted form.
+    /// The publisher's saved names in each language are filled in too (only when the form was not posted).
+    /// </summary>
+    public void FillTranslations(IEnumerable<BookTranslation> saved, Publisher? publisher = null)
     {
         var posted = Translations;
         Translations = Obrl.Web.Localization.Languages.All
@@ -224,6 +240,9 @@ public sealed class UploadVm
                     .FirstOrDefault()
                 ?? new BookTranslationInput { Language = l.Code })
             .ToList();
+        if (posted.Count == 0 && publisher is not null)
+            foreach (var t in Translations)
+                t.PublisherName = publisher.Translations.FirstOrDefault(x => x.Language == t.Language)?.Name;
     }
 }
 
@@ -240,6 +259,13 @@ public sealed class BookTranslationInput
 
     [StringLength(4000), Display(Name = "Description")]
     public string? Description { get; set; }
+
+    /// <summary>
+    /// The publisher's name in this language. It belongs to the publisher, not the book, so every book from the same
+    /// publisher shows it. Not part of <see cref="IsEmpty"/>.
+    /// </summary>
+    [StringLength(200), Display(Name = "Publisher")]
+    public string? PublisherName { get; set; }
 
     public bool IsEmpty => string.IsNullOrWhiteSpace(Title) && string.IsNullOrWhiteSpace(Author) && string.IsNullOrWhiteSpace(Description);
 }
@@ -357,4 +383,57 @@ public sealed class BookListsVm
     public List<BookListRow> Publishers { get; init; } = [];
 }
 
-public sealed record BookListRow(int Id, string Name, int SortOrder, int Books);
+public sealed record BookListRow(int Id, string Name, int SortOrder, int Books)
+{
+    /// <summary>Names entered in other languages (publishers only), keyed by language code.</summary>
+    public IReadOnlyDictionary<string, string> Names { get; init; } = new Dictionary<string, string>();
+}
+
+/// <summary>A publisher on the upload form's pick list, with its names in other languages keyed by language code.</summary>
+public sealed record PublisherOption(string Name, IReadOnlyDictionary<string, string> Names);
+
+/// <summary>The form that adds or edits a book language (Admin &gt; Book lists).</summary>
+public sealed class BookLanguageEditVm
+{
+    public int? Id { get; set; }
+
+    [Required, StringLength(60), Display(Name = "Name")]
+    public string Name { get; set; } = "";
+
+    [Range(0, 100000), Display(Name = "Order")]
+    public int SortOrder { get; set; }
+
+    public int Books { get; set; }
+}
+
+/// <summary>The form that adds or edits a publisher (Admin &gt; Book lists), with its name in other languages.</summary>
+public sealed class PublisherEditVm
+{
+    public int? Id { get; set; }
+
+    [Required, StringLength(200), Display(Name = "Name")]
+    public string Name { get; set; } = "";
+
+    /// <summary>One entry for every non-English language; an empty name shows the English one.</summary>
+    public List<PublisherNameInput> Translations { get; set; } = [];
+
+    public int Books { get; set; }
+
+    public void FillTranslations(IEnumerable<PublisherTranslation> saved)
+    {
+        var posted = Translations;
+        Translations = Obrl.Web.Localization.Languages.All
+            .Where(l => l.Code != Obrl.Web.Localization.Languages.Default)
+            .Select(l => posted.FirstOrDefault(p => p.Language == l.Code)
+                ?? new PublisherNameInput { Language = l.Code, Name = saved.FirstOrDefault(t => t.Language == l.Code)?.Name })
+            .ToList();
+    }
+}
+
+public sealed class PublisherNameInput
+{
+    public string? Language { get; set; }
+
+    [StringLength(200), Display(Name = "Name")]
+    public string? Name { get; set; }
+}

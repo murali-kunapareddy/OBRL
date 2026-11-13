@@ -24,6 +24,7 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
     public DbSet<BookLanguage> BookLanguages => Set<BookLanguage>();
     public DbSet<Publisher> Publishers => Set<Publisher>();
+    public DbSet<PublisherTranslation> PublisherTranslations => Set<PublisherTranslation>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -103,6 +104,14 @@ public class ObrlDbContext(DbContextOptions<ObrlDbContext> options) : IdentityDb
             e.Property(x => x.Name).HasMaxLength(200).IsRequired();
             e.Property(x => x.NormalizedName).HasMaxLength(200).IsRequired();
             e.HasIndex(x => x.NormalizedName).IsUnique();
+        });
+
+        b.Entity<PublisherTranslation>(e =>
+        {
+            e.HasKey(x => new { x.PublisherId, x.Language });
+            e.Property(x => x.Language).HasMaxLength(10);
+            e.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            e.HasOne(x => x.Publisher).WithMany(x => x.Translations).HasForeignKey(x => x.PublisherId).OnDelete(DeleteBehavior.Cascade);
         });
 
         b.Entity<BookTranslation>(e =>

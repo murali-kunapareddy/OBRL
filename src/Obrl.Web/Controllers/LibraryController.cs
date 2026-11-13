@@ -82,8 +82,17 @@ public class LibraryController(ObrlDbContext db, AccessService access, Lending l
             foreach (var ownId in own) notes[ownId] = L["Uploaded by you"].Value;
         }
 
+        // Book counts next to each category (its sub categories included) and next to "All books".
+        var visible = access.VisibleBooks(User);
+        var links = (await visible.SelectMany(b => b.Categories.Select(c => new { b.Id, c.CategoryId })).ToListAsync(ct))
+            .Select(x => (x.Id, x.CategoryId)).ToList();
+        var showOverview = current is null && string.IsNullOrEmpty(search) && !mine && page == 1;
+
         return View(new LibraryVm
         {
+            CategoryCounts = LibraryStats.CountPerCategory(tree, links),
+            TotalBooks = await visible.CountAsync(ct),
+            Overview = showOverview ? await LibraryStats.BuildAsync(db, visible, tree, links, s => L[s].Value, bookText, ct) : null,
             Roots = tree.Roots,
             Current = current,
             Breadcrumb = current is null ? [] : tree.Trail(current.Id),

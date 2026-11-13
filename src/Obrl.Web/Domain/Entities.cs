@@ -202,8 +202,23 @@ public class Publisher
     public string NormalizedName { get; set; } = "";
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
+    /// <summary>The publisher's name in other interface languages. English (<see cref="Name"/>) is required; the rest are optional.</summary>
+    public List<PublisherTranslation> Translations { get; set; } = [];
+
     public static string Normalize(string name) =>
         string.Join(' ', name.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)).ToUpperInvariant();
+}
+
+/// <summary>A publisher's name in one non-English interface language. Readers of other languages see the English name.</summary>
+public class PublisherTranslation
+{
+    public int PublisherId { get; set; }
+    public Publisher? Publisher { get; set; }
+
+    /// <summary>Language code from <see cref="Obrl.Web.Localization.Languages"/>, e.g. "te".</summary>
+    public string Language { get; set; } = "";
+    public string Name { get; set; } = "";
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
 
 public class BookCategory

@@ -86,6 +86,43 @@
         });
     });
 
+    // ----- Phones: the side menu slides in from the left -----
+    var shell = document.querySelector(".app-shell");
+    function setMenu(open) {
+        if (!shell) return;
+        shell.classList.toggle("menu-open", open);
+        document.querySelectorAll("[data-menu-open]").forEach(function (b) { b.setAttribute("aria-expanded", open ? "true" : "false"); });
+        document.body.classList.toggle("overflow-hidden", open);
+        if (open) { var first = document.querySelector("#sidebar a, #sidebar button"); if (first) first.focus(); }
+    }
+    document.querySelectorAll("[data-menu-open]").forEach(function (b) { b.addEventListener("click", function () { setMenu(true); }); });
+    document.querySelectorAll("[data-menu-close]").forEach(function (b) { b.addEventListener("click", function () { setMenu(false); }); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && shell && shell.classList.contains("menu-open")) setMenu(false); });
+    window.matchMedia("(min-width: 992px)").addEventListener("change", function (m) { if (m.matches) setMenu(false); });
+
+    // ----- Panels that start folded on phones (<details data-collapse-small>), and remember the member's choice -----
+    var small = window.matchMedia("(max-width: 991.98px)").matches;
+    document.querySelectorAll("details[data-collapse-small], details[data-remember]").forEach(function (d) {
+        var key = d.getAttribute("data-remember");
+        var saved = null;
+        try { saved = key ? localStorage.getItem(key) : null; } catch (e) { /* private mode */ }
+        if (saved !== null) d.open = saved === "1";
+        else if (small && d.hasAttribute("data-collapse-small")) d.open = false;
+        if (key) d.addEventListener("toggle", function () { try { localStorage.setItem(key, d.open ? "1" : "0"); } catch (e) { } });
+    });
+
+    // ----- Filter a long list as you type (<input data-filter-list="#list">, rows carry data-filter-text) -----
+    document.querySelectorAll("[data-filter-list]").forEach(function (input) {
+        var list = document.querySelector(input.getAttribute("data-filter-list"));
+        if (!list) return;
+        input.addEventListener("input", function () {
+            var q = input.value.trim().toLowerCase();
+            list.querySelectorAll("[data-filter-text]").forEach(function (row) {
+                row.hidden = q !== "" && row.getAttribute("data-filter-text").toLowerCase().indexOf(q) < 0;
+            });
+        });
+    });
+
     // ----- Confirm before destructive actions -----
     document.addEventListener("submit", function (e) {
         var msg = e.target.getAttribute && e.target.getAttribute("data-confirm");

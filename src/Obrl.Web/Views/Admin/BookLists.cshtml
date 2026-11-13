@@ -1,91 +1,85 @@
 @model BookListsVm
 @{
     ViewData["Title"] = L["Book lists"].Value;
+    var others = Obrl.Web.Localization.Languages.All.Where(l => l.Code != Obrl.Web.Localization.Languages.Default).ToList();
 }
 <h1 class="page-title">@L["Book lists"]</h1>
 <p class="page-sub">@L["The languages and publishers uploaders choose from when they add or edit a book."]</p>
 
 <div class="row g-4">
-    <div class="col-lg-6">
-        <div class="panel p-4">
-            <h2 class="h5">@L["Languages"]</h2>
-            <p class="text-muted small">@L["Uploaders pick the book's language from this list only. Lower numbers come first. A language used by books cannot be deleted."]</p>
-            <div class="table-responsive">
-                <table class="table table-sm align-middle">
-                    <thead><tr><th>@L["Name"]</th><th style="width:90px">@L["Order"]</th><th class="text-end">@L["Books"]</th><th></th></tr></thead>
-                    <tbody>
-                    @foreach (var l in Model.Languages)
-                    {
-                        <tr>
-                            <td colspan="2">
-                                <form method="post" asp-action="SaveLanguage" class="d-flex gap-1">
-                                    <input type="hidden" name="id" value="@l.Id" />
-                                    <input name="name" value="@l.Name" class="form-control form-control-sm" maxlength="60" required aria-label="@L["Name"]" />
-                                    <input name="sortOrder" value="@l.SortOrder" type="number" class="form-control form-control-sm" style="width:80px" aria-label="@L["Order"]" />
-                                    <button class="btn btn-sm btn-outline-secondary">@L["Save"]</button>
-                                </form>
-                            </td>
-                            <td class="text-end small text-muted">@l.Books</td>
-                            <td class="text-end">
-                                @if (l.Books == 0)
-                                {
-                                    <form method="post" asp-action="DeleteLanguage" data-confirm="@L["Delete {0}?", l.Name]">
-                                        <input type="hidden" name="id" value="@l.Id" />
-                                        <button class="btn btn-sm btn-link text-danger" title="@L["Delete"]" aria-label="@L["Delete"]"><i class="bi bi-trash"></i></button>
-                                    </form>
-                                }
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+    <div class="col-lg-5">
+        <div class="panel">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                <h2 class="h5 mb-0">@L["Languages"] <span class="text-muted fw-normal">(@Model.Languages.Count)</span></h2>
+                <a class="btn btn-sm btn-primary" asp-action="EditLanguage"><i class="bi bi-plus-lg me-1"></i>@L["Add language"]</a>
             </div>
-            <form method="post" asp-action="SaveLanguage" class="d-flex gap-1">
-                <input name="name" class="form-control form-control-sm" maxlength="60" required placeholder="@L["New language"]" aria-label="@L["New language"]" />
-                <input type="hidden" name="sortOrder" value="0" />
-                <button class="btn btn-sm btn-primary text-nowrap"><i class="bi bi-plus-lg me-1"></i>@L["Add"]</button>
-            </form>
+            <p class="text-muted small">@L["Uploaders pick the book's language from this list only. Lower numbers come first. A language used by books cannot be deleted."]</p>
+            <ul class="list-rows">
+                @foreach (var l in Model.Languages)
+                {
+                    <li>
+                        <div class="min-w-0 flex-grow-1">
+                            <div class="fw-semibold text-truncate">@l.Name</div>
+                            <div class="small text-muted">@L["Order"] @l.SortOrder · @L["{0} books", l.Books]</div>
+                        </div>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="EditLanguage" asp-route-id="@l.Id" title="@L["Edit"]" aria-label="@L["Edit {0}", l.Name]"><i class="bi bi-pencil"></i></a>
+                        @if (l.Books == 0)
+                        {
+                            <form method="post" asp-action="DeleteLanguage" data-confirm="@L["Delete {0}?", l.Name]">
+                                <input type="hidden" name="id" value="@l.Id" />
+                                <button class="btn btn-sm btn-outline-danger" title="@L["Delete"]" aria-label="@L["Delete {0}", l.Name]"><i class="bi bi-trash"></i></button>
+                            </form>
+                        }
+                    </li>
+                }
+            </ul>
         </div>
     </div>
-    <div class="col-lg-6">
-        <div class="panel p-4">
-            <h2 class="h5">@L["Publishers"]</h2>
-            <p class="text-muted small">@L["Uploaders pick a publisher from this list or type a new one, which is added here. Fix spelling here; renaming one to another's name merges the two."]</p>
+    <div class="col-lg-7">
+        <div class="panel">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                <h2 class="h5 mb-0">@L["Publishers"] <span class="text-muted fw-normal">(@Model.Publishers.Count)</span></h2>
+                <a class="btn btn-sm btn-primary" asp-action="EditPublisher"><i class="bi bi-plus-lg me-1"></i>@L["Add publisher"]</a>
+            </div>
+            <p class="text-muted small">@L["Uploaders pick a publisher from this list or type a new one, which is added here. Each publisher can have its name in every language; readers see the English name where none was entered. Renaming one to another's name merges the two."]</p>
             @if (Model.Publishers.Count == 0)
             {
                 <p class="text-muted small mb-0">@L["No publishers yet."]</p>
             }
             else
             {
-                <div class="table-responsive" style="max-height:600px;overflow:auto">
-                    <table class="table table-sm align-middle">
-                        <thead><tr><th>@L["Name"]</th><th class="text-end">@L["Books"]</th><th></th></tr></thead>
-                        <tbody>
-                        @foreach (var p in Model.Publishers)
-                        {
-                            <tr>
-                                <td>
-                                    <form method="post" asp-action="SavePublisher" class="d-flex gap-1">
-                                        <input type="hidden" name="id" value="@p.Id" />
-                                        <input name="name" value="@p.Name" class="form-control form-control-sm" maxlength="200" required aria-label="@L["Name"]" />
-                                        <button class="btn btn-sm btn-outline-secondary">@L["Save"]</button>
-                                    </form>
-                                </td>
-                                <td class="text-end small text-muted">@p.Books</td>
-                                <td class="text-end">
-                                    @if (p.Books == 0)
+                @if (Model.Publishers.Count > 8)
+                {
+                    <input type="search" class="form-control form-control-sm mb-2" placeholder="@L["Filter publishers"]" aria-label="@L["Filter publishers"]" data-filter-list="#publisher-rows" />
+                }
+                <ul class="list-rows list-rows-scroll" id="publisher-rows">
+                    @foreach (var p in Model.Publishers)
+                    {
+                        <li data-filter-text="@p.Name @string.Join(" ", p.Names.Values)">
+                            <div class="min-w-0 flex-grow-1">
+                                <div class="fw-semibold text-truncate">@p.Name</div>
+                                <div class="small text-muted">
+                                    @L["{0} books", p.Books]
+                                    @foreach (var lang in others)
                                     {
-                                        <form method="post" asp-action="DeletePublisher" data-confirm="@L["Delete {0}?", p.Name]">
-                                            <input type="hidden" name="id" value="@p.Id" />
-                                            <button class="btn btn-sm btn-link text-danger" title="@L["Delete"]" aria-label="@L["Delete"]"><i class="bi bi-trash"></i></button>
-                                        </form>
+                                        if (p.Names.TryGetValue(lang.Code, out var name))
+                                        {
+                                            <span class="ms-2" lang="@lang.Code" title="@lang.NativeName"><i class="bi bi-translate me-1"></i>@name</span>
+                                        }
                                     }
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
+                                </div>
+                            </div>
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="EditPublisher" asp-route-id="@p.Id" title="@L["Edit"]" aria-label="@L["Edit {0}", p.Name]"><i class="bi bi-pencil"></i></a>
+                            @if (p.Books == 0)
+                            {
+                                <form method="post" asp-action="DeletePublisher" data-confirm="@L["Delete {0}?", p.Name]">
+                                    <input type="hidden" name="id" value="@p.Id" />
+                                    <button class="btn btn-sm btn-outline-danger" title="@L["Delete"]" aria-label="@L["Delete {0}", p.Name]"><i class="bi bi-trash"></i></button>
+                                </form>
+                            }
+                        </li>
+                    }
+                </ul>
             }
         </div>
     </div>

@@ -1961,4 +1961,160 @@
   <data name="Admins choose which emails go out, and can send themselves a test email, under Admin &gt; Settings." xml:space="preserve">
     <value>ಯಾವ ಇಮೇಲ್‌ಗಳು ಹೋಗಬೇಕೆಂದು ನಿರ್ವಾಹಕರು ನಿರ್ವಾಹಕ &gt; ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಆರಿಸುತ್ತಾರೆ, ತಮಗೆ ಪರೀಕ್ಷಾ ಇಮೇಲ್ ಸಹ ಕಳುಹಿಸಿಕೊಳ್ಳಬಹುದು.</value>
   </data>
+  <data name="Empty shows the English publisher" xml:space="preserve">
+    <value>ಖಾಲಿ ಇದ್ದರೆ ಇಂಗ್ಲಿಷ್ ಪ್ರಕಾಶಕರ ಹೆಸರು ಕಾಣುತ್ತದೆ</value>
+  </data>
+  <data name="The publisher’s name is shared by all its books, so changing it here changes it on every book from this publisher." xml:space="preserve">
+    <value>ಪ್ರಕಾಶಕರ ಹೆಸರು ಅವರ ಎಲ್ಲಾ ಪುಸ್ತಕಗಳಿಗೂ ಒಂದೇ, ಆದ್ದರಿಂದ ಇಲ್ಲಿ ಬದಲಾಯಿಸಿದರೆ ಆ ಪ್ರಕಾಶಕರ ಪ್ರತಿಯೊಂದು ಪುಸ್ತಕದಲ್ಲೂ ಬದಲಾಗುತ್ತದೆ.</value>
+  </data>
+  <data name="Enter the name in English here; other languages go in their tabs above." xml:space="preserve">
+    <value>ಇಲ್ಲಿ ಹೆಸರನ್ನು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಬರೆಯಿರಿ; ಇತರ ಭಾಷೆಗಳ ಹೆಸರುಗಳನ್ನು ಮೇಲಿನ ಅವುಗಳ ಟ್ಯಾಬ್‌ಗಳಲ್ಲಿ ಬರೆಯಿರಿ.</value>
+  </data>
+  <data name="Add language" xml:space="preserve">
+    <value>ಭಾಷೆ ಸೇರಿಸಿ</value>
+  </data>
+  <data name="{0} books" xml:space="preserve">
+    <value>{0} ಪುಸ್ತಕಗಳು</value>
+  </data>
+  <data name="Edit {0}" xml:space="preserve">
+    <value>{0} ತಿದ್ದಿ</value>
+  </data>
+  <data name="Delete {0}" xml:space="preserve">
+    <value>{0} ಅಳಿಸಿ</value>
+  </data>
+  <data name="Add publisher" xml:space="preserve">
+    <value>ಪ್ರಕಾಶಕರನ್ನು ಸೇರಿಸಿ</value>
+  </data>
+  <data name="Uploaders pick a publisher from this list or type a new one, which is added here. Each publisher can have its name in every language; readers see the English name where none was entered. Renaming one to another's name merges the two." xml:space="preserve">
+    <value>ಅಪ್‌ಲೋಡ್ ಮಾಡುವವರು ಈ ಪಟ್ಟಿಯಿಂದ ಪ್ರಕಾಶಕರನ್ನು ಆರಿಸುತ್ತಾರೆ ಅಥವಾ ಹೊಸದನ್ನು ಟೈಪ್ ಮಾಡುತ್ತಾರೆ, ಅದು ಇಲ್ಲಿ ಸೇರುತ್ತದೆ. ಪ್ರತಿಯೊಬ್ಬ ಪ್ರಕಾಶಕರ ಹೆಸರನ್ನು ಪ್ರತಿ ಭಾಷೆಯಲ್ಲೂ ನೀಡಬಹುದು; ನೀಡದ ಕಡೆ ಓದುಗರಿಗೆ ಇಂಗ್ಲಿಷ್ ಹೆಸರು ಕಾಣುತ್ತದೆ. ಒಂದರ ಹೆಸರನ್ನು ಇನ್ನೊಂದರ ಹೆಸರಿಗೆ ಬದಲಾಯಿಸಿದರೆ ಎರಡೂ ಒಂದಾಗುತ್ತವೆ.</value>
+  </data>
+  <data name="Filter publishers" xml:space="preserve">
+    <value>ಪ್ರಕಾಶಕರನ್ನು ಹುಡುಕಿ</value>
+  </data>
+  <data name="Edit publisher" xml:space="preserve">
+    <value>ಪ್ರಕಾಶಕರನ್ನು ತಿದ್ದಿ</value>
+  </data>
+  <data name="Used by {0} books. Changes show on all of them." xml:space="preserve">
+    <value>{0} ಪುಸ್ತಕಗಳು ಇದನ್ನು ಬಳಸುತ್ತಿವೆ. ಬದಲಾವಣೆಗಳು ಅವೆಲ್ಲದರಲ್ಲೂ ಕಾಣುತ್ತವೆ.</value>
+  </data>
+  <data name="Uploaders can pick it as soon as it is saved." xml:space="preserve">
+    <value>ಉಳಿಸಿದ ಕೂಡಲೇ ಅಪ್‌ಲೋಡ್ ಮಾಡುವವರು ಇದನ್ನು ಆರಿಸಬಹುದು.</value>
+  </data>
+  <data name="Typing the name of another publisher on the list merges the two: its books move to that publisher." xml:space="preserve">
+    <value>ಪಟ್ಟಿಯಲ್ಲಿರುವ ಇನ್ನೊಬ್ಬ ಪ್ರಕಾಶಕರ ಹೆಸರನ್ನು ಟೈಪ್ ಮಾಡಿದರೆ ಎರಡೂ ಒಂದಾಗುತ್ತವೆ: ಇದರ ಪುಸ್ತಕಗಳು ಆ ಪ್ರಕಾಶಕರಿಗೆ ಸರಿಯುತ್ತವೆ.</value>
+  </data>
+  <data name="Edit language" xml:space="preserve">
+    <value>ಭಾಷೆ ತಿದ್ದಿ</value>
+  </data>
+  <data name="Used by {0} books. Renaming it changes it on all of them." xml:space="preserve">
+    <value>{0} ಪುಸ್ತಕಗಳು ಇದನ್ನು ಬಳಸುತ್ತಿವೆ. ಹೆಸರು ಬದಲಾಯಿಸಿದರೆ ಅವೆಲ್ಲದರಲ್ಲೂ ಬದಲಾಗುತ್ತದೆ.</value>
+  </data>
+  <data name="Write the name in English. Readers using OBRL in Telugu or Kannada see the common language names in their language." xml:space="preserve">
+    <value>ಹೆಸರನ್ನು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಬರೆಯಿರಿ. OBRL ಅನ್ನು ತೆಲುಗು ಅಥವಾ ಕನ್ನಡದಲ್ಲಿ ಬಳಸುವ ಓದುಗರಿಗೆ ಸಾಮಾನ್ಯ ಭಾಷೆಗಳ ಹೆಸರುಗಳು ಅವರ ಭಾಷೆಯಲ್ಲೇ ಕಾಣುತ್ತವೆ.</value>
+  </data>
+  <data name="Text size" xml:space="preserve">
+    <value>ಅಕ್ಷರದ ಗಾತ್ರ</value>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>ಪುಟಗಳು</value>
+  </data>
+  <data name="Books by language" xml:space="preserve">
+    <value>ಭಾಷಾವಾರು ಪುಸ್ತಕಗಳು</value>
+  </data>
+  <data name="No books yet." xml:space="preserve">
+    <value>ಇನ್ನೂ ಪುಸ್ತಕಗಳಿಲ್ಲ.</value>
+  </data>
+  <data name="Top 10 publishers" xml:space="preserve">
+    <value>ಟಾಪ್ 10 ಪ್ರಕಾಶಕರು</value>
+  </data>
+  <data name="No publishers entered yet." xml:space="preserve">
+    <value>ಇನ್ನೂ ಪ್ರಕಾಶಕರನ್ನು ನಮೂದಿಸಿಲ್ಲ.</value>
+  </data>
+  <data name="Top 10 categories" xml:space="preserve">
+    <value>ಟಾಪ್ 10 ವರ್ಗಗಳು</value>
+  </data>
+  <data name="Most read" xml:space="preserve">
+    <value>ಹೆಚ್ಚು ಓದಿದವು</value>
+  </data>
+  <data name="Nobody has opened a book yet." xml:space="preserve">
+    <value>ಇನ್ನೂ ಯಾರೂ ಪುಸ್ತಕ ತೆರೆದಿಲ್ಲ.</value>
+  </data>
+  <data name="No ratings yet." xml:space="preserve">
+    <value>ಇನ್ನೂ ರೇಟಿಂಗ್‌ಗಳಿಲ್ಲ.</value>
+  </data>
+  <data name="1 reader" xml:space="preserve">
+    <value>1 ಓದುಗ</value>
+  </data>
+  <data name="{0} readers" xml:space="preserve">
+    <value>{0} ಓದುಗರು</value>
+  </data>
+  <data name="1 book" xml:space="preserve">
+    <value>1 ಪುಸ್ತಕ</value>
+  </data>
+  <data name="Library at a glance" xml:space="preserve">
+    <value>ಗ್ರಂಥಾಲಯ ಒಂದು ನೋಟದಲ್ಲಿ</value>
+  </data>
+  <data name="Readers" xml:space="preserve">
+    <value>ಓದುಗರು</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>ಮೆನು</value>
+  </data>
+  <data name="My books" xml:space="preserve">
+    <value>ನನ್ನ ಪುಸ್ತಕಗಳು</value>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>ಇನ್ನಷ್ಟು</value>
+  </data>
+  <data name="Books waiting for review" xml:space="preserve">
+    <value>ಪರಿಶೀಲನೆಗೆ ಕಾಯುತ್ತಿರುವ ಪುಸ್ತಕಗಳು</value>
+  </data>
+  <data name="Tap the middle to show or hide the bars. Tap the left or right edge to turn the page." xml:space="preserve">
+    <value>ಬಾರ್‌ಗಳನ್ನು ತೋರಿಸಲು ಅಥವಾ ಮರೆಮಾಡಲು ಮಧ್ಯದಲ್ಲಿ ತಟ್ಟಿ. ಪುಟ ತಿರುಗಿಸಲು ಎಡ ಅಥವಾ ಬಲ ಅಂಚನ್ನು ತಟ್ಟಿ.</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>ಇಂಗ್ಲಿಷ್</value>
+  </data>
+  <data name="Telugu" xml:space="preserve">
+    <value>ತೆಲುಗು</value>
+  </data>
+  <data name="Hindi" xml:space="preserve">
+    <value>ಹಿಂದಿ</value>
+  </data>
+  <data name="Kannada" xml:space="preserve">
+    <value>ಕನ್ನಡ</value>
+  </data>
+  <data name="Not set" xml:space="preserve">
+    <value>ನೀಡಿಲ್ಲ</value>
+  </data>
+  <data name="1 rating" xml:space="preserve">
+    <value>1 ರೇಟಿಂಗ್</value>
+  </data>
+  <data name="{0} ratings" xml:space="preserve">
+    <value>{0} ರೇಟಿಂಗ್‌ಗಳು</value>
+  </data>
+  <data name="Phones and tablets, library charts and publisher names in other languages" xml:space="preserve">
+    <value>ಫೋನ್‌ಗಳು, ಟ್ಯಾಬ್ಲೆಟ್‌ಗಳು, ಗ್ರಂಥಾಲಯ ಚಾರ್ಟ್‌ಗಳು ಮತ್ತು ಇತರ ಭಾಷೆಗಳಲ್ಲಿ ಪ್ರಕಾಶಕರ ಹೆಸರುಗಳು</value>
+  </data>
+  <data name="OBRL works on phones and tablets: the side menu opens from a button at the top or from More at the bottom, and the library's categories fold away under one button." xml:space="preserve">
+    <value>OBRL ಫೋನ್‌ಗಳು ಮತ್ತು ಟ್ಯಾಬ್ಲೆಟ್‌ಗಳಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ: ಬದಿಯ ಮೆನು ಮೇಲಿನ ಬಟನ್‌ನಿಂದ ಅಥವಾ ಕೆಳಗಿನ 'ಇನ್ನಷ್ಟು'ದಿಂದ ತೆರೆಯುತ್ತದೆ, ಗ್ರಂಥಾಲಯದ ವರ್ಗಗಳು ಒಂದೇ ಬಟನ್ ಅಡಿಯಲ್ಲಿ ಮಡಚಿಕೊಳ್ಳುತ್ತವೆ.</value>
+  </data>
+  <data name="The reader fits phones: page turning sits at the bottom within reach of a thumb, pinch to zoom a page, tap the left or right edge to turn the page, and tap the middle to hide the bars." xml:space="preserve">
+    <value>ರೀಡರ್ ಫೋನ್‌ಗಳಿಗೆ ಹೊಂದುತ್ತದೆ: ಪುಟ ತಿರುಗಿಸುವ ಬಟನ್‌ಗಳು ಹೆಬ್ಬೆರಳಿಗೆ ಸಿಗುವಂತೆ ಕೆಳಗಿವೆ, ಪುಟವನ್ನು ದೊಡ್ಡದಾಗಿಸಲು ಎರಡು ಬೆರಳುಗಳಿಂದ ಹಿಗ್ಗಿಸಿ, ಪುಟ ತಿರುಗಿಸಲು ಎಡ ಅಥವಾ ಬಲ ಅಂಚನ್ನು ತಟ್ಟಿ, ಬಾರ್‌ಗಳನ್ನು ಮರೆಮಾಡಲು ಮಧ್ಯದಲ್ಲಿ ತಟ್ಟಿ.</value>
+  </data>
+  <data name="The library shows how many books each category has, and the total next to All books." xml:space="preserve">
+    <value>ಪ್ರತಿ ವರ್ಗದಲ್ಲಿ ಎಷ್ಟು ಪುಸ್ತಕಗಳಿವೆ ಮತ್ತು 'ಎಲ್ಲಾ ಪುಸ್ತಕಗಳು' ಪಕ್ಕದಲ್ಲಿ ಒಟ್ಟು ಸಂಖ್ಯೆಯನ್ನು ಗ್ರಂಥಾಲಯ ತೋರಿಸುತ್ತದೆ.</value>
+  </data>
+  <data name="Library at a glance: charts of books by language, the top 10 publishers and categories, and the most read and top rated books." xml:space="preserve">
+    <value>ಗ್ರಂಥಾಲಯ ಒಂದು ನೋಟದಲ್ಲಿ: ಭಾಷಾವಾರು ಪುಸ್ತಕಗಳು, ಟಾಪ್ 10 ಪ್ರಕಾಶಕರು ಮತ್ತು ವರ್ಗಗಳು, ಹೆಚ್ಚು ಓದಿದ ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ರೇಟಿಂಗ್ ಪಡೆದ ಪುಸ್ತಕಗಳ ಚಾರ್ಟ್‌ಗಳು.</value>
+  </data>
+  <data name="Publisher names can be entered in Telugu and Kannada, on the book form or under Admin &gt; Book lists. Readers see the English name where none was entered." xml:space="preserve">
+    <value>ಪ್ರಕಾಶಕರ ಹೆಸರುಗಳನ್ನು ಪುಸ್ತಕ ಫಾರ್ಮ್‌ನಲ್ಲಿ ಅಥವಾ ಅಡ್ಮಿನ್ &gt; ಪುಸ್ತಕ ಪಟ್ಟಿಗಳಲ್ಲಿ ತೆಲುಗು ಮತ್ತು ಕನ್ನಡದಲ್ಲಿ ನೀಡಬಹುದು. ನೀಡದ ಕಡೆ ಓದುಗರಿಗೆ ಇಂಗ್ಲಿಷ್ ಹೆಸರು ಕಾಣುತ್ತದೆ.</value>
+  </data>
+  <data name="Admin &gt; Book lists has add and edit pages for languages and publishers." xml:space="preserve">
+    <value>ಅಡ್ಮಿನ್ &gt; ಪುಸ್ತಕ ಪಟ್ಟಿಗಳಲ್ಲಿ ಭಾಷೆಗಳು ಮತ್ತು ಪ್ರಕಾಶಕರನ್ನು ಸೇರಿಸಲು ಹಾಗೂ ತಿದ್ದಲು ಪುಟಗಳಿವೆ.</value>
+  </data>
+  <data name="After editing a book, you go back to the page you started from." xml:space="preserve">
+    <value>ಪುಸ್ತಕವನ್ನು ತಿದ್ದಿದ ನಂತರ, ನೀವು ಆರಂಭಿಸಿದ ಪುಟಕ್ಕೆ ಮರಳುತ್ತೀರಿ.</value>
+  </data>
 </root>

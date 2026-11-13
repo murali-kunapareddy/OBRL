@@ -1,0 +1,43 @@
+@model BookLanguageEditVm
+@{
+    ViewData["Title"] = Model.Id is null ? L["Add language"].Value : L["Edit language"].Value;
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-2">
+        <li class="breadcrumb-item"><a asp-action="BookLists">@L["Book lists"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+    </ol>
+</nav>
+<h1 class="page-title">@ViewData["Title"]</h1>
+<p class="page-sub">
+    @if (Model.Id is not null)
+    {
+        @L["Used by {0} books. Renaming it changes it on all of them.", Model.Books]
+    }
+    else
+    {
+        @L["Uploaders can pick it as soon as it is saved."]
+    }
+</p>
+
+<form method="post" class="panel form-narrow" asp-action="EditLanguage">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="row g-3 mb-3">
+        <div class="col-sm-8">
+            <label asp-for="Name" class="form-label fw-semibold"></label>
+            <input asp-for="Name" class="form-control" maxlength="60" autofocus />
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+        <div class="col-sm-4">
+            <label asp-for="SortOrder" class="form-label fw-semibold"></label>
+            <input asp-for="SortOrder" type="number" inputmode="numeric" min="0" class="form-control" />
+            <span asp-validation-for="SortOrder" class="text-danger small"></span>
+        </div>
+    </div>
+    <p class="small text-muted">@L["Write the name in English. Readers using OBRL in Telugu or Kannada see the common language names in their language."]</p>
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">@L["Save"]</button>
+        <a class="btn btn-link" asp-action="BookLists">@L["Cancel"]</a>
+    </div>
+</form>

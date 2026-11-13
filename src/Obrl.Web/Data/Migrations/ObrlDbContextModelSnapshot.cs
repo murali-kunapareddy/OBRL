@@ -809,6 +809,28 @@ namespace Obrl.Web.Data.Migrations
                     b.ToTable("Publishers");
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.PublisherTranslation", b =>
+                {
+                    b.Property<int>("PublisherId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Language")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("PublisherId", "Language");
+
+                    b.ToTable("PublisherTranslations");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Rating", b =>
                 {
                     b.Property<string>("UserId")
@@ -1213,6 +1235,17 @@ namespace Obrl.Web.Data.Migrations
                     b.Navigation("Comment");
                 });
 
+            modelBuilder.Entity("Obrl.Web.Domain.PublisherTranslation", b =>
+                {
+                    b.HasOne("Obrl.Web.Domain.Publisher", "Publisher")
+                        .WithMany("Translations")
+                        .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Publisher");
+                });
+
             modelBuilder.Entity("Obrl.Web.Domain.Rating", b =>
                 {
                     b.HasOne("Obrl.Web.Domain.Book", "Book")
@@ -1305,6 +1338,11 @@ namespace Obrl.Web.Data.Migrations
                     b.Navigation("Replies");
 
                     b.Navigation("Reports");
+                });
+
+            modelBuilder.Entity("Obrl.Web.Domain.Publisher", b =>
+                {
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }
