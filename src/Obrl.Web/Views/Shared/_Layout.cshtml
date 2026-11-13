@@ -50,8 +50,11 @@
 else
 {
     <div class="app-shell">
-        <aside class="sidebar">
-            <a class="brand" href="/"><span class="brand-mark"><i class="bi bi-book"></i></span> OBRL</a>
+        <aside class="sidebar" id="sidebar" aria-label="@L["Main"]">
+            <div class="d-flex align-items-center justify-content-between">
+                <a class="brand" href="/"><span class="brand-mark"><i class="bi bi-book"></i></span> OBRL</a>
+                <button type="button" class="btn btn-link text-reset menu-close" data-menu-close aria-label="@L["Close"]"><i class="bi bi-x-lg"></i></button>
+            </div>
             <a class="side-link @Active("Home")" href="/"><i class="bi bi-house"></i> @L["Dashboard"]</a>
             <a class="side-link @Active("Library")" asp-controller="Library" asp-action="Index"><i class="bi bi-collection"></i> @L["Library"]</a>
             <a class="side-link" asp-controller="Library" asp-action="Index" asp-route-mine="true"><i class="bi bi-bookmark-star"></i> @L["My subscriptions"]</a>
@@ -74,7 +77,7 @@ else
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() is "Users" or "CreateUser" ? "active" : "")" asp-controller="Admin" asp-action="Users"><i class="bi bi-people"></i> @L["Users"]</a>
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Disclaimer" ? "active" : "")" asp-controller="Admin" asp-action="Disclaimer"><i class="bi bi-file-earmark-text"></i> @L["Disclaimer"]</a>
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Activity" ? "active" : "")" asp-controller="Admin" asp-action="Activity"><i class="bi bi-activity"></i> @L["Activity"]</a>
-                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "BookLists" ? "active" : "")" asp-controller="Admin" asp-action="BookLists"><i class="bi bi-list-ul"></i> @L["Book lists"]</a>
+                <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() is "BookLists" or "EditLanguage" or "EditPublisher" ? "active" : "")" asp-controller="Admin" asp-action="BookLists"><i class="bi bi-list-ul"></i> @L["Book lists"]</a>
                 <a class="side-link @(controller == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")" asp-controller="Admin" asp-action="Settings"><i class="bi bi-gear"></i> @L["Settings"]</a>
             }
 
@@ -94,8 +97,12 @@ else
             </div>
         </aside>
 
+        <div class="sidebar-backdrop" data-menu-close aria-hidden="true"></div>
+
         <div class="main">
             <header class="topbar">
+                <button type="button" class="menu-btn" data-menu-open aria-controls="sidebar" aria-expanded="false" aria-label="@L["Menu"]"><i class="bi bi-list"></i></button>
+                <a class="topbar-brand" href="/" aria-label="OBRL"><span class="brand-mark"><i class="bi bi-book"></i></span></a>
                 <form class="search" method="get" action="/Library" role="search">
                     <i class="bi bi-search"></i>
                     <input class="form-control" type="search" name="q" placeholder="@L["Search titles, authors and descriptions"]" value="@Context.Request.Query["q"]" aria-label="@L["Search"]" />
@@ -122,13 +129,13 @@ else
 
     <nav class="mobile-nav" aria-label="@L["Main"]">
         <a class="@Active("Home")" href="/"><i class="bi bi-house"></i>@L["Home"]</a>
-        <a class="@Active("Library")" href="/Library"><i class="bi bi-collection"></i>@L["Library"]</a>
+        <a class="@(controller == "Library" && Context.Request.Query["mine"] != "true" ? "active" : "")" href="/Library"><i class="bi bi-collection"></i>@L["Library"]</a>
+        <a class="@(controller == "Library" && Context.Request.Query["mine"] == "true" ? "active" : "")" href="/Library?mine=true"><i class="bi bi-bookmark-star"></i>@L["My books"]</a>
         <a class="@Active("Board")" href="/board"><i class="bi bi-chat-square-text"></i>@L["Board"]</a>
-        @if (canContribute)
-        {
-            <a class="@Active("Uploads")" href="/Uploads"><i class="bi bi-cloud-arrow-up"></i>@L["Uploads"]</a>
-        }
-        <a class="@(area == "Identity" ? "active" : "")" href="/Identity/Account/Manage"><i class="bi bi-person-circle"></i>@L["Account"]</a>
+        <button type="button" data-menu-open aria-controls="sidebar" aria-expanded="false">
+            <i class="bi bi-list"></i>@L["More"]
+            @if (waiting > 0) { <span class="nav-dot" aria-label="@L["Books waiting for review"]"></span> }
+        </button>
     </nav>
 }
 <partial name="_ScriptText" />

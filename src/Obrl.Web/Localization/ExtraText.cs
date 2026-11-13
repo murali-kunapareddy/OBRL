@@ -20,6 +20,7 @@ public static class ExtraText
         "Optional note for this bookmark:", "Bookmark added", "You are turning pages very fast. Please wait a moment.",
         "This page could not be loaded. Try again.", "You are moving very fast. Please wait a moment.",
         "This part could not be loaded. Try again.", "No contents list.",
+        "Tap the middle to show or hide the bars. Tap the left or right edge to turn the page.",
     ];
 
     /// <summary>Names shown through L[value]: book statuses and roles.</summary>
@@ -27,6 +28,10 @@ public static class ExtraText
     [
         "Queued", "Processing", "Ready", "Failed",
         "User", "Contributor", "Moderator", "Admin",
+        // Book languages seeded by the BookMetadataAndEmail migration (others Admins add show as typed)
+        "English", "Telugu", "Hindi", "Kannada",
+        // Library at a glance (Services/LibraryStats.cs)
+        "Not set", "1 rating", "{0} ratings",
     ];
 
     /// <summary>Labels, validation and status messages written inside Identity's page models.</summary>

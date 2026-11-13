@@ -7,20 +7,28 @@
 }
 <div class="library">
     <aside>
-        <div class="panel p-3">
-            <div class="d-flex align-items-center justify-content-between mb-2">
-                <strong>@L["Categories"]</strong>
-                <a class="small" href="/Library">@L["All books"]</a>
-            </div>
+        @* On phones the list folds away under one button, so the books come first. *@
+        <details class="panel p-3 cat-panel" open data-collapse-small>
+            <summary class="d-flex align-items-center justify-content-between gap-2">
+                <strong><i class="bi bi-diagram-3 me-1 d-lg-none"></i>@L["Categories"]
+                    @if (Model.Current is not null) { <span class="fw-normal text-muted d-lg-none">· @Model.Current.Name</span> }
+                </strong>
+                <i class="bi bi-chevron-down cat-panel-chevron d-lg-none" aria-hidden="true"></i>
+            </summary>
+            <a class="all-books-link @(Model.Current is null && !Model.MySubscriptionsOnly && Model.Query is null ? "active" : "")" href="/Library">
+                <i class="bi bi-collection"></i>
+                <span>@L["All books"]</span>
+                <span class="cat-count">(@Model.TotalBooks)</span>
+            </a>
             @if (Model.Roots.Count == 0)
             {
-                <p class="small text-muted mb-0">@L["No categories yet."]</p>
+                <p class="small text-muted mb-0 mt-2">@L["No categories yet."]</p>
             }
             else
             {
                 <div class="cat-tree"><partial name="_CategoryTree" model="@((Model.Roots, Model))" /></div>
             }
-        </div>
+        </details>
     </aside>
 
     <section>
@@ -55,9 +63,13 @@
                     {
                         @L["My subscriptions"]
                     }
+                    else if (Model.Current is not null)
+                    {
+                        @Model.Current.Name <span class="title-count">(@Model.CategoryCounts.GetValueOrDefault(Model.Current.Id))</span>
+                    }
                     else
                     {
-                        @(Model.Current?.Name ?? L["All books"])
+                        @L["All books"] <span class="title-count">(@Model.TotalBooks)</span>
                     }
                 </h1>
                 @if (Model.Current?.Description is string d)
@@ -96,6 +108,11 @@
             </p>
         }
 
+        @if (Model.Overview is { IsEmpty: false } overview)
+        {
+            <partial name="_Overview" model="overview" />
+        }
+
         @if (Model.Books.Count == 0)
         {
             <div class="empty-shelf">@L["No books here yet."]</div>
@@ -121,3 +138,11 @@
         }
     </section>
 </div>
+
+@section Scripts {
+    @if (Model.Overview is { IsEmpty: false })
+    {
+        <script src="~/lib/chartjs/chart.umd.min.js"></script>
+        <script src="~/js/library-charts.js" asp-append-version="true"></script>
+    }
+}

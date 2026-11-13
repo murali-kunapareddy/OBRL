@@ -2,7 +2,7 @@
 
 .reader-body { overflow: hidden; background: var(--obrl-reader-bg); }
 
-.reader { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+.reader { position: relative; display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
 .reader-bar {
     display: flex;
@@ -21,8 +21,32 @@
 .reader.immersive.show-bar .reader-bar { transform: none; opacity: 1; }
 
 .bar-group { display: flex; align-items: center; gap: .15rem; min-width: 0; }
-.bar-left { flex: 1 1 0; }
+.bar-left { flex: 1 1 0; max-width: calc(50% - 125px); }
 .bar-right { flex: 1 1 0; justify-content: flex-end; }
+
+/* Page turning: centred in the top bar on wide screens. */
+.reader-nav {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: .15rem;
+    height: 52px;
+    transform: translateX(-50%);
+    transition: transform .2s ease, opacity .2s ease;
+}
+.reader.immersive .reader-nav { transform: translate(-50%, -100%); opacity: 0; }
+.reader.immersive.show-bar .reader-nav { transform: translateX(-50%); opacity: 1; }
+.pct { display: none; }
+.bar-btn:disabled { opacity: .35; }
+
+/* A thin line showing how far through the book the reader is. */
+.reader-progress { position: absolute; left: 0; right: 0; top: 51px; height: 2px; z-index: 6; pointer-events: none; }
+.reader-progress span { display: block; height: 100%; width: 0; background: var(--obrl-accent); transition: width .3s ease; }
+.reader.immersive .reader-progress { top: 0; }
+.reader-settings { min-width: 230px; }
 
 .bar-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: .25rem; }
 
@@ -65,7 +89,10 @@
 .stage {
     position: relative;
     flex: 1;
+    min-height: 0;
     overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     outline: none;
     -webkit-user-select: none;
     user-select: none;
@@ -146,18 +173,62 @@
 }
 .reader-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* ----- Small screens ----- */
+/* ----- Small screens: tablets in portrait and phones ----- */
 
-@media (max-width: 760px) {
-    /* Phones: pinch to zoom instead of zoom buttons, so the pager fits. */
-    .bar-title, .zoom-label, #zoomIn, #zoomOut, #fullscreen { display: none; }
-    .bar-left, .bar-right { flex: 0 0 auto; }
-    .reader-bar { padding: 0 .25rem; gap: .1rem; }
-    .bar-btn { min-width: 32px; padding: 0 .25rem; }
-    .pager input { width: 3rem; }
-    .text-page { padding: 1.5rem 1.1rem 1rem; }
+@media (max-width: 900px) {
+    .reader-bar {
+        height: auto;
+        min-height: 52px;
+        padding: env(safe-area-inset-top) max(.25rem, env(safe-area-inset-right)) 0 max(.25rem, env(safe-area-inset-left));
+        gap: .1rem;
+    }
+    .bar-left { max-width: none; flex: 1 1 auto; }
+    .bar-right { flex: 0 0 auto; }
+    .bar-title { font-size: .95rem; }
+    .bar-btn { min-width: 40px; height: 40px; padding: 0 .25rem; font-size: 1.15rem; }
+    /* Pinch to zoom instead of zoom buttons; tap the middle of the page for a full-screen view. */
+    .zoom-label, #zoomIn, #zoomOut, #fullscreen { display: none; }
+
+    /* Page turning moves to a bar at the bottom, within reach of a thumb. */
+    .reader-nav {
+        position: static;
+        order: 3;
+        transform: none;
+        height: auto;
+        justify-content: space-between;
+        gap: .5rem;
+        padding: .3rem max(.5rem, env(safe-area-inset-right)) calc(.3rem + env(safe-area-inset-bottom)) max(.5rem, env(safe-area-inset-left));
+        background: var(--obrl-surface);
+        border-top: 1px solid var(--obrl-border);
+    }
+    .nav-btn { min-width: 52px; height: 44px; font-size: 1.4rem; border-radius: .6rem; background: var(--obrl-surface-2); }
+    .pager { font-size: .95rem; }
+    .pager input { width: 3.6rem; padding: .3rem; font-size: 16px; }
+    .pct { display: inline; margin-left: .35rem; font-size: .8rem; }
+    .reader-progress { top: auto; bottom: 0; order: 4; position: relative; height: 0; }
+    .reader-progress span { display: none; }
+
+    /* Full-page view: both bars go away; a hair-line keeps the progress. */
+    .reader.chrome-hidden .reader-bar, .reader.chrome-hidden .reader-nav { display: none; }
+    .reader.chrome-hidden .reader-progress { position: fixed; left: 0; right: 0; bottom: 0; height: 3px; }
+    .reader.chrome-hidden .reader-progress span { display: block; }
+
+    .page-wrap { margin: .5rem auto 1rem; }
+    .text-page { padding: 1.25rem max(1.1rem, env(safe-area-inset-right)) 1rem max(1.1rem, env(safe-area-inset-left)); }
     .text-page p { text-align: left; }
+    .text-nav { padding: 0 1.1rem; margin-bottom: 2rem; }
+    .reader-toast { bottom: calc(5rem + env(safe-area-inset-bottom)); max-width: calc(100% - 2rem); text-align: center; }
+    .reader.chrome-hidden .reader-toast { bottom: 1.5rem; }
+    .reader-menu { max-height: 55vh; min-width: min(300px, calc(100vw - 1rem)); }
 }
+
+@media (max-width: 480px) {
+    .wide-only { display: none; }
+    .bar-btn { min-width: 38px; }
+}
+
+/* Pinching zooms the page picture, not the whole screen. */
+.reader[data-mode="page"] .stage { touch-action: pan-x pan-y; }
 
 /* ----- Printing is blocked ----- */
 

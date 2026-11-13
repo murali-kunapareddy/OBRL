@@ -1,0 +1,50 @@
+@model PublisherEditVm
+@{
+    ViewData["Title"] = Model.Id is null ? L["Add publisher"].Value : L["Edit publisher"].Value;
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-2">
+        <li class="breadcrumb-item"><a asp-action="BookLists">@L["Book lists"]</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+    </ol>
+</nav>
+<h1 class="page-title">@ViewData["Title"]</h1>
+<p class="page-sub">
+    @if (Model.Id is not null)
+    {
+        @L["Used by {0} books. Changes show on all of them.", Model.Books]
+    }
+    else
+    {
+        @L["Uploaders can pick it as soon as it is saved."]
+    }
+</p>
+
+<form method="post" class="panel form-narrow" asp-action="EditPublisher">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label fw-semibold">English <span class="text-danger">*</span></label>
+        <input asp-for="Name" class="form-control" maxlength="200" lang="en" autofocus />
+        <span asp-validation-for="Name" class="text-danger small"></span>
+        @if (Model.Id is not null)
+        {
+            <div class="form-text">@L["Typing the name of another publisher on the list merges the two: its books move to that publisher."]</div>
+        }
+    </div>
+    @for (var i = 0; i < Model.Translations.Count; i++)
+    {
+        var code = Model.Translations[i].Language!;
+        var lang = Obrl.Web.Localization.Languages.All.First(l => l.Code == code);
+        <div class="mb-3">
+            <input type="hidden" asp-for="Translations[i].Language" />
+            <label asp-for="Translations[i].Name" class="form-label fw-semibold" lang="@code">@lang.NativeName</label>
+            <input asp-for="Translations[i].Name" class="form-control" maxlength="200" lang="@code" placeholder="@L["Empty shows the English name"]" />
+            <span asp-validation-for="Translations[i].Name" class="text-danger small"></span>
+        </div>
+    }
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">@L["Save"]</button>
+        <a class="btn btn-link" asp-action="BookLists">@L["Cancel"]</a>
+    </div>
+</form>

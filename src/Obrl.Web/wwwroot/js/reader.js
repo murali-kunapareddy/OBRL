@@ -59,12 +59,19 @@
     }
     document.addEventListener("visibilitychange", function () { if (document.hidden) saveNow(); });
     window.addEventListener("pagehide", saveNow);
-    stage.addEventListener("scroll", saveSoon, { passive: true });
+    stage.addEventListener("scroll", function () { saveSoon(); if (mode === "text") showProgress(); }, { passive: true });
 
     function setPositionLabel() {
         posInput.value = position + 1;
         $("prev").disabled = position <= 0;
         $("next").disabled = position >= count - 1;
+        showProgress();
+    }
+
+    function showProgress() {
+        var p = Math.round(percent());
+        $("pct").textContent = p + "%";
+        $("progressLine").style.width = p + "%";
     }
 
     // ---------- Copy protection (deterrence; screenshots cannot be blocked) ----------
@@ -168,6 +175,7 @@
     var touchX = null, touchY = null;
     stage.addEventListener("touchstart", function (e) {
         if (e.touches.length === 1) { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }
+        else touchX = null; // two fingers: a pinch, not a swipe
     }, { passive: true });
     stage.addEventListener("touchend", function (e) {
         if (touchX === null) return;
@@ -177,6 +185,58 @@
             goTo(position + (dx < 0 ? 1 : -1), 0);
         }
     }, { passive: true });
+
+    // ---------- Touch screens: tap the edges to turn the page, tap the middle for a full-page view ----------
+    var coarse = window.matchMedia("(pointer: coarse)");
+    var small = window.matchMedia("(max-width: 900px)");
+
+    // Forward: scroll down one screen; at the bottom, the next page. Back is the same upwards.
+    function pageForward() {
+        if (stage.scrollTop + stage.clientHeight < stage.scrollHeight - 4)
+            stage.scrollBy({ top: stage.clientHeight * 0.9, behavior: "smooth" });
+        else goTo(position + 1, 0);
+    }
+    function pageBack() {
+        if (stage.scrollTop > 4) stage.scrollBy({ top: -stage.clientHeight * 0.9, behavior: "smooth" });
+        else goTo(position - 1, 1);
+    }
+    function toggleChrome(force) {
+        var hide = typeof force === "boolean" ? force : !root.classList.contains("chrome-hidden");
+        root.classList.toggle("chrome-hidden", hide);
+    }
+    stage.addEventListener("click", function (e) {
+        if (!coarse.matches) return;
+        if (e.target.closest && e.target.closest("a, button, input, select, textarea, .text-nav")) return;
+        var rect = stage.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width;
+        if (x < 0.28) pageBack();
+        else if (x > 0.72) pageForward();
+        else if (small.matches) toggleChrome();
+    });
+    // Leaving the small layout (turning a tablet, say) brings the bars back.
+    small.addEventListener("change", function () { if (!small.matches) toggleChrome(false); });
+    if (coarse.matches && small.matches) {
+        var hinted = false;
+        try { hinted = localStorage.getItem("obrl.tapHint") === "1"; localStorage.setItem("obrl.tapHint", "1"); } catch (e) { hinted = true; }
+        if (!hinted) setTimeout(function () {
+            toast(t("Tap the middle to show or hide the bars. Tap the left or right edge to turn the page."));
+            clearTimeout(toast.t);
+            toast.t = setTimeout(function () { toastEl.classList.remove("show"); }, 5000);
+        }, 900);
+    }
+
+    // Redraw when the reading area changes size: window resize, phone turned, bars hidden or shown.
+    function onStageResize(fn) {
+        var timer = null, lastW = stage.clientWidth, lastH = stage.clientHeight;
+        function check() {
+            if (stage.clientWidth === lastW && stage.clientHeight === lastH) return;
+            lastW = stage.clientWidth; lastH = stage.clientHeight;
+            clearTimeout(timer);
+            timer = setTimeout(fn, 150);
+        }
+        if (window.ResizeObserver) new ResizeObserver(check).observe(stage);
+        else window.addEventListener("resize", check);
+    }
 
     if (mode === "page") initPageMode(); else initTextMode();
 
@@ -195,8 +255,9 @@
         var order = [];                                        // for evicting old bitmaps
         var renderToken = 0;
 
-        function availableWidth() { return Math.max(200, stage.clientWidth - 32); }
-        function availableHeight() { return Math.max(200, stage.clientHeight - 32); }
+        function gutter() { return stage.clientWidth < 600 ? 8 : 32; }
+        function availableWidth() { return Math.max(160, stage.clientWidth - gutter()); }
+        function availableHeight() { return Math.max(160, stage.clientHeight - (stage.clientWidth < 600 ? 24 : 32)); }
 
         function displayWidth() {
             if (fit === "width") return availableWidth();
@@ -210,7 +271,7 @@
 
         function updateZoomUi() {
             var pct = Math.round((displayWidth() / availableWidth()) * 100);
-            $("zoomLabel").textContent = pct + "%";
+            if ($("zoomLabel")) $("zoomLabel").textContent = pct + "%";
             $("fitWidth").classList.toggle("active", fit === "width");
             $("fitPage").classList.toggle("active", fit === "page");
         }
@@ -267,9 +328,10 @@
             updateZoomUi();
         }
 
-        function render(offset) {
+        // quiet: keep the current picture fully visible while a sharper one loads (after a pinch).
+        function render(offset, quiet) {
             var token = ++renderToken;
-            wrap.classList.add("loading");
+            if (!quiet) wrap.classList.add("loading");
             setPositionLabel();
             return getBitmap(position, wantedPixels())
                 .then(function (bmp) {
@@ -277,7 +339,7 @@
                     draw(bmp);
                     wrap.classList.remove("loading");
                     var max = stage.scrollHeight - stage.clientHeight;
-                    stage.scrollTop = offset > 0 && max > 0 ? offset * max : 0;
+                    if (!quiet) stage.scrollTop = offset > 0 && max > 0 ? offset * max : 0;
                     // Get the next page ready in the background.
                     if (position + 1 < count) getBitmap(position + 1, wantedPixels()).catch(function () {});
                 })
@@ -314,11 +376,51 @@
         on("fitWidth", "click", function () { setFit("width"); });
         on("fitPage", "click", function () { setFit("page"); });
 
-        var resizeTimer = null;
-        window.addEventListener("resize", function () {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function () { render(stageOffset()); }, 150);
+        onStageResize(function () { if (!pinch) render(stageOffset(), true); });
+
+        // ---------- Pinch to zoom (touch screens) ----------
+        var pinch = null;
+        function touchDistance(e) {
+            var a = e.touches[0], b = e.touches[1];
+            return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) || 1;
+        }
+        stage.addEventListener("touchstart", function (e) {
+            if (e.touches.length !== 2) return;
+            var rect = stage.getBoundingClientRect();
+            var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+            var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+            pinch = {
+                distance: touchDistance(e),
+                width: canvas.getBoundingClientRect().width,
+                // The spot under the fingers, in page content coordinates, stays under the fingers.
+                x: stage.scrollLeft + midX, y: stage.scrollTop + midY, midX: midX, midY: midY,
+                newWidth: null,
+            };
+        }, { passive: true });
+        stage.addEventListener("touchmove", function (e) {
+            if (!pinch || e.touches.length !== 2) return;
+            e.preventDefault();
+            var w = Math.min(availableWidth() * 4, Math.max(availableWidth() * 0.5, pinch.width * touchDistance(e) / pinch.distance));
+            var ratio = w / pinch.width;
+            pinch.newWidth = w;
+            canvas.style.width = Math.round(w) + "px";
+            canvas.style.height = Math.round(w * aspect) + "px";
+            stage.scrollLeft = pinch.x * ratio - pinch.midX;
+            stage.scrollTop = pinch.y * ratio - pinch.midY;
+            $("zoomLabel") && ($("zoomLabel").textContent = Math.round(w / availableWidth() * 100) + "%");
+        }, { passive: false });
+        stage.addEventListener("touchend", function (e) {
+            if (!pinch || e.touches.length >= 2) return;
+            var w = pinch.newWidth;
+            pinch = null;
+            if (!w) return;
+            // Close to the screen width: snap to "fit width" so the page fits again.
+            if (Math.abs(w / availableWidth() - 1) < 0.08) { fit = "width"; localStorage.setItem("obrl.fit", "width"); }
+            else { zoom = w / availableWidth(); fit = "custom"; }
+            render(stageOffset(), true);
         });
+        // Older iPhones: stop Safari zooming the whole screen.
+        document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
 
         document.addEventListener("keydown", function (e) {
             if (e.target === posInput) return;
@@ -360,6 +462,7 @@
             document.querySelectorAll("[data-leading]").forEach(function (b) { b.classList.toggle("active", b.dataset.leading === prefs.leading); });
             document.querySelectorAll("[data-measure]").forEach(function (b) { b.classList.toggle("active", b.dataset.measure === prefs.measure); });
             Object.keys(prefs).forEach(function (k) { localStorage.setItem("obrl." + k, prefs[k]); });
+            if ($("fontSize")) $("fontSize").textContent = prefs.size;
         }
 
         function keepPlace(fn) {
@@ -372,6 +475,14 @@
 
         on("fontUp", "click", function () { keepPlace(function () { prefs.size = Math.min(32, prefs.size + 1); }); });
         on("fontDown", "click", function () { keepPlace(function () { prefs.size = Math.max(13, prefs.size - 1); }); });
+        document.querySelectorAll("[data-font-step]").forEach(function (b) {
+            b.addEventListener("click", function (e) {
+                e.stopPropagation(); // keep the settings menu open while trying sizes
+                var step = parseInt(b.dataset.fontStep, 10);
+                keepPlace(function () { prefs.size = Math.min(32, Math.max(13, prefs.size + step)); });
+            });
+        });
+        onStageResize(function () { $("watermark").style.height = stage.scrollHeight + "px"; showProgress(); });
         document.querySelectorAll("[data-font]").forEach(function (b) { b.addEventListener("click", function () { keepPlace(function () { prefs.font = b.dataset.font; }); }); });
         document.querySelectorAll("[data-leading]").forEach(function (b) { b.addEventListener("click", function () { keepPlace(function () { prefs.leading = b.dataset.leading; }); }); });
         document.querySelectorAll("[data-measure]").forEach(function (b) { b.addEventListener("click", function () { keepPlace(function () { prefs.measure = b.dataset.measure; }); }); });

@@ -26,11 +26,11 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
     }
 
     [HttpGet]
-    public async Task<IActionResult> Create(CancellationToken ct)
+    public async Task<IActionResult> Create(string? returnUrl, CancellationToken ct)
     {
         ViewBag.Accept = BookFormats.Accept;
         ViewBag.MaxMb = options.Value.MaxUploadMegabytes;
-        var vm = new UploadVm();
+        var vm = new UploadVm { ReturnUrl = ReturnUrlOrReferer(returnUrl) };
         await FillListsAsync(vm, ct);
         vm.FillTranslations([]);
         return View("Edit", vm);
@@ -67,7 +67,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
             Author = Blank(vm.Author),
             Description = Blank(vm.Description),
             LanguageId = vm.LanguageId,
-            Publisher = await FindOrAddPublisherAsync(vm.PublisherName, ct),
+            Publisher = await FindOrAddPublisherAsync(vm.PublisherName, vm.Translations, emptyRemovesFor: null, ct),
             PublishedYear = vm.PublishedYear,
             OriginalFileName = Path.GetFileName(vm.File!.FileName),
             OriginalFormat = format!,
@@ -101,9 +101,10 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
+    public async Task<IActionResult> Edit(Guid id, string? returnUrl, CancellationToken ct)
     {
-        var book = await db.Books.Include(b => b.Categories).Include(b => b.Translations).Include(b => b.Publisher).FirstOrDefaultAsync(b => b.Id == id, ct);
+        var book = await db.Books.Include(b => b.Categories).Include(b => b.Translations)
+            .Include(b => b.Publisher).ThenInclude(p => p!.Translations).FirstOrDefaultAsync(b => b.Id == id, ct);
         if (book is null) return NotFound();
         if (!CanManage(book)) return Forbid();
         var vm = new UploadVm
@@ -118,9 +119,10 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
             PublishedYear = book.PublishedYear,
             CoverSource = book.CoverSource,
             CoverPage = book.CoverPage,
+            ReturnUrl = ReturnUrlOrReferer(returnUrl),
         };
         await FillListsAsync(vm, ct);
-        vm.FillTranslations(book.Translations);
+        vm.FillTranslations(book.Translations, book.Publisher);
         FillBookInfo(vm, book);
         return View(vm);
     }
@@ -164,7 +166,7 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         book.Author = Blank(vm.Author);
         book.Description = Blank(vm.Description);
         book.LanguageId = vm.LanguageId;
-        book.Publisher = await FindOrAddPublisherAsync(vm.PublisherName, ct);
+        book.Publisher = await FindOrAddPublisherAsync(vm.PublisherName, vm.Translations, emptyRemovesFor: book.PublisherId, ct);
         book.PublishedYear = vm.PublishedYear;
         BookText.Apply(book, vm.Translations);
         var wanted = vm.CategoryIds.Distinct().ToHashSet();
@@ -177,7 +179,8 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
         if (resubmitted) book.RejectedAt = null;
         await db.SaveChangesAsync(ct);
         TempData["Message"] = (resubmitted ? L["Saved and sent back for review."] : L["Saved."]).Value;
-        return RedirectToAction("Details", "Books", new { id });
+        // Back to where the edit was started (the library, the book page, My uploads...).
+        return SafeReturnUrl(vm.ReturnUrl) is string back ? LocalRedirect(back) : RedirectToAction("Details", "Books", new { id });
     }
 
     [HttpPost, ValidateAntiForgeryToken]
@@ -332,27 +335,52 @@ public class UploadsController(ObrlDbContext db, BookStorage storage, CoverServi
     public static bool IsValidYear(int year, int thisYear) => year >= MinYear && year <= thisYear;
 
     /// <summary>
-    /// The publisher with this name (ignoring case and extra spaces), or a new one added to the list.
-    /// Null when the field was left empty.
+    /// The publisher with this name (ignoring case and extra spaces), or a new one added to the list, with its names in
+    /// other languages updated from the book form's language tabs. Null when the field was left empty.
+    /// An emptied name box removes that language's name only when the book already had this publisher
+    /// (<paramref name="emptyRemovesFor"/>), because only then did the form show the saved names.
     /// </summary>
-    private async Task<Publisher?> FindOrAddPublisherAsync(string? name, CancellationToken ct)
+    private async Task<Publisher?> FindOrAddPublisherAsync(string? name, IEnumerable<BookTranslationInput> names, int? emptyRemovesFor, CancellationToken ct)
     {
-        var clean = string.Join(' ', (name ?? "").Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
-        if (clean.Length == 0) return null;
+        var clean = PublisherText.Clean(name);
+        if (clean is null) return null;
         var normalized = Publisher.Normalize(clean);
-        var existing = await db.Publishers.FirstOrDefaultAsync(p => p.NormalizedName == normalized, ct);
-        if (existing is not null) return existing;
-        var added = new Publisher { Name = clean, NormalizedName = normalized };
-        db.Publishers.Add(added);
-        return added;
+        var publisher = await db.Publishers.Include(p => p.Translations).FirstOrDefaultAsync(p => p.NormalizedName == normalized, ct);
+        if (publisher is null)
+        {
+            publisher = new Publisher { Name = clean, NormalizedName = normalized };
+            db.Publishers.Add(publisher);
+        }
+        PublisherText.Apply(publisher, names.Select(n => KeyValuePair.Create(n.Language, n.PublisherName)),
+            emptyRemoves: emptyRemovesFor is int same && same == publisher.Id);
+        return publisher;
     }
 
     private async Task FillListsAsync(UploadVm vm, CancellationToken ct)
     {
         vm.AllCategories = (await CategoryTree.LoadAsync(db, ct)).Flatten();
         vm.AllLanguages = await db.BookLanguages.AsNoTracking().OrderBy(l => l.SortOrder).ThenBy(l => l.Name).ToListAsync(ct);
-        vm.AllPublishers = await db.Publishers.AsNoTracking().OrderBy(p => p.Name).Select(p => p.Name).Take(5000).ToListAsync(ct);
+        var publishers = await db.Publishers.AsNoTracking().OrderBy(p => p.Name).Take(5000)
+            .Select(p => new { p.Name, Names = p.Translations.Select(t => new { t.Language, t.Name }).ToList() })
+            .ToListAsync(ct);
+        vm.AllPublishers = publishers
+            .Select(p => new PublisherOption(p.Name, p.Names.ToDictionary(n => n.Language, n => n.Name))).ToList();
     }
+
+    /// <summary>The page to go back to: the one named in the link, or else the page the member came from.</summary>
+    private string? ReturnUrlOrReferer(string? returnUrl)
+    {
+        if (SafeReturnUrl(returnUrl) is string named) return named;
+        if (!Uri.TryCreate(Request.Headers.Referer.ToString(), UriKind.Absolute, out var referer)) return null;
+        if (!string.Equals(referer.Host, Request.Host.Host, StringComparison.OrdinalIgnoreCase)) return null;
+        return SafeReturnUrl(referer.PathAndQuery);
+    }
+
+    /// <summary>A local address that is not this form itself, or null.</summary>
+    private string? SafeReturnUrl(string? url) =>
+        !string.IsNullOrEmpty(url) && Url.IsLocalUrl(url)
+        && !url.StartsWith("/Uploads/Edit", StringComparison.OrdinalIgnoreCase)
+        && !url.StartsWith("/Uploads/Create", StringComparison.OrdinalIgnoreCase) ? url : null;
 
     private static string? Blank(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
 }

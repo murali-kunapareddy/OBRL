@@ -11,7 +11,7 @@
     <!-- Version shown in the footer as major.minor.build. Change major.minor by hand for a release, and add the
          release to Services/ReleaseNotes.cs (the version history page).
          The build number is the build time (UTC) as yyyyMMddHHmmss, shown in hexadecimal. -->
-    <ObrlVersion>1.1</ObrlVersion>
+    <ObrlVersion>1.2</ObrlVersion>
     <ObrlBuildTimestamp Condition="'$(ObrlBuildTimestamp)' == ''">$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</ObrlBuildTimestamp>
   </PropertyGroup>
 

@@ -277,6 +277,7 @@ To add a theme, copy a block, change the colours, and add a button with `data-th
 | HtmlSanitizer, AngleSharp | MIT | Cleaning EPUB HTML |
 | Bootstrap, Bootstrap Icons | MIT | UI |
 | Cropper.js 1.6.2 | MIT | Cover crop and adjust tool (`wwwroot/lib/cropperjs`) |
+| Chart.js 4.5.1 | MIT | Library at a glance charts (`wwwroot/lib/chartjs`) |
 | qrcode-generator | MIT | Authenticator QR code |
 | Inter, Literata | SIL OFL 1.1 | Fonts |
 | SecLists NCSC password list | MIT | Leaked-password check |

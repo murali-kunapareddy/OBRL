@@ -21,8 +21,8 @@
         @if (b.Language is not null || b.Publisher is not null || b.PublishedYear is not null)
         {
             <dl class="book-facts small mb-3">
-                @if (b.Language is not null) { <div><dt>@L["Language"]</dt><dd>@b.Language.Name</dd></div> }
-                @if (b.Publisher is not null) { <div><dt>@L["Publisher"]</dt><dd>@b.Publisher.Name</dd></div> }
+                @if (b.Language is not null) { <div><dt>@L["Language"]</dt><dd>@L[b.Language.Name]</dd></div> }
+                @if (b.Publisher is not null) { <div><dt>@L["Publisher"]</dt><dd>@Obrl.Web.Services.PublisherText.ForCurrentLanguage(b.Publisher)</dd></div> }
                 @if (b.PublishedYear is not null) { <div><dt>@L["Year"]</dt><dd>@b.PublishedYear</dd></div> }
             </dl>
         }
@@ -90,7 +90,7 @@
             }
             @if (Model.CanEdit)
             {
-                <a class="btn btn-outline-secondary btn-lg" asp-controller="Uploads" asp-action="Edit" asp-route-id="@b.Id"><i class="bi bi-pencil"></i> @L["Edit details"]</a>
+                <a class="btn btn-outline-secondary btn-lg" asp-controller="Uploads" asp-action="Edit" asp-route-id="@b.Id" asp-route-returnUrl="@Context.Request.Path"><i class="bi bi-pencil"></i> @L["Edit details"]</a>
             }
             @if (Model.CanModerate && !b.IsApproved)
             {

@@ -13,6 +13,16 @@ public static class ReleaseNotes
 {
     public static readonly IReadOnlyList<Release> All =
     [
+        new("1.2", new DateOnly(2026, 11, 13), "Phones and tablets, library charts and publisher names in other languages",
+        [
+            "OBRL works on phones and tablets: the side menu opens from a button at the top or from More at the bottom, and the library's categories fold away under one button.",
+            "The reader fits phones: page turning sits at the bottom within reach of a thumb, pinch to zoom a page, tap the left or right edge to turn the page, and tap the middle to hide the bars.",
+            "The library shows how many books each category has, and the total next to All books.",
+            "Library at a glance: charts of books by language, the top 10 publishers and categories, and the most read and top rated books.",
+            "Publisher names can be entered in Telugu and Kannada, on the book form or under Admin > Book lists. Readers see the English name where none was entered.",
+            "Admin > Book lists has add and edit pages for languages and publishers.",
+            "After editing a book, you go back to the page you started from.",
+        ]),
         new("1.1", new DateOnly(2026, 11, 6), "Book language, publisher and year, and email",
         [
             "Books have a language, a publisher and a year of publication. Uploaders pick the language from a list Admins keep under Admin > Book lists, and pick a publisher or type a new one.",
